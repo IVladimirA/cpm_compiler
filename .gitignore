@@ -1,0 +1,6 @@
+source/parser/node.grammar.output
+out/transpiler.o
+source/parser/node.lexer.c
+source/parser/node.lexer.h
+source/parser/node.grammar.c
+source/parser/node.grammar.h
