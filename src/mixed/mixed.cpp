@@ -133,6 +133,7 @@ Mixed::operator std::string() {
             break;
         case FLOAT:
             strMixed = std::to_string(floating);
+            strMixed.erase(strMixed.find_last_not_of('0') + 1, std::string::npos);
             break;
         case UNDEF:
         default:
