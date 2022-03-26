@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "../node.h"
+#include "../node/node.h"
 
 int yylex(void);
 void yyerror(const char* msg);
@@ -50,15 +50,15 @@ Expression: Expression OP_PLUS Expression { $$ = new Node(PLUS, $1, $3); }
 | Literal {$$ = $1; }
 ;
 
-Declaration: VAR_D Variable { $$ = new Node(DECL, $2); }
-| CONST_D Variable { $$ = new Node(DECL, $2); }
+Declaration: VAR_D Variable { $$ = new Node(VAR_DECL, $2); }
+| CONST_D Variable { $$ = new Node(CONST_DECL, $2); }
 ;
 
 Variable: VAR { $$ = new Node(*$1, VAR_NAME); }
 ;
 
-Literal: INT_L { $$ = new Node(std::stoll(*$1)); }
-| FLOAT_L { $$ = new Node(std::stod(*$1)); }
+Literal: INT_L { $$ = new Node(*$1); }
+| FLOAT_L { $$ = new Node(*$1); }
 | STRING_L { $$ = new Node(*$1); }
 ;
 

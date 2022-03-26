@@ -10,18 +10,19 @@ class Mixed {
     long long int integer;
     double floating;
     std::string str;
-    bool isConst;
     MixedType type;
     public:
         Mixed();
-        Mixed(long long int num, bool is_const = false);
-        Mixed(int num, bool is_const = false);
-        Mixed(double num, bool is_const = false);
-        Mixed(std::string string, bool is_const = false);
-        friend Mixed operator + (Mixed m1, Mixed const &m2);
-        friend Mixed operator - (Mixed m1, Mixed const &m2);
+        Mixed(long long int num);
+        Mixed(int num);
+        Mixed(double num);
+        Mixed(std::string string);
+        friend Mixed operator+(Mixed m1, Mixed const &m2);
+        friend Mixed operator-(Mixed m1, Mixed const &m2);
+        Mixed& operator=(const std::string& s);
         //friend std::string operator = (Mixed const &m);
         operator std::string();
+        //friend operator Mixed(std::string s);
         friend std::ostream &operator<<(std::ostream &output, const Mixed &m);
         friend std::istream &operator>>(std::istream& input, Mixed& m);
 };

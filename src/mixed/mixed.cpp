@@ -2,27 +2,22 @@
 
 Mixed::Mixed() {
     type = UNDEF;
-    isConst = false;
 }
-Mixed::Mixed(long long int num, bool is_const) {
+Mixed::Mixed(long long int num) {
     type = INT;
     integer = num;
-    isConst = is_const;
 }
-Mixed::Mixed(int num, bool is_const) {
+Mixed::Mixed(int num) {
     type = INT;
     integer = num;
-    isConst = is_const;
 }
-Mixed::Mixed(double num, bool is_const) {
+Mixed::Mixed(double num) {
     type = FLOAT;
     floating = num;
-    isConst = is_const;
 }
-Mixed::Mixed(std::string string, bool is_const) {
+Mixed::Mixed(std::string string) {
     type = STR;
     str = string;
-    isConst = is_const;
 }
 Mixed operator + (Mixed m1, Mixed const &m2) {
     Mixed result;
@@ -119,6 +114,13 @@ Mixed operator - (Mixed m1, Mixed const &m2) {
     }
     return left + right;
 }
+
+Mixed& Mixed::operator=(const std::string& s) {
+    type = STR;
+    str = s;
+    return *this;
+}
+
 Mixed::operator std::string() {
     std::string strMixed;
     switch (type) {
