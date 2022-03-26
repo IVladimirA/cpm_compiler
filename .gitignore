@@ -2,4 +2,3 @@ out
 src/parser/*.c
 src/parser/*.h
 src/parser/*.output
-cpm_compiler.zip

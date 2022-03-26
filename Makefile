@@ -5,7 +5,7 @@ utils := src/utils/utils.h src/utils/utils.cpp
 all_classes := $(node) $(mixed) $(utils)
 CXXFLAGS+=-std=c++17 -Wall -O2
 
-all: out/a.o
+all: out/a.o pack
 
 run: out/a.o
 	./out/a.o
@@ -30,8 +30,8 @@ src/parser/%.tab.c src/parser/%.tab.h: src/parser/%.y
 out:
 	mkdir -p out
 
-pack: src/parser/%.lexer.c src/parser/%.tab.h
-	zip cpm_compiler.zip -r Makefile src
+pack: src/parser/node.lexer.c src/parser/node.tab.h
+	zip cpm_compiler.zip -r Makefile src examples
 
 clean:
 	rm -rf out
