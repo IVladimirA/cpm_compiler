@@ -12,4 +12,4 @@ val numberString = "134";
 print(numberString + answerNumber);
 print(numberString - answerNumber);
 val name = input("Name ");
-print("Your name is" + name);
+print("Your name is " + name);

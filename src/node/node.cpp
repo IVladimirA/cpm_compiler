@@ -73,8 +73,10 @@ std::string Node::generateLine() {
             result = "input(" + left->generateLine() + ")";
             break;
         case VAR_NAME:
-        case LIT:
             result = value;
+            break;
+        case LIT:
+            result = "Mixed(" + value + ")";
             break;
         default:
             result = "ERROR";
