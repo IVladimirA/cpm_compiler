@@ -119,20 +119,26 @@ Mixed operator - (Mixed m1, Mixed const &m2) {
     }
     return left + right;
 }
-/*std::string operator = (Mixed const &m) {
-    switch (m.type) {
-        case INT:
-            return std::to_string(m.integer);
-        case FLOAT:
-            return std::to_string(m.floating);
+Mixed::operator std::string() {
+    std::string strMixed;
+    switch (type) {
         case STR:
-            return m.str;
+            strMixed = str;
+            break;
+        case INT:
+            strMixed = std::to_string(integer);
+            break;
+        case FLOAT:
+            strMixed = std::to_string(floating);
+            break;
         case UNDEF:
-            return "Undefined Mixed variable";
         default:
-            return "Incorrect string of \"Mixed\" type";
+            strMixed = "STR ERROR";
+            break;
     }
-}*/
+    return strMixed;
+}
+
 std::ostream &operator<<(std::ostream &output, const Mixed &m) {
     switch (m.type) {
         case INT:

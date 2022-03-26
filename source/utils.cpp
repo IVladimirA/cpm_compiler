@@ -1,10 +1,14 @@
 #include "utils.h"
 
-void print(Mixed const &m) {
-    std::cout << m << std::endl;
+void print(std::string string) {
+    std::cout << string << '\n';
 }
 
-Mixed input(Mixed const &m) {
+Mixed input(std::string string) {
+    std::string value;
     Mixed result;
-    std::cout << m << std::endl;
+    std::cout << string;
+    std::cin >> value;
+    result = Mixed(value);
+    return result;
 }

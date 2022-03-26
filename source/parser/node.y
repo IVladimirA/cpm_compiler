@@ -7,7 +7,7 @@
 
 int yylex(void);
 void yyerror(const char* msg);
-std::vector<Mixed> res;
+std::vector<Node*> code;
 
 %}
 
@@ -27,7 +27,7 @@ std::vector<Mixed> res;
 %left OP_PLUS
 %left OP_MINUS
 
-%type <node> Input Line Expression Declaration
+%type <node> Input Line Expression Declaration Variable Literal
 
 %start Input
 
@@ -37,23 +37,29 @@ Input: Line { }
 | Input Line { }
 ;
 
-Line: Expression COMMAND_END { $$ = new Node(); }
-| Declaration OP_EQUATION Expression COMMAND_END { $$ = new Node(); }
-| VAR OP_EQUATION Expression COMMAND_END { $$ = new Node(); }
+Line: Expression COMMAND_END { code.push_back($1); }
+| Declaration OP_EQUATION Expression COMMAND_END { code.push_back(new Node(EQUATION, $1, $3)); }
+| Variable OP_EQUATION Expression COMMAND_END { code.push_back(new Node(EQUATION, $1, $3)); }
 ;
 
-Expression: Expression OP_PLUS Expression { $$ = new Node(); }
-| Expression OP_MINUS Expression { $$ = new Node(); }
-| PRINT LEFT_BRACKET Expression RIGHT_BRACKET { $$ = new Node(); }
-| INPUT LEFT_BRACKET Expression RIGHT_BRACKET { $$ = new Node(); }
-| VAR { $$ = new Node(); }
-| INT_L { $$ = new Node(); }
-| FLOAT_L { $$ = new Node(); }
-| STRING_L { $$ = new Node(); }
+Expression: Expression OP_PLUS Expression { $$ = new Node(PLUS, $1, $3); }
+| Expression OP_MINUS Expression { $$ = new Node(MINUS, $1, $3); }
+| PRINT LEFT_BRACKET Expression RIGHT_BRACKET { $$ = new Node(PRINT_F, $3); }
+| INPUT LEFT_BRACKET Expression RIGHT_BRACKET { $$ = new Node(INPUT_F, $3); }
+| Variable { $$ = $1; }
+| Literal {$$ = $1; }
 ;
 
-Declaration: VAR_D VAR { $$ = new Node(); }
-| CONST_D VAR { $$ = new Node(); }
+Declaration: VAR_D Variable { $$ = new Node(DECL, $2); }
+| CONST_D Variable { $$ = new Node(DECL, $2); }
+;
+
+Variable: VAR { $$ = new Node(*$1, VAR_NAME); }
+;
+
+Literal: INT_L { $$ = new Node(std::stoll(*$1)); }
+| FLOAT_L { $$ = new Node(std::stod(*$1)); }
+| STRING_L { $$ = new Node(*$1); }
 ;
 
 %%

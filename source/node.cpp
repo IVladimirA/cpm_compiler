@@ -4,47 +4,35 @@ Node::Node() {
     value = Mixed();
     left = nullptr;
     right = nullptr;
-    op = VAR_V;
+    op = VAR_NAME;
 }
 
-Node::Node(std::string str, bool is_const) {
+Node::Node(std::string str, OpType o, bool is_const) {
     value = Mixed(str, is_const);
     left = nullptr;
     right = nullptr;
-    if (is_const)
-        op = VAL_V;
-    else
-        op = VAR_V;
+    op = o;
 }
 
-Node::Node(int num, bool is_const) {
+Node::Node(int num, OpType o, bool is_const) {
     value = Mixed(num, is_const);
     left = nullptr;
     right = nullptr;
-    if (is_const)
-        op = VAL_V;
-    else
-        op = VAR_V;
+    op = o;
 }
 
-Node::Node(long long int num, bool is_const) {
+Node::Node(long long int num, OpType o, bool is_const) {
     value = Mixed(num, is_const);
     left = nullptr;
     right = nullptr;
-    if (is_const)
-        op = VAL_V;
-    else
-        op = VAR_V;
+    op = o;
 }
 
-Node::Node(double num, bool is_const) {
+Node::Node(double num, OpType o, bool is_const) {
     value = Mixed(num, is_const);
     left = nullptr;
     right = nullptr;
-    if (is_const)
-        op = VAL_V;
-    else
-        op = VAR_V;
+    op = o;
 }
 
 Node::Node(OpType o, Node* l, Node* r) {
@@ -52,4 +40,36 @@ Node::Node(OpType o, Node* l, Node* r) {
     left = l;
     right = r;
     value = Mixed();
+}
+
+std::string Node::getStr() {
+    std::string result;
+    switch (op) {
+        case PLUS:
+            result = left->getStr() + " + " + right->getStr();
+            break;
+        case MINUS:
+            result = left->getStr() + " - " + right->getStr();
+            break;
+        case EQUATION:
+            result = left->getStr() + " = " + right->getStr();
+            break;
+        case DECL:
+            result = "decl " + left->getStr();
+            break;
+        case PRINT_F:
+            result = "print(" + left->getStr() + ")";
+            break;
+        case INPUT_F:
+            result = "input(" + left->getStr() + ")";
+            break;
+        case VAR_NAME:
+        case LIT:
+            result = value;
+            break;
+        default:
+            result = "ERROR";
+            break;
+    }
+    return result;
 }

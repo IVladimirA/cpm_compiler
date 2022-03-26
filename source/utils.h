@@ -5,7 +5,7 @@
 #include <string>
 #include "mixed.h"
 
-void print(Mixed const &m);
-Mixed input(Mixed const &m);
+void print(std::string string);
+Mixed input(std::string string);
 
 #endif

@@ -1,0 +1,15 @@
+var str = "Hello";
+str = str + "1";
+print(str);
+str = 21 + 2 + 18;
+val worldString = "World";
+val answerNumber = 42;
+print(worldString + answerNumber);
+print(worldString - answerNumber);
+val pi = 3.14;
+print(pi + answerNumber);
+val numberString = "134";
+print(numberString + answerNumber);
+print(numberString - answerNumber);
+val name = input("Name ");
+print("Your name is" + name);
