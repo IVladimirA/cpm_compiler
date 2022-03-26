@@ -27,15 +27,11 @@ std::vector<Node*> code;
 %left OP_PLUS
 %left OP_MINUS
 
-%type <node> Input Line Expression Declaration Variable Literal
+%type <node> Line Expression Declaration Variable Literal
 
-%start Input
+%start Line
 
 %%
-
-Input: Line { }
-| Input Line { }
-;
 
 Line: Expression COMMAND_END { code.push_back($1); }
 | Declaration OP_EQUATION Expression COMMAND_END { code.push_back(new Node(EQUATION, $1, $3)); }

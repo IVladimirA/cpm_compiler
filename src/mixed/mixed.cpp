@@ -1,3 +1,4 @@
+#include <iostream>
 #include "mixed.h"
 
 Mixed::Mixed() {

@@ -1,7 +1,6 @@
 #ifndef MIXED_TYPE_H
 #define MIXED_TYPE_H
 
-#include <iostream>
 #include <string>
 
 enum MixedType { INT, FLOAT, STR, UNDEF };
