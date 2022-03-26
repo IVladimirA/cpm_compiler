@@ -4,7 +4,7 @@
 #include "mixed/mixed.h"
 #include "utils/utils.h"
 #include "node/node.h"
-#include "parser/node.grammar.h"
+#include "parser/node.tab.h"
 #include "parser/node.lexer.h"
 
 extern std::vector<Node*> code;
@@ -25,6 +25,6 @@ int main(int argc, char** argv) {
     for (Node* line : code) {
         outfile << '\t' << line->generateLine() << ";\n";
     }
-    outfile << "}\n";
+    outfile << "\treturn 0;\n}\n";
     return 0;
 }

@@ -16,7 +16,7 @@ out/a.cpp: out out/transpiler.o
 out/a.o: ./out/a.cpp $(mixed) $(utils)
 	$(CXX) $^ $(CXXFLAGS) -w -o out/a.o
 
-out/transpiler.o: src/main.cpp $(all_classes) src/parser/node.lexer.c src/parser/node.grammar.c
+out/transpiler.o: src/main.cpp $(all_classes) src/parser/node.lexer.c src/parser/node.tab.c
 	$(CXX) $^ $(CXXFLAGS) -w -o out/transpiler.o
 
 src/parser/%.lexer.c src/parser/%.lexer.h: src/parser/%.lex
@@ -24,13 +24,13 @@ src/parser/%.lexer.c src/parser/%.lexer.h: src/parser/%.lex
 	mv lex.c src/parser/$*.lexer.c
 	mv lex.h src/parser/$*.lexer.h
 
-src/parser/%.grammar.c src/parser/%.grammar.h: src/parser/%.y
-	bison -d -v $^ -o src/parser/$*.grammar.c
+src/parser/%.tab.c src/parser/%.tab.h: src/parser/%.y
+	bison -d -v $^ -o src/parser/$*.tab.c
 
 out:
 	mkdir -p out
 
-pack: src/parser/%.lexer.c src/parser/%.grammar.h
+pack: src/parser/%.lexer.c src/parser/%.tab.h
 	zip cpm_compiler.zip -r Makefile src
 
 clean:

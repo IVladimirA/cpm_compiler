@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 #include "../node/node.h"
-#include "node.grammar.h"
+#include "node.tab.h"
 
 %}
 
