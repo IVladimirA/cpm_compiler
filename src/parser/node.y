@@ -6,7 +6,9 @@
 #include "../node/node.h"
 
 int yylex(void);
-void yyerror(const char* msg);
+void yyerror(const char *error) {
+    std::cerr << error;
+}
 std::vector<Node*> code;
 
 %}

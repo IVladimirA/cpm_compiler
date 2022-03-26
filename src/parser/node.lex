@@ -7,7 +7,7 @@
 
 %}
 
-%option outfile="lex.c" header-file="lex.h"
+%option outfile="lex.c" header-file="lex.h" noyywrap
 
 blank [ \t\r\n]+
 digit [0-9]

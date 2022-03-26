@@ -142,24 +142,3 @@ Mixed::operator std::string() {
     return strMixed;
 }
 
-std::ostream &operator<<(std::ostream &output, const Mixed &m) {
-    switch (m.type) {
-        case INT:
-            return output << m.integer;
-        case FLOAT:
-            return output << m.floating;
-        case STR:
-            return output << m.str;
-        case UNDEF:
-            return output << "Undefined Mixed variable";
-        default:
-            return output << "Incorrect output of \"Mixed\" type";
-    }
-}
-
-std::istream& operator>>(std::istream& input, Mixed& m) {
-    std::string s;
-    std::cin >> s;
-    m = Mixed(s);
-    return input;
-}

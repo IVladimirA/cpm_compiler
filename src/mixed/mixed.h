@@ -19,11 +19,7 @@ class Mixed {
         friend Mixed operator+(Mixed m1, Mixed const &m2);
         friend Mixed operator-(Mixed m1, Mixed const &m2);
         Mixed& operator=(const std::string& s);
-        //friend std::string operator = (Mixed const &m);
         operator std::string();
-        //friend operator Mixed(std::string s);
-        friend std::ostream &operator<<(std::ostream &output, const Mixed &m);
-        friend std::istream &operator>>(std::istream& input, Mixed& m);
 };
 
 #endif
