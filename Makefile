@@ -1,8 +1,7 @@
 CXX := g++
 node := src/node/node.h src/node/node.cpp
 mixed := src/mixed/mixed.h src/mixed/mixed.cpp
-utils := src/utils/utils.h src/utils/utils.cpp
-all_classes := $(node) $(mixed) $(utils)
+all_classes := $(node) $(mixed)
 CXXFLAGS+=-std=c++17 -Wall -O2
 
 all: out/a.o
@@ -13,7 +12,7 @@ run: out/a.o
 out/a.cpp: out out/transpiler.o
 	./out/transpiler.o $(ARGS)
 
-out/a.o: ./out/a.cpp $(mixed) $(utils)
+out/a.o: ./out/a.cpp $(mixed)
 	$(CXX) $^ $(CXXFLAGS) -w -o out/a.o
 
 out/transpiler.o: src/main.cpp $(all_classes) src/parser/node.lexer.c src/parser/node.tab.c

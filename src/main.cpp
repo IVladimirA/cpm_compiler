@@ -2,8 +2,6 @@
 #include <vector>
 #include <fstream>
 #include <array>
-#include "mixed/mixed.h"
-#include "utils/utils.h"
 #include "node/node.h"
 #include "parser/node.tab.h"
 #include "parser/node.lexer.h"
@@ -26,7 +24,6 @@ int main(int argc, char** argv) {
     }
     std::ofstream outfile(out_file_path);
     outfile << "#include \"../src/mixed/mixed.h\"\n";
-    outfile << "#include \"../src/utils/utils.h\"\n\n";
     outfile << "int main(void) {\n";
     for (Node* line : code) {
         if (line->check_line(consts, vars_declared, vars_defined, errors))
