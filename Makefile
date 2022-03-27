@@ -5,7 +5,7 @@ utils := src/utils/utils.h src/utils/utils.cpp
 all_classes := $(node) $(mixed) $(utils)
 CXXFLAGS+=-std=c++17 -Wall -O2
 
-all: out/a.o pack
+all: out/a.o
 
 run: out/a.o
 	./out/a.o
