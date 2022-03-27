@@ -18,6 +18,7 @@ public:
     std::string generateLine();
     bool isEqual(Node* tree);
     int check_line(std::unordered_set<std::string>& consts, std::unordered_set<std::string>& vars_defined, std::unordered_set<std::string>& vars_declared, std::array<int, 4>& errors);
+    ~Node();
 private:
     Node* left;
     Node* right;

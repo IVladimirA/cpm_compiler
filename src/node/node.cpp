@@ -106,3 +106,8 @@ int Node::check_line(std::unordered_set<std::string>& consts, std::unordered_set
     }
     return result;
 }
+
+Node::~Node() {
+    delete left;
+    delete right;
+}

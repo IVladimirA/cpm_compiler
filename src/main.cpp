@@ -32,6 +32,7 @@ int main(int argc, char** argv) {
         if (line->check_line(consts, vars_declared, vars_defined, errors))
             continue;
         outfile << '\t' << line->generateLine() << ";\n";
+        delete line;
     }
     outfile << "\treturn 0;\n}\n";
     outfile << "/*\nErrors:\n";
