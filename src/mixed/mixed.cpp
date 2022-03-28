@@ -98,12 +98,6 @@ Mixed operator - (Mixed m1, Mixed const &m2) {
     return left + right;
 }
 
-Mixed& Mixed::operator=(const std::string& s) {
-    type = STR;
-    str = s;
-    return *this;
-}
-
 Mixed::operator std::string() const {
     std::string strMixed;
     switch (type) {
@@ -126,19 +120,6 @@ Mixed::operator std::string() const {
     }
     return strMixed;
 }
-
-Mixed operator+(const std::string& string, double number) {
-    return Mixed(string) + Mixed(number);
-}
-
-Mixed operator+(const std::string& string, int number) {
-    return Mixed(string) + Mixed(number);
-}
-
-Mixed operator+(const std::string& string, long long int number) {
-    return Mixed(string) + Mixed(number);
-}
-
 
 void print(const std::string& string) {
     std::cout << string << '\n';

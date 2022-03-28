@@ -19,13 +19,9 @@ class Mixed {
         Mixed(const char* string);
         friend Mixed operator+(Mixed m1, Mixed const &m2);
         friend Mixed operator-(Mixed m1, Mixed const &m2);
-        Mixed& operator=(const std::string& s);
         operator std::string() const;
 };
 
-Mixed operator+(const std::string& string, int number);
-Mixed operator+(const std::string& string, long long int number);
-Mixed operator+(const std::string& string, double number);
 void print(const std::string& string = "");
 Mixed input(const std::string& string = "");
 

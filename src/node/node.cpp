@@ -42,7 +42,6 @@ std::string Node::generateLine() {
             result = value;
             break;
         case LIT:
-            //result = value;
             result = "Mixed(" + value + ")";
             break;
         default:
