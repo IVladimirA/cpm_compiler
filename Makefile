@@ -2,7 +2,7 @@ CXX := g++
 node := src/node/node.h src/node/node.cpp
 mixed := src/mixed/mixed.h src/mixed/mixed.cpp
 library := cpm_compiler/libmixed.so cpm_compiler/mixed.h
-example := examples/perimeter.cpm
+example := examples/a.cpm
 CXXFLAGS+=-std=c++17 -Wall -O2
 
 .PHONY: all clean run pack
