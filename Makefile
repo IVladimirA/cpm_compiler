@@ -5,13 +5,13 @@ CXXFLAGS+=-std=c++17 -Wall -O2
 
 all: cpm_compiler cpm_compiler/c+- cpm_compiler/libmixed.so
 
-run: cpm_compiler/out cpm_compiler/out/a.out
-	cpm_compiler/out/a.out
+run: out out/a.out
+	out/a.out
 
-cpm_compiler/out/a.out cpm_compiler/out/a.cpp: ./examples/a.cpm cpm_compiler/mixed.h cpm_compiler/libmixed.so cpm_compiler/c+-
+out out/a.out: ./examples/a.cpm cpm_compiler/libmixed.so cpm_compiler/c+-
 	cpm_compiler/c+- examples/a.cpm
 
-cpm_compiler/libmixed.so cpm_compiler/mixed.h: $(mixed)
+cpm_compiler/libmixed.so cpm_compiler/mixed.h: cpm_compiler $(mixed)
 	cp src/mixed/mixed.h cpm_compiler/mixed.h
 	$(CXX) src/mixed/mixed.cpp $(CXXFLAGS) -fPIC -c -o cpm_compiler/mixed.o
 	$(CXX) cpm_compiler/mixed.o -fPIC -shared -o cpm_compiler/libmixed.so
@@ -28,9 +28,6 @@ src/parser/%.lexer.c src/parser/%.lexer.h: src/parser/%.lex
 src/parser/%.tab.c src/parser/%.tab.h: src/parser/%.y
 	bison -d -v $^ -o src/parser/$*.tab.c
 
-cpm_compiler/out: cpm_compiler
-	mkdir -p cpm_compiler/out
-
 cpm_compiler:
 	mkdir -p cpm_compiler
 
@@ -40,4 +37,5 @@ pack: cpm_compiler cpm_compiler/c+- cpm_compiler/libmixed.so
 
 clean:
 	rm -rf cpm_compiler
+	rm -rf out
 	rm -f src/parser/*.c src/parser/*.h src/parser/*.output

@@ -8,6 +8,14 @@
 
 extern std::vector<Node*> code;
 
+static void show_usage(const std::string& name) {
+    std::cout << "Usage: " << name << " file [directory]\n"
+              << "Options:\n"
+              << "\t-h,--help\tShow this help message\n"
+              << "\tSpecify the path to .cpm file to create directory with .cpp and .out files. Directory is \"./out\" by default."
+              << std::endl;
+}
+
 static void parse_code(std::ifstream& in_file) {
     std::string line;
     while (std::getline(in_file, line)) {
@@ -51,11 +59,20 @@ static void write_cpp(const std::string& file_path) {
 }
 
 int main(int argc, char** argv) {
-    std::cout << argv[0] << std::endl;
+    std::string program_name = argv[0];
     if (argc < 2)
-        throw std::invalid_argument("No input file");
+        throw std::invalid_argument("No input file. Try '" + program_name + " --help' for more information.");
+    if (argc > 3)
+        throw std::invalid_argument("Too many arguments: " + std::to_string(argc) + " given. Try '" + program_name + " --help' for more information.");
     std::string in_file_path = argv[1];
-    std::string cpm_path = argv[0];
+    std::string out_dir = ".";
+    if (argc == 3)
+        out_dir = argv[2];
+    if (in_file_path == "-h" || in_file_path == "--help") {
+        show_usage(program_name);
+        return 0;
+    }
+    std::string cpm_path = program_name;
     const size_t dir_path = cpm_path.rfind("/");
     if (dir_path != std::string::npos)
         cpm_path = cpm_path.substr(0, dir_path + 1);
@@ -65,5 +82,7 @@ int main(int argc, char** argv) {
     system(("mkdir -p " + cpm_path + "out").c_str());
     write_cpp(cpm_path + "out/a.cpp");
     system(("g++ " + cpm_path + "out/a.cpp " + cpm_path + "libmixed.so -o" + cpm_path + "out/a.out").c_str());
+    system(("cp -rf " + cpm_path + "out " + out_dir).c_str());
+    system(("rm -rf " + cpm_path + "out").c_str());
     return 0;
 }
