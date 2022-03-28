@@ -15,11 +15,11 @@ Flex (Fast Lexical Analyzer Generator) and Bison (parser generator) are being us
     3. Float - 8 byte
 - C+- is an implicit dynamic typization language
     1. Same variable can store numbers and strings, the following is correct
-    ```
-    var a = 5.5;
-    a = "Hello";
-    a = 34.5;
-    ```
+        ```
+        var a = 5.5;
+        a = "Hello";
+        a = 34.5;
+        ```
     2. Operators follow rules (order of arguments doesn't matter)
         - String + Int/Float: Numeric converts to string
         - String - Int/Float: String converts to Int/Float, if it's not possible String value considered to be `0`
@@ -151,6 +151,28 @@ Perimeter: 5.55.5123.4123.4
 Oops... strings concatenated
 Let's try another time!
 Perimeter: 257.8
+```
+Running `c+-` compiler from another location (with source `examples/errors.cpm`)
+```
+$ pwd
+/home/vladimir/projects/cpm_compiler
+$ mkdir ../test
+$ cd ../test
+$ pwd
+/home/vladimir/projects/test
+```
+```
+$ ../cpm_compiler/cpm_compiler/c+- ../cpm_compiler/examples/errors.cpm ./result
+$ ls -R
+.:
+result
+
+./result:
+a.cpp  a.out
+```
+```
+$ result/a.out
+10
 ```
 ### perimeter.cpm source file
 ```
