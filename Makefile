@@ -5,11 +5,11 @@ CXXFLAGS+=-std=c++17 -Wall -O2
 
 all: cpm_compiler cpm_compiler/c+- cpm_compiler/libmixed.so
 
-run: cpm_compiler/out cpm_compiler/out/a.o
-	cpm_compiler/out/a.o
+run: cpm_compiler/out cpm_compiler/out/a.out
+	cpm_compiler/out/a.out
 
-cpm_compiler/out/a.o cpm_compiler/out/a.cpp: ./examples/a.cpm cpm_compiler/mixed.h cpm_compiler/libmixed.so cpm_compiler/c+-
-	cpm_compiler/c+- examples/a.cpm cpm_compiler/out/a.o cpm_compiler/libmixed.so cpm_compiler/out/a.cpp
+cpm_compiler/out/a.out cpm_compiler/out/a.cpp: ./examples/a.cpm cpm_compiler/mixed.h cpm_compiler/libmixed.so cpm_compiler/c+-
+	cpm_compiler/c+- examples/a.cpm
 
 cpm_compiler/libmixed.so cpm_compiler/mixed.h: $(mixed)
 	cp src/mixed/mixed.h cpm_compiler/mixed.h

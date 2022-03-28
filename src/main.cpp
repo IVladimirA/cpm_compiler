@@ -8,16 +8,6 @@
 
 extern std::vector<Node*> code;
 
-static void show_usage(std::string& name)
-{
-    std::cout << "Usage: " << name << " file [options]"
-              << "Options:\n"
-              << "\t-h, --help\t\tDiplsay this information\n"
-              << "\t-o, --output <file>\tSpecify the output file path\n"
-              << "\t--nocpp\t\tDelete cpp file after compilation"
-              << std::endl;
-}
-
 static void parse_code(std::ifstream& in_file) {
     std::string line;
     while (std::getline(in_file, line)) {
@@ -26,7 +16,7 @@ static void parse_code(std::ifstream& in_file) {
     }
 }
 
-static void parse_file(std::string& file_path) {
+static void parse_file(const std::string& file_path) {
     std::ifstream infile(file_path);
     parse_code(infile);
     infile.close();
@@ -54,27 +44,26 @@ static void generate_cpp(std::ostream& outfile) {
     outfile << "Redifinition of constant: " << errors[3] << "\n*/";
 }
 
-static void write_cpp(std::string& file_path) {
+static void write_cpp(const std::string& file_path) {
     std::ofstream outfile(file_path);
     generate_cpp(outfile);
     outfile.close();
 }
 
 int main(int argc, char** argv) {
+    std::cout << argv[0] << std::endl;
     if (argc < 2)
         throw std::invalid_argument("No input file");
     std::string in_file_path = argv[1];
-    std::string cpp_file_path = "a.cpp";
-    std::string out_file_path = "a.o";
-    std::string library_path = "libmixed.so";
-    if (argc >= 3)
-        out_file_path = argv[2];
-    if (argc >= 4)
-        library_path = argv[3];
-    if (argc >= 5)
-        cpp_file_path = argv[4];
+    std::string cpm_path = argv[0];
+    const size_t dir_path = cpm_path.rfind("/");
+    if (dir_path != std::string::npos)
+        cpm_path = cpm_path.substr(0, dir_path + 1);
+    else
+        cpm_path = "./";
     parse_file(in_file_path);
-    write_cpp(cpp_file_path);
-    system(("g++ " + cpp_file_path + " " + library_path + " -o" + out_file_path).c_str());
+    system(("mkdir -p " + cpm_path + "out").c_str());
+    write_cpp(cpm_path + "out/a.cpp");
+    system(("g++ " + cpm_path + "out/a.cpp " + cpm_path + "libmixed.so -o" + cpm_path + "out/a.out").c_str());
     return 0;
 }
