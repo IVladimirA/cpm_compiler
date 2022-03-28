@@ -11,7 +11,7 @@ extern std::vector<Node*> code;
 int main(int argc, char** argv) {
     std::string line;
     std::string in_file_path = "examples/a.cpm";
-    std::string out_file_path = "out/a.cpp";
+    std::string out_file_path = "out/a.exe";
     std::ifstream infile(in_file_path);
     std::array<int, 4> errors; // 0 - redeclaration of const, 1 - redeclaration of variable, 2 - usage of undefined identifier, 3 - redifinition of const
     errors.fill(0);
@@ -22,9 +22,10 @@ int main(int argc, char** argv) {
         yy_scan_string(line.c_str());
         yyparse();
     }
-    std::ofstream outfile(out_file_path);
-    outfile << "#include \"../src/mixed/mixed.h\"\n";
-    outfile << "int main(void) {\n";
+    infile.close();
+    std::ofstream outfile("out/a.cpp");
+    outfile << "#include \"mixed.h\"\n\n";
+    outfile << "int main() {\n";
     for (Node* line : code) {
         if (line->check_line(consts, vars_declared, vars_defined, errors))
             continue;
@@ -37,5 +38,7 @@ int main(int argc, char** argv) {
     outfile << "Redeclaration of variable: " << errors[1] << "\n";
     outfile << "Usage of undefined identifier: " << errors[2] << "\n";
     outfile << "Redifinition of constant: " << errors[3] << "\n*/";
+    outfile.close();
+    system("g++ out/a.cpp out/libmixed.so -o out/a.o");
     return 0;
 }

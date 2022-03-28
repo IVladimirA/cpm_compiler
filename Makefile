@@ -4,19 +4,21 @@ mixed := src/mixed/mixed.h src/mixed/mixed.cpp
 all_classes := $(node) $(mixed)
 CXXFLAGS+=-std=c++17 -Wall -O2
 
-all: out/a.o
+all: out out/compiler.o out/libmixed.so
 
-run: out/a.o
+run: out out/a.o
 	./out/a.o
 
-out/a.cpp: out out/transpiler.o
-	./out/transpiler.o $(ARGS)
+out/a.o out/a.cpp: ./examples/a.cpm out/mixed.h out/libmixed.so out/compiler.o
+	./out/compiler.o
 
-out/a.o: ./out/a.cpp $(mixed)
-	$(CXX) $^ $(CXXFLAGS) -w -o out/a.o
+out/libmixed.so out/mixed.h: $(mixed)
+	cp src/mixed/mixed.h out/mixed.h
+	$(CXX) src/mixed/mixed.cpp $(CXXFLAGS) -fPIC -c -o out/mixed.o
+	$(CXX) out/mixed.o -fPIC -shared -o out/libmixed.so
 
-out/transpiler.o: src/main.cpp $(all_classes) src/parser/node.lexer.c src/parser/node.tab.c
-	$(CXX) $^ $(CXXFLAGS) -w -o out/transpiler.o
+out/compiler.o: src/main.cpp $(node) src/parser/node.lexer.c src/parser/node.tab.c
+	$(CXX) $^ $(CXXFLAGS) -w -o out/compiler.o
 
 src/parser/%.lexer.c src/parser/%.lexer.h: src/parser/%.lex
 	flex src/parser/$*.lex
