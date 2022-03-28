@@ -1,0 +1,14 @@
+val a = 10;
+val b = 2.2;
+val c = " txt ";
+print("Mixed variables:\n");
+print(a + b);
+print(a + c);
+print(b + c);
+print(a + b + c);
+print("Literals:\n");
+print(10 + 2.2);
+print(10 + " txt ");
+print(2.2 + " txt ");
+print(10 + 2.2 + " txt ");
+
