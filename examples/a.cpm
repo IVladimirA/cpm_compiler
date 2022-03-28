@@ -15,8 +15,8 @@ val pi = 3.14;
 print(pi + answerNumber); // -> 45.14
 
 val numberString = "134";
-print(numberString + answerNumber); // -> 92
-print(numberString - answerNumber); // -> 13442
+print(numberString - answerNumber); // -> 92
+print(numberString + answerNumber); // -> 13442
 
 val name = input("Name: "); // prints "Name: " and waits for input
 print("Your name is " + name);
