@@ -1,0 +1,11 @@
+print("Calculating perimeter of rectangle");
+val a = input("Enter length of one side: ");
+val b = input("Enter length of another side: ");
+var answer = a + a + b + b;
+print("Perimeter: " + answer);
+print("Oops... strings concatenated");
+val a_numeric = a - 0;
+val b_numeric = b - 0;
+answer = a_numeric + a_numeric + b_numeric + b_numeric;
+print("Let's try another time!");
+print("Perimeter: " + answer);
