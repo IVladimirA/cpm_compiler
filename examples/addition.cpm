@@ -1,7 +1,7 @@
 val a = 10;
 val b = 2.2;
 val c = " txt ";
-print("Mixed v\"\\ \n ariables:");
+print("Mixed variables:");
 print(a + b);
 print(a + c);
 print(b + c);

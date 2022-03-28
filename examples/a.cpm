@@ -1,15 +1,22 @@
-var str = "Hello";
-str = str + "1";
-print(str);
-str = 21 + 2 + 18;
-val worldString = "World";
+var str = "Hello"; // variable declared using var
+str = str + "1";   // variables can be changed
+print(str);        // print function takes only one argument
+
+str = 21 + 2 + 18; // same variable can store numbers
+print(str);        // -> 41
+
+val worldString = "World"; // constant declared using val
 val answerNumber = 42;
-print(worldString + answerNumber);
-print(worldString - answerNumber);
+
+print(worldString + answerNumber); // -> World42
+print(worldString - answerNumber); // -> -42
+
 val pi = 3.14;
-print(pi + answerNumber);
+print(pi + answerNumber); // -> 45.14
+
 val numberString = "134";
-print(numberString + answerNumber);
-print(numberString - answerNumber);
-val name = input("Name ");
+print(numberString + answerNumber); // -> 92
+print(numberString - answerNumber); // -> 13442
+
+val name = input("Name: "); // prints "Name: " and waits for input
 print("Your name is " + name);
