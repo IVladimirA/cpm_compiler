@@ -22,7 +22,7 @@ class Mixed {
         operator std::string() const;
 };
 
-void print(const std::string& string = "");
-Mixed input(const std::string& string = "");
+void print(const Mixed& m);
+Mixed input(const Mixed& m);
 
 #endif

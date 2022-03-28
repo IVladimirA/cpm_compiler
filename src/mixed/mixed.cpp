@@ -121,14 +121,14 @@ Mixed::operator std::string() const {
     return strMixed;
 }
 
-void print(const std::string& string) {
-    std::cout << string << '\n';
+void print(const Mixed& m) {
+    std::cout << m.operator std::string() << '\n';
 }
 
-Mixed input(const std::string& string) {
+Mixed input(const Mixed& m) {
     std::string value;
     Mixed result;
-    std::cout << string;
+    std::cout << m.operator std::string();
     std::cin >> value;
     result = Mixed(value);
     return result;
