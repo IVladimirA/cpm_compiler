@@ -34,8 +34,9 @@ cpm_compiler/out: cpm_compiler
 cpm_compiler:
 	mkdir -p cpm_compiler
 
-pack: src/parser/node.lexer.c src/parser/node.tab.h
-	zip cpm_compiler.zip -r Makefile src examples
+pack: cpm_compiler cpm_compiler/c+- cpm_compiler/libmixed.so
+	rm -rf cpm_compiler/out
+	zip cpm_compiler.zip -r Makefile cpm_compiler
 
 clean:
 	rm -rf cpm_compiler
