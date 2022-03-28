@@ -15,7 +15,7 @@ letter [a-zA-Z]
 integer {digit}+
 float {digit}+"."{digit}*
 variable {letter}({letter}|{digit}|"_")*
-string \042({letter}|{digit}|"_"|{blank})*\042
+string \042([^\042]|(\\\042))*\042
 
 %%
 
@@ -59,12 +59,12 @@ string \042({letter}|{digit}|"_"|{blank})*\042
     return FLOAT_L;
 }
 
+{blank} ;
 "(" return LEFT_BRACKET;
 ")" return RIGHT_BRACKET;
 "=" return OP_EQUATION;
 "+" return OP_PLUS;
 "-" return OP_MINUS;
 ";" return COMMAND_END;
-{blank}
 
 %%

@@ -139,6 +139,7 @@ Mixed operator+(const std::string& string, long long int number) {
     return Mixed(string) + Mixed(number);
 }
 
+
 void print(const std::string& string) {
     std::cout << string << '\n';
 }

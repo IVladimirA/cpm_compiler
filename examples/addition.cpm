@@ -1,14 +1,13 @@
 val a = 10;
 val b = 2.2;
 val c = " txt ";
-print("Mixed variables:\n");
+print("Mixed v\"\\ \n ariables:");
 print(a + b);
 print(a + c);
 print(b + c);
 print(a + b + c);
-print("Literals:\n");
+print("Literals:");
 print(10 + 2.2);
 print(10 + " txt ");
 print(2.2 + " txt ");
 print(10 + 2.2 + " txt ");
-
