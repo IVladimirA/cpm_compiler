@@ -29,31 +29,31 @@ std::vector<Node*> code;
 %left OP_PLUS
 %left OP_MINUS
 
-%type <node> Input Line Command Expression Declaration Variable Literal
+%type <node> Input Command Expression Function Declaration Variable Literal
 
 %start Input
 
 %%
 
-Input: Line { code.push_back($1); }
-| Input Line { code.push_back($2); }
+Input: Command { code.push_back($1); }
+| Input Command { code.push_back($2); }
 ;
 
-Line: Command COMMAND_END { $$ = new Node(COMMAND, $1); }
-| Command COMMAND_END COMMENT { $$ = new Node(COMM, new Node(COMMAND, $1), nullptr, *$3); }
-;
-
-Command: Expression { $$ = $1; }
-| Declaration OP_EQUATION Expression { $$ = new Node(EQUATION, $1, $3); }
-| Variable OP_EQUATION Expression { $$ = new Node(EQUATION, $1, $3); }
+Command: COMMENT { $$ = new Node(*$1, COMM); }
+| Expression COMMAND_END { $$ = new Node(COMMAND, $1); }
+| Declaration OP_EQUATION Expression COMMAND_END { $$ = new Node(COMMAND, new Node(EQUATION, $1, $3)); }
+| Variable OP_EQUATION Expression COMMAND_END { $$ = new Node(COMMAND, new Node(EQUATION, $1, $3)); }
 ;
 
 Expression: Expression OP_PLUS Expression { $$ = new Node(PLUS, $1, $3); }
 | Expression OP_MINUS Expression { $$ = new Node(MINUS, $1, $3); }
-| PRINT LEFT_BRACKET Expression RIGHT_BRACKET { $$ = new Node(PRINT_F, $3); }
-| INPUT LEFT_BRACKET Expression RIGHT_BRACKET { $$ = new Node(INPUT_F, $3); }
+| Function { $$ = $1; }
 | Variable { $$ = $1; }
 | Literal {$$ = $1; }
+;
+
+Function: PRINT LEFT_BRACKET Expression RIGHT_BRACKET { $$ = new Node(PRINT_F, $3); }
+| INPUT LEFT_BRACKET Expression RIGHT_BRACKET { $$ = new Node(INPUT_F, $3); }
 ;
 
 Declaration: VAR_D Variable { $$ = new Node(VAR_DECL, $2); }

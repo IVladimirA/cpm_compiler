@@ -50,17 +50,17 @@ static void generate_cpp(std::ostream& outfile) {
     outfile << "int main() {\n";
     int wrong_commands = 0; // Commands with errors count
     for (Node* command : code) {
-        if (command->check_line(consts, vars_declared, vars_defined, errors)) {
+        if (command->check_command(consts, vars_declared, vars_defined, errors)) {
             ++wrong_commands;
             continue;
         }
-        outfile << command->generate_line() << "\n";
+        outfile << command->generate_command();
         delete command;
     }
 
     /* Printing error statisitic */
 
-    outfile << "return 0;\n}\n";
+    outfile << "\nreturn 0;\n}\n";
     outfile << "/*\nCommands skipped: " << wrong_commands << "\n";
     outfile << "Errors:\n";
     outfile << "Redeclaration of constant: " << errors[0] << "\n";
