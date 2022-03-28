@@ -16,8 +16,7 @@ public:
     Node(std::string string, OpType operation = LIT);
     Node(OpType operation, Node* l, Node* r = nullptr, std::string val = "");
     std::string generateLine();
-    bool isEqual(Node* tree);
-    int check_line(std::unordered_set<std::string>& consts, std::unordered_set<std::string>& vars_defined, std::unordered_set<std::string>& vars_declared, std::array<int, 4>& errors);
+    bool check_line(std::unordered_set<std::string>& consts, std::unordered_set<std::string>& vars_defined, std::unordered_set<std::string>& vars_declared, std::array<int, 4>& errors);
     ~Node();
 private:
     Node* left;
