@@ -35,8 +35,8 @@ src/parser/%.tab.c src/parser/%.tab.h: src/parser/%.y
 cpm_compiler:
 	mkdir -p cpm_compiler
 
-pack: all
-	zip cpm_compiler.zip -r Makefile cpm_compiler
+pack: src/parser/node.lexer.c src/parser/node.tab.c
+	zip cpm_compiler.zip -r Makefile src
 
 clean:
 	rm -rf cpm_compiler
