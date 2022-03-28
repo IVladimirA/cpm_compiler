@@ -1,17 +1,20 @@
 CXX := g++
 node := src/node/node.h src/node/node.cpp
 mixed := src/mixed/mixed.h src/mixed/mixed.cpp
+library := cpm_compiler/libmixed.so cpm_compiler/mixed.h
 CXXFLAGS+=-std=c++17 -Wall -O2
 
-all: cpm_compiler cpm_compiler/c+- cpm_compiler/libmixed.so
+.PHONY: all clean run pack
 
-run: out out/a.out
+all: cpm_compiler cpm_compiler/c+- $(library)
+
+run: cpm_compiler out/a.out
 	out/a.out
 
-out out/a.out: ./examples/a.cpm cpm_compiler/libmixed.so cpm_compiler/c+-
+out/a.out: examples/a.cpm cpm_compiler/c+- $(library)
 	cpm_compiler/c+- examples/a.cpm
 
-cpm_compiler/libmixed.so cpm_compiler/mixed.h: cpm_compiler $(mixed)
+$(library): $(mixed)
 	cp src/mixed/mixed.h cpm_compiler/mixed.h
 	$(CXX) src/mixed/mixed.cpp $(CXXFLAGS) -fPIC -c -o cpm_compiler/mixed.o
 	$(CXX) cpm_compiler/mixed.o -fPIC -shared -o cpm_compiler/libmixed.so
@@ -32,7 +35,6 @@ cpm_compiler:
 	mkdir -p cpm_compiler
 
 pack: cpm_compiler cpm_compiler/c+- cpm_compiler/libmixed.so
-	rm -rf cpm_compiler/out
 	zip cpm_compiler.zip -r Makefile cpm_compiler
 
 clean:
