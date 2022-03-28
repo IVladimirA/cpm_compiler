@@ -16,13 +16,17 @@ class Mixed {
         Mixed(int num);
         Mixed(double num);
         Mixed(std::string string);
+        Mixed(const char* string);
         friend Mixed operator+(Mixed m1, Mixed const &m2);
         friend Mixed operator-(Mixed m1, Mixed const &m2);
         Mixed& operator=(const std::string& s);
-        operator std::string();
+        operator std::string() const;
 };
 
-void print(std::string string);
-Mixed input(std::string string);
+Mixed operator+(const std::string& string, int number);
+Mixed operator+(const std::string& string, long long int number);
+Mixed operator+(const std::string& string, double number);
+void print(const std::string& string = "");
+Mixed input(const std::string& string = "");
 
 #endif
