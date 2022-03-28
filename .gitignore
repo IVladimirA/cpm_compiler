@@ -1,4 +1,4 @@
-out
+cpm_compiler
 src/parser/*.c
 src/parser/*.h
 src/parser/*.output

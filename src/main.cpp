@@ -8,7 +8,17 @@
 
 extern std::vector<Node*> code;
 
-void parse_code(std::ifstream& in_file) {
+static void show_usage(std::string& name)
+{
+    std::cout << "Usage: " << name << " file [options]"
+              << "Options:\n"
+              << "\t-h, --help\t\tDiplsay this information\n"
+              << "\t-o, --output <file>\tSpecify the output file path\n"
+              << "\t--nocpp\t\tDelete cpp file after compilation"
+              << std::endl;
+}
+
+static void parse_code(std::ifstream& in_file) {
     std::string line;
     while (std::getline(in_file, line)) {
         yy_scan_string(line.c_str());
@@ -16,19 +26,19 @@ void parse_code(std::ifstream& in_file) {
     }
 }
 
-void parse_file(std::string& file_path) {
+static void parse_file(std::string& file_path) {
     std::ifstream infile(file_path);
     parse_code(infile);
     infile.close();
 }
 
-void generate_cpp(std::ostream& outfile) {
+static void generate_cpp(std::ostream& outfile) {
     std::array<int, 4> errors; // 0 - redeclaration of const, 1 - redeclaration of variable, 2 - usage of undefined identifier, 3 - redifinition of const
     errors.fill(0);
     std::unordered_set<std::string> consts;
     std::unordered_set<std::string> vars_defined;
     std::unordered_set<std::string> vars_declared;
-    outfile << "#include \"mixed.h\"\n\n";
+    outfile << "#include \"../mixed.h\"\n\n";
     outfile << "int main() {\n";
     for (Node* line : code) {
         if (line->check_line(consts, vars_declared, vars_defined, errors))
@@ -44,7 +54,7 @@ void generate_cpp(std::ostream& outfile) {
     outfile << "Redifinition of constant: " << errors[3] << "\n*/";
 }
 
-void write_cpp(std::string& file_path) {
+static void write_cpp(std::string& file_path) {
     std::ofstream outfile(file_path);
     generate_cpp(outfile);
     outfile.close();
