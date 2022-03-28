@@ -14,35 +14,35 @@ Node::Node(OpType operation, Node* l, Node* r, std::string val) {
     value = val;
 }
 
-std::string Node::generateLine() {
+std::string Node::generate_line() {
     std::string result;
     switch (op) {
         case COMM:
-            result = left->generateLine() + " " + value;
+            result = left->generate_line() + " " + value;
             break;
         case COMMAND:
-            result = left->generateLine() + ";";
+            result = left->generate_line() + ";";
             break;
         case PLUS:
-            result = left->generateLine() + " + " + right->generateLine();
+            result = left->generate_line() + " + " + right->generate_line();
             break;
         case MINUS:
-            result = left->generateLine() + " - " + right->generateLine();
+            result = left->generate_line() + " - " + right->generate_line();
             break;
         case EQUATION:
-            result = left->generateLine() + " = " + right->generateLine();
+            result = left->generate_line() + " = " + right->generate_line();
             break;
         case CONST_DECL:
-            result = "const Mixed " + left->generateLine();
+            result = "const Mixed " + left->generate_line();
             break;
         case VAR_DECL:
-            result = "Mixed " + left->generateLine();
+            result = "Mixed " + left->generate_line();
             break;
         case PRINT_F:
-            result = "print(" + left->generateLine() + ")";
+            result = "print(" + left->generate_line() + ")";
             break;
         case INPUT_F:
-            result = "input(" + left->generateLine() + ")";
+            result = "input(" + left->generate_line() + ")";
             break;
         case VAR_NAME:
             result = value;
@@ -51,8 +51,7 @@ std::string Node::generateLine() {
             result = "Mixed(" + value + ")";
             break;
         default:
-            result = "ERROR";
-            break;
+            throw std::logic_error("Incorrect op of Node");
     }
     return result;
 }

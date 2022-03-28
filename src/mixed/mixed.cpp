@@ -4,18 +4,22 @@
 Mixed::Mixed() {
     type = UNDEF;
 }
+
 Mixed::Mixed(long long int num) {
     type = INT;
     integer = num;
 }
+
 Mixed::Mixed(int num) {
     type = INT;
     integer = num;
 }
+
 Mixed::Mixed(double num) {
     type = FLOAT;
     floating = num;
 }
+
 Mixed::Mixed(std::string string) {
     type = STR;
     str = string;
@@ -53,6 +57,7 @@ Mixed operator + (const Mixed& m1, const Mixed& m2) {
     }
     return result;
 }
+
 Mixed operator - (const Mixed& m1, const Mixed& m2) {
     Mixed left, right;
     switch (m1.type) {
@@ -129,7 +134,12 @@ Mixed::operator std::string() const {
     return strMixed;
 }
 
-int is_numeric(const std::string& s) { // 0 - nonnumeric, 1 - integer, 2 - floating
+/* Checks if string numeric */
+/* Return: 0 - nonnumeric, 1 - integer, 2 - floating */
+
+int is_numeric(const std::string& s) {
+    if (s == "" || s == ".")
+        return 0;
     bool point = false;
     for (const char& c : s) {
         if (!std::isdigit(c) && c != '.')

@@ -1,5 +1,5 @@
-#ifndef NODE_H
-#define NODE_H
+#ifndef CPM_COMPILER_NODE_NODE_H_
+#define CPM_COMPILER_NODE_NODE_H_
 
 #include <unordered_set>
 #include <string>
@@ -15,7 +15,7 @@ class Node {
 public:
     Node(std::string string, OpType operation = LIT);
     Node(OpType operation, Node* l, Node* r = nullptr, std::string val = "");
-    std::string generateLine();
+    std::string generate_line();
     bool check_line(std::unordered_set<std::string>& consts, std::unordered_set<std::string>& vars_defined, std::unordered_set<std::string>& vars_declared, std::array<int, 4>& errors);
     ~Node();
 private:

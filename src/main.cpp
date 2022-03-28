@@ -45,6 +45,7 @@ static void generate_cpp(std::ostream& outfile) {
     std::unordered_set<std::string> vars_declared; // identifiers of declared variables
 
     /* Printing code to .cpp file */
+
     outfile << "#include \"../mixed.h\"\n\n";
     outfile << "int main() {\n";
     int wrong_commands = 0; // Commands with errors count
@@ -53,10 +54,12 @@ static void generate_cpp(std::ostream& outfile) {
             ++wrong_commands;
             continue;
         }
-        outfile << command->generateLine() << "\n";
+        outfile << command->generate_line() << "\n";
         delete command;
     }
+
     /* Printing error statisitic */
+
     outfile << "return 0;\n}\n";
     outfile << "/*\nCommands skipped: " << wrong_commands << "\n";
     outfile << "Errors:\n";
