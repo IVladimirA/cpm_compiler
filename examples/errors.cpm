@@ -1,0 +1,8 @@
+val a = 1;
+a = 2;
+var a = 3;
+print(a + b);
+var b = 4;
+c = a + b;
+val c = a + b;
+print(a + b + c);
