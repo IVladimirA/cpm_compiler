@@ -7,16 +7,22 @@ Node::Node(std::string string, OpType operation) {
     op = operation;
 }
 
-Node::Node(OpType operation, Node* l, Node* r) {
+Node::Node(OpType operation, Node* l, Node* r, std::string val) {
     op = operation;
     left = l;
     right = r;
-    value = "";
+    value = val;
 }
 
 std::string Node::generateLine() {
     std::string result;
     switch (op) {
+        case COMM:
+            result = left->generateLine() + " " + value;
+            break;
+        case COMMAND:
+            result = left->generateLine() + ";";
+            break;
         case PLUS:
             result = left->generateLine() + " + " + right->generateLine();
             break;
@@ -54,6 +60,10 @@ std::string Node::generateLine() {
 int Node::check_line(std::unordered_set<std::string>& consts, std::unordered_set<std::string>& vars_defined, std::unordered_set<std::string>& vars_declared, std::array<int, 4>& errors) {
     int result = 0;
     switch (op) {
+        case COMM:
+        case COMMAND:
+            result = std::max(result, left->check_line(consts, vars_defined, vars_declared, errors));
+            break;
         case PLUS:
         case MINUS:
             result = std::max(result, left->check_line(consts, vars_defined, vars_declared, errors));

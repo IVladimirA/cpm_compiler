@@ -8,13 +8,13 @@
 enum OpType {
     PLUS, MINUS, CONST_DECL, VAR_DECL, EQUATION,
     PRINT_F, INPUT_F,
-    VAR_NAME, LIT
+    VAR_NAME, LIT, COMM, COMMAND
 };
 
 class Node {
 public:
     Node(std::string string, OpType operation = LIT);
-    Node(OpType operation, Node* l, Node* r = nullptr);
+    Node(OpType operation, Node* l, Node* r = nullptr, std::string val = "");
     std::string generateLine();
     bool isEqual(Node* tree);
     int check_line(std::unordered_set<std::string>& consts, std::unordered_set<std::string>& vars_defined, std::unordered_set<std::string>& vars_declared, std::array<int, 4>& errors);

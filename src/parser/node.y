@@ -18,7 +18,7 @@ std::vector<Node*> code;
     std::string* name;
 }
 
-%token <name> VAR INT_L FLOAT_L STRING_L
+%token <name> VAR INT_L FLOAT_L STRING_L COMMENT
 %token VAR_D CONST_D
 %token OP_PLUS OP_MINUS OP_EQUATION
 %token COMMAND_END
@@ -29,15 +29,23 @@ std::vector<Node*> code;
 %left OP_PLUS
 %left OP_MINUS
 
-%type <node> Line Expression Declaration Variable Literal
+%type <node> Input Line Command Expression Declaration Variable Literal
 
-%start Line
+%start Input
 
 %%
 
-Line: Expression COMMAND_END { code.push_back($1); }
-| Declaration OP_EQUATION Expression COMMAND_END { code.push_back(new Node(EQUATION, $1, $3)); }
-| Variable OP_EQUATION Expression COMMAND_END { code.push_back(new Node(EQUATION, $1, $3)); }
+Input: Line { code.push_back($1); }
+| Input Line { code.push_back($2); }
+;
+
+Line: Command COMMAND_END { $$ = new Node(COMMAND, $1); }
+| Command COMMAND_END COMMENT { $$ = new Node(COMM, new Node(COMMAND, $1), nullptr, *$3); }
+;
+
+Command: Expression { $$ = $1; }
+| Declaration OP_EQUATION Expression { $$ = new Node(EQUATION, $1, $3); }
+| Variable OP_EQUATION Expression { $$ = new Node(EQUATION, $1, $3); }
 ;
 
 Expression: Expression OP_PLUS Expression { $$ = new Node(PLUS, $1, $3); }

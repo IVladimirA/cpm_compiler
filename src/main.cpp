@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <sstream>
 #include <array>
 #include "node/node.h"
 #include "parser/node.tab.h"
@@ -17,11 +18,10 @@ static void show_usage(const std::string& name) {
 }
 
 static void parse_code(std::ifstream& in_file) {
-    std::string line;
-    while (std::getline(in_file, line)) {
-        yy_scan_string(line.c_str());
-        yyparse();
-    }
+    std::stringstream lines;
+    lines << in_file.rdbuf();
+    yy_scan_string(lines.str().c_str());
+    yyparse();
 }
 
 static void parse_file(const std::string& file_path) {

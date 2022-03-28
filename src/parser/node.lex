@@ -16,6 +16,7 @@ integer {digit}+
 float {digit}+"."{digit}*
 variable {letter}({letter}|{digit}|"_")*
 string \042([^\042]|(\\\042))*\042
+comment "//"([.])*"\n"
 
 %%
 
@@ -37,6 +38,11 @@ string \042([^\042]|(\\\042))*\042
 "input" {
     yylval.name=new std::string(yytext);
     return INPUT;
+}
+
+{comment} {
+    yylval.name=new std::string(yytext);
+    return COMM;
 }
 
 {string} {
