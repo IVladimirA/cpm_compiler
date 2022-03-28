@@ -10,7 +10,7 @@ run: out out/a.o
 	./out/a.o
 
 out/a.o out/a.cpp: ./examples/a.cpm out/mixed.h out/libmixed.so out/compiler.o
-	./out/compiler.o
+	./out/compiler.o examples/a.cpm out/a.o out/libmixed.so out/a.cpp
 
 out/libmixed.so out/mixed.h: $(mixed)
 	cp src/mixed/mixed.h out/mixed.h

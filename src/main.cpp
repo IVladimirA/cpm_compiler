@@ -51,10 +51,20 @@ void write_cpp(std::string& file_path) {
 }
 
 int main(int argc, char** argv) {
-    std::string in_file_path = "examples/a.cpm";
-    std::string out_file_path = "out/a.cpp";
+    if (argc < 2)
+        throw std::invalid_argument("No input file");
+    std::string in_file_path = argv[1];
+    std::string cpp_file_path = "a.cpp";
+    std::string out_file_path = "a.o";
+    std::string library_path = "libmixed.so";
+    if (argc >= 3)
+        out_file_path = argv[2];
+    if (argc >= 4)
+        library_path = argv[3];
+    if (argc >= 5)
+        cpp_file_path = argv[4];
     parse_file(in_file_path);
-    write_cpp(out_file_path);
-    system("g++ out/a.cpp out/libmixed.so -o out/a.o");
+    write_cpp(cpp_file_path);
+    system(("g++ " + cpp_file_path + " " + library_path + " -o" + out_file_path).c_str());
     return 0;
 }
