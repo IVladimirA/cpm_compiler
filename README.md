@@ -85,6 +85,10 @@ All source files and Makefile can be archived
 ```
 $ make pack
 ```
+All files created after compilation can be deleted
+```
+$ make clean
+```
 Compiler can be used without make, but it requires files from `cpm_compiler` directory and `g++` compiler installed
 ```
 $ cpm_compiler/c+- --help
