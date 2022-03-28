@@ -26,7 +26,7 @@ Mixed::Mixed(const char* string) {
     str = string;
 }
 
-Mixed operator + (Mixed m1, Mixed const &m2) {
+Mixed operator + (const Mixed& m1, const Mixed& m2) {
     Mixed result;
     if (m1.type == UNDEF || m2.type == UNDEF) {
         throw std::invalid_argument("Operator + cannot take UNDEF type Mixed as an argument");
@@ -48,23 +48,27 @@ Mixed operator + (Mixed m1, Mixed const &m2) {
                     result = Mixed(m1.floating + m2.floating);
                 break;
             default:
-                break;
+                throw std::logic_error("Invalid type of first argument in subtraction");
         }
     }
     return result;
 }
-Mixed operator - (Mixed m1, Mixed const &m2) {
+Mixed operator - (const Mixed& m1, const Mixed& m2) {
     Mixed left, right;
     switch (m1.type) {
         case STR:
-            try {
-                left = Mixed(std::stod(m1.str));
-            } catch (const std::exception& e) {
-                try {
-                    left = Mixed(std::stoll(m1.str));
-                } catch (const std::exception& e) {
+            switch(is_numeric(m1.str)) {
+                case 0:
                     left = Mixed(0);
-                }
+                    break;
+                case 1:
+                    left = Mixed(std::stoll(m1.str));
+                    break;
+                case 2:
+                    left = Mixed(std::stod(m1.str));
+                    break;
+                default:
+                    throw std::logic_error("Invalid returned value by int is_numeric(const std::string&)");
             }
             break;
         case INT:
@@ -72,18 +76,22 @@ Mixed operator - (Mixed m1, Mixed const &m2) {
             left = m1;
             break;
         default:
-            left = Mixed(0);        
+            throw std::logic_error("Invalid type of first argument in subtraction");
     }
     switch (m2.type) {
         case STR:
-            try {
-                right = Mixed(std::stod(m2.str));
-            } catch (const std::exception& e) {
-                try {
-                    right = Mixed(std::stoll(m2.str));
-                } catch (const std::exception& e) {
+            switch(is_numeric(m2.str)) {
+                case 0:
                     right = Mixed(0);
-                }
+                    break;
+                case 1:
+                    right = Mixed(-std::stoll(m2.str));
+                    break;
+                case 2:
+                    right = Mixed(-std::stod(m2.str));
+                    break;
+                default:
+                    throw std::logic_error("Invalid returned value by int is_numeric(const std::string&)");
             }
             break;
         case INT:
@@ -93,7 +101,7 @@ Mixed operator - (Mixed m1, Mixed const &m2) {
             right = Mixed(-m2.floating);
             break;
         default:
-            right = Mixed(0);        
+            throw std::logic_error("Invalid type of first argument in subtraction");
     }
     return left + right;
 }
@@ -119,6 +127,22 @@ Mixed::operator std::string() const {
             break;
     }
     return strMixed;
+}
+
+int is_numeric(const std::string& s) { // 0 - nonnumeric, 1 - integer, 2 - floating
+    bool point = false;
+    for (const char& c : s) {
+        if (!std::isdigit(c) && c != '.')
+            return 0;
+        else if (c == '.') {
+            if (point)
+                return 0;
+            point = true;
+        }
+    }
+    if (point)
+        return 2;
+    return 1;
 }
 
 void print(const Mixed& m) {

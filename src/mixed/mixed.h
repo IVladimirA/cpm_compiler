@@ -17,11 +17,12 @@ class Mixed {
         Mixed(double num);
         Mixed(std::string string);
         Mixed(const char* string);
-        friend Mixed operator+(Mixed m1, Mixed const &m2);
-        friend Mixed operator-(Mixed m1, Mixed const &m2);
+        friend Mixed operator + (const Mixed& m1, const Mixed& m2);
+        friend Mixed operator - (const Mixed& m1, const Mixed& m2);
         operator std::string() const;
 };
 
+int is_numeric(const std::string& s);
 void print(const Mixed& m);
 Mixed input(const Mixed& m);
 
