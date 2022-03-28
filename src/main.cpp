@@ -10,10 +10,10 @@
 extern std::vector<Node*> code;
 
 static void print_usage(const std::string& name) {
-    std::cout << "Usage: " << name << " file [directory]\n"
+    std::cout << "Usage: " << name << " FILE [DIRECTORY]\n"
               << "Options:\n"
               << "\t-h, --help\tShow this help message\n"
-              << "Specify the path to .cpm file to create directory with .cpp and .out files. Directory is \"./out\" by default."
+              << "Specify the path to .cpm source FILE to create DIRECTORY with a.cpp and a.out files. Directory is \"./out\" by default."
               << std::endl;
 }
 
