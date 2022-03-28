@@ -9,11 +9,11 @@
 
 extern std::vector<Node*> code;
 
-static void show_usage(const std::string& name) {
+static void print_usage(const std::string& name) {
     std::cout << "Usage: " << name << " file [directory]\n"
               << "Options:\n"
               << "\t-h, --help\tShow this help message\n"
-              << "\tSpecify the path to .cpm file to create directory with .cpp and .out files. Directory is \"./out\" by default."
+              << "Specify the path to .cpm file to create directory with .cpp and .out files. Directory is \"./out\" by default."
               << std::endl;
 }
 
@@ -31,14 +31,23 @@ static void parse_file(const std::string& file_path) {
 }
 
 static void generate_cpp(std::ostream& outfile) {
-    std::array<int, 4> errors; // 0 - redeclaration of const, 1 - redeclaration of variable, 2 - usage of undefined identifier, 3 - redifinition of const
+    std::array<int, 4> errors; // stores counts of errors
     errors.fill(0);
-    std::unordered_set<std::string> consts;
-    std::unordered_set<std::string> vars_defined;
-    std::unordered_set<std::string> vars_declared;
+    /* 
+        0 - redeclaration of const
+        1 - redeclaration of variable
+        2 - usage of undefined identifier
+        3 - redifinition of const
+    */
+    
+    std::unordered_set<std::string> consts; // identifiers of defined consts
+    std::unordered_set<std::string> vars_defined; // identifiers of defined variables
+    std::unordered_set<std::string> vars_declared; // identifiers of declared variables
+
+    /* Printing code to .cpp file */
     outfile << "#include \"../mixed.h\"\n\n";
     outfile << "int main() {\n";
-    int wrong_commands = 0;
+    int wrong_commands = 0; // Commands with errors count
     for (Node* command : code) {
         if (command->check_line(consts, vars_declared, vars_defined, errors)) {
             ++wrong_commands;
@@ -47,6 +56,7 @@ static void generate_cpp(std::ostream& outfile) {
         outfile << command->generateLine() << "\n";
         delete command;
     }
+    /* Printing error statisitic */
     outfile << "return 0;\n}\n";
     outfile << "/*\nCommands skipped: " << wrong_commands << "\n";
     outfile << "Errors:\n";
@@ -68,25 +78,29 @@ int main(int argc, char** argv) {
         throw std::invalid_argument("No input file. Try '" + program_name + " --help' for more information.");
     if (argc > 3)
         throw std::invalid_argument("Too many arguments: " + std::to_string(argc - 1) + " given. Try '" + program_name + " --help' for more information.");
-    std::string in_file_path = argv[1];
-    std::string out_dir = ".";
+
+    std::string source_path = argv[1]; // .cpm source file location
+    std::string out_dir = ".";  // resulting directory with .cpp and .out files location
     if (argc == 3)
         out_dir = argv[2];
-    if (in_file_path == "-h" || in_file_path == "--help") {
-        show_usage(program_name);
+    if (source_path == "-h" || source_path == "--help") {
+        print_usage(program_name);
         return 0;
     }
-    std::string cpm_path = program_name;
-    const size_t dir_path = cpm_path.rfind("/");
-    if (dir_path != std::string::npos)
-        cpm_path = cpm_path.substr(0, dir_path + 1);
+    
+    std::string cpm_path = program_name;  // path to compiler
+    const size_t path_ending = cpm_path.rfind("/");
+    if (path_ending != std::string::npos)
+        cpm_path = cpm_path.substr(0, path_ending + 1);
     else
         cpm_path = "./";
-    parse_file(in_file_path);
-    system(("mkdir -p " + cpm_path + "out").c_str());
-    write_cpp(cpm_path + "out/a.cpp");
-    system(("g++ " + cpm_path + "out/a.cpp " + cpm_path + "libmixed.so -o" + cpm_path + "out/a.out").c_str());
-    system(("cp -rf " + cpm_path + "out " + out_dir).c_str());
+
+    parse_file(source_path); // parsing source code
+    system(("mkdir -p " + cpm_path + "out").c_str()); // creating "out" directory
+    write_cpp(cpm_path + "out/a.cpp"); // writing transpiled code to .cpp file
+
+    system(("g++ " + cpm_path + "out/a.cpp " + cpm_path + "libmixed.so -o" + cpm_path + "out/a.out").c_str()); // compiling .cpp into .out file
+    system(("cp -rf " + cpm_path + "out " + out_dir).c_str()); // moving "out" directory
     system(("rm -rf " + cpm_path + "out").c_str());
     return 0;
 }
