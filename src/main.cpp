@@ -11,7 +11,7 @@ extern std::vector<Node*> code;
 static void show_usage(const std::string& name) {
     std::cout << "Usage: " << name << " file [directory]\n"
               << "Options:\n"
-              << "\t-h,--help\tShow this help message\n"
+              << "\t-h, --help\tShow this help message\n"
               << "\tSpecify the path to .cpm file to create directory with .cpp and .out files. Directory is \"./out\" by default."
               << std::endl;
 }
@@ -63,7 +63,7 @@ int main(int argc, char** argv) {
     if (argc < 2)
         throw std::invalid_argument("No input file. Try '" + program_name + " --help' for more information.");
     if (argc > 3)
-        throw std::invalid_argument("Too many arguments: " + std::to_string(argc) + " given. Try '" + program_name + " --help' for more information.");
+        throw std::invalid_argument("Too many arguments: " + std::to_string(argc - 1) + " given. Try '" + program_name + " --help' for more information.");
     std::string in_file_path = argv[1];
     std::string out_dir = ".";
     if (argc == 3)
