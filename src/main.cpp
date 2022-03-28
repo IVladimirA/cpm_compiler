@@ -38,14 +38,18 @@ static void generate_cpp(std::ostream& outfile) {
     std::unordered_set<std::string> vars_declared;
     outfile << "#include \"../mixed.h\"\n\n";
     outfile << "int main() {\n";
-    for (Node* line : code) {
-        if (line->check_line(consts, vars_declared, vars_defined, errors))
+    int wrong_commands = 0;
+    for (Node* command : code) {
+        if (command->check_line(consts, vars_declared, vars_defined, errors)) {
+            ++wrong_commands;
             continue;
-        outfile << line->generateLine() << "\n";
-        delete line;
+        }
+        outfile << command->generateLine() << "\n";
+        delete command;
     }
     outfile << "return 0;\n}\n";
-    outfile << "/*\nErrors:\n";
+    outfile << "/*\nCommands skipped: " << wrong_commands << "\n";
+    outfile << "Errors:\n";
     outfile << "Redeclaration of constant: " << errors[0] << "\n";
     outfile << "Redeclaration of variable: " << errors[1] << "\n";
     outfile << "Usage of undefined identifier: " << errors[2] << "\n";
