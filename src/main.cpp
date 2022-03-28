@@ -41,10 +41,10 @@ static void generate_cpp(std::ostream& outfile) {
     for (Node* line : code) {
         if (line->check_line(consts, vars_declared, vars_defined, errors))
             continue;
-        outfile << '\t' << line->generateLine() << ";\n";
+        outfile << line->generateLine() << "\n";
         delete line;
     }
-    outfile << "\treturn 0;\n}\n";
+    outfile << "return 0;\n}\n";
     outfile << "/*\nErrors:\n";
     outfile << "Redeclaration of constant: " << errors[0] << "\n";
     outfile << "Redeclaration of variable: " << errors[1] << "\n";

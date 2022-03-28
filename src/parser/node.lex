@@ -16,7 +16,7 @@ integer {digit}+
 float {digit}+"."{digit}*
 variable {letter}({letter}|{digit}|"_")*
 string \042([^\042]|(\\\042))*\042
-comment "//"([.])*"\n"
+comment ({blank}?"//"[^\n]*)|({blank}?"/*"([^\n]|"\n")*"*/")
 
 %%
 
@@ -42,7 +42,7 @@ comment "//"([.])*"\n"
 
 {comment} {
     yylval.name=new std::string(yytext);
-    return COMM;
+    return COMMENT;
 }
 
 {string} {
