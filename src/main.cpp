@@ -7,7 +7,7 @@
 #include "parser/node.tab.h"
 #include "parser/node.lexer.h"
 
-extern std::vector<Node*> code;
+extern std::vector<const Node*> code;
 
 static void print_usage(const std::string& name) {
     std::cout << "Usage: " << name << " FILE [DIRECTORY]\n"
@@ -49,7 +49,7 @@ static void generate_cpp(std::ostream& outfile) {
     outfile << "#include \"../mixed.h\"\n\n";
     outfile << "int main() {\n";
     int wrong_commands = 0; // Commands with errors count
-    for (Node* command : code) {
+    for (const Node* command : code) {
         if (command->check_command(consts, vars_declared, vars_defined, errors)) {
             ++wrong_commands;
             continue;

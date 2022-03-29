@@ -9,13 +9,13 @@ int yylex(void);
 void yyerror(const char *error) {
     std::cerr << error;
 }
-std::vector<Node*> code;
+std::vector<const Node*> code;
 
 %}
 
 %union {
-    Node* node;
-    std::string* name;
+    const Node* node;
+    const std::string* name;
 }
 
 %token <name> VAR INT_L FLOAT_L STRING_L COMMENT
