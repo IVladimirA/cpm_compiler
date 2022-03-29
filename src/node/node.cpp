@@ -1,25 +1,22 @@
 #include "node.h"
 
-Node::Node(std::string string, OpType operation) {
+Node::Node(const std::string& string, OpType operation) {
     value = string;
     left = nullptr;
     right = nullptr;
     op = operation;
 }
 
-Node::Node(OpType operation, Node* l, Node* r, std::string val) {
+Node::Node(OpType operation, const Node* l, const Node* r, const std::string& val) {
     op = operation;
     left = l;
     right = r;
     value = val;
 }
 
-std::string Node::generate_command() {
+std::string Node::generate_command() const {
     std::string result;
     switch (op) {
-        case COMM:
-            result = value;
-            break;
         case COMMAND:
             result = "\n" + left->generate_command() + ";";
             break;
@@ -45,6 +42,7 @@ std::string Node::generate_command() {
             result = "input(" + left->generate_command() + ")";
             break;
         case VAR_NAME:
+        case COMM:
             result = value;
             break;
         case LIT:
@@ -56,12 +54,9 @@ std::string Node::generate_command() {
     return result;
 }
 
-bool Node::check_command(std::unordered_set<std::string>& consts, std::unordered_set<std::string>& vars_defined, std::unordered_set<std::string>& vars_declared, std::array<int, 4>& errors) {
+bool Node::check_command(std::unordered_set<std::string>& consts, std::unordered_set<std::string>& vars_defined, std::unordered_set<std::string>& vars_declared, std::array<int, 4>& errors) const {
     bool error = false;
     switch (op) {
-        case COMMAND:
-            error |= left->check_command(consts, vars_defined, vars_declared, errors);
-            break;
         case PLUS:
         case MINUS:
             error |= left->check_command(consts, vars_defined, vars_declared, errors);
@@ -98,6 +93,7 @@ bool Node::check_command(std::unordered_set<std::string>& consts, std::unordered
                 vars_declared.insert(left->value);
             }
             break;
+        case COMMAND:
         case PRINT_F:
         case INPUT_F:
             error |= left->check_command(consts, vars_defined, vars_declared, errors);
@@ -110,8 +106,9 @@ bool Node::check_command(std::unordered_set<std::string>& consts, std::unordered
             break;
         case LIT:
         case COMM:
-        default:
             break;
+        default:
+            throw std::logic_error("Incorrect op of Node");;
     }
     return error;
 }

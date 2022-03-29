@@ -13,14 +13,14 @@ enum OpType {
 
 class Node {
 public:
-    Node(std::string string, OpType operation = LIT);
-    Node(OpType operation, Node* l, Node* r = nullptr, std::string val = "");
-    std::string generate_command();
-    bool check_command(std::unordered_set<std::string>& consts, std::unordered_set<std::string>& vars_defined, std::unordered_set<std::string>& vars_declared, std::array<int, 4>& errors);
+    Node(const std::string& string, OpType operation = LIT);
+    Node(OpType operation, const Node* l, const Node* r = nullptr, const std::string& val = "");
+    std::string generate_command() const;
+    bool check_command(std::unordered_set<std::string>& consts, std::unordered_set<std::string>& vars_defined, std::unordered_set<std::string>& vars_declared, std::array<int, 4>& errors) const;
     ~Node();
 private:
-    Node* left;
-    Node* right;
+    const Node* left;
+    const Node* right;
     std::string value;
     OpType op;
 };
