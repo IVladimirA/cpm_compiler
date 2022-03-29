@@ -9,43 +9,30 @@ Node::Node(OpType operation, const Node* l, const Node* r, const std::string& va
 }
 
 std::string Node::generate_command() const {
-    std::string result;
     switch (op) {
         case COMMAND:
-            result = "\n" + left->generate_command() + ";";
-            break;
+            return "\n" + left->generate_command() + ";";
         case PLUS:
-            result = left->generate_command() + " + " + right->generate_command();
-            break;
+            return left->generate_command() + " + " + right->generate_command();
         case MINUS:
-            result = left->generate_command() + " - " + right->generate_command();
-            break;
+            return left->generate_command() + " - " + right->generate_command();
         case EQUATION:
-            result = left->generate_command() + " = " + right->generate_command();
-            break;
+            return left->generate_command() + " = " + right->generate_command();
         case CONST_DECL:
-            result = "const Mixed " + left->generate_command();
-            break;
+            return "const Mixed " + left->generate_command();
         case VAR_DECL:
-            result = "Mixed " + left->generate_command();
-            break;
+            return "Mixed " + left->generate_command();
         case PRINT_F:
-            result = "print(" + left->generate_command() + ")";
-            break;
+            return "print(" + left->generate_command() + ")";
         case INPUT_F:
-            result = "input(" + left->generate_command() + ")";
-            break;
+            return "input(" + left->generate_command() + ")";
+        case LIT:
+            return "Mixed(" + value + ")";
         case VAR_NAME:
         case COMM:
-            result = value;
-            break;
-        case LIT:
-            result = "Mixed(" + value + ")";
-            break;
         default:
-            throw std::logic_error("Incorrect op of Node");
+            return value;
     }
-    return result;
 }
 
 bool Node::check_command(std::unordered_set<std::string>& consts, std::unordered_set<std::string>& vars_defined, std::unordered_set<std::string>& vars_declared, std::array<int, 4>& errors) const {
