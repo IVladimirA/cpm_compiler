@@ -9,18 +9,18 @@
 
 extern std::vector<const Node*> code;
 
-static void print_usage(const std::string& name) {
-    std::cout << "Usage: " << name << " FILE [DIRECTORY]\n"
+static void print_usage(const std::string& program_name) {
+    std::cout << "Usage: " << program_name << " FILE [DIRECTORY]\n"
               << "Options:\n"
               << "\t-h, --help\tShow this help message\n"
               << "Specify the path to .cpm source FILE to create DIRECTORY with a.cpp and a.out files. Directory is \"./out\" by default."
               << std::endl;
 }
 
-static void parse_code(std::ifstream& in_file) {
-    std::stringstream lines;
-    lines << in_file.rdbuf();
-    yy_scan_string(lines.str().c_str());
+static void parse_code(std::ifstream& infile) {
+    std::stringstream all_code;
+    all_code << infile.rdbuf();
+    yy_scan_string(all_code.str().c_str());
     yyparse();
 }
 
@@ -34,10 +34,10 @@ static void generate_cpp(std::ostream& outfile) {
     std::array<int, 4> errors; // stores counts of errors
     errors.fill(0);
     /* 
-        0 - redeclaration of const
+        0 - redeclaration of constant
         1 - redeclaration of variable
         2 - usage of undefined identifier
-        3 - redifinition of const
+        3 - redifinition of constant
     */
     
     std::unordered_set<std::string> consts; // identifiers of defined consts
