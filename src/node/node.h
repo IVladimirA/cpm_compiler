@@ -21,8 +21,8 @@ public:
 private:
     const Node* left;
     const Node* right;
-    std::string value;
-    OpType op;
+    const std::string value;
+    const OpType op;
 };
 
 #endif

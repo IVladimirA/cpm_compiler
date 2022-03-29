@@ -1,17 +1,11 @@
 #include "node.h"
 
-Node::Node(const std::string& string, OpType operation) {
-    value = string;
-    left = nullptr;
-    right = nullptr;
-    op = operation;
+Node::Node(const std::string& string, OpType operation) 
+    : left{nullptr}, right{nullptr}, value {string}, op {operation} {
 }
 
-Node::Node(OpType operation, const Node* l, const Node* r, const std::string& val) {
-    op = operation;
-    left = l;
-    right = r;
-    value = val;
+Node::Node(OpType operation, const Node* l, const Node* r, const std::string& val) 
+    : left{l}, right{r}, value {val}, op {operation} {
 }
 
 std::string Node::generate_command() const {
