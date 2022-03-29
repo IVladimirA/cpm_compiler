@@ -12,9 +12,8 @@ public:
     Mixed(int num);
     Mixed(double num);
     Mixed(std::string string);
-    Mixed(const char* string);
-    friend Mixed operator + (const Mixed& m1, const Mixed& m2);
-    friend Mixed operator - (const Mixed& m1, const Mixed& m2);
+    friend Mixed operator+(const Mixed& m1, const Mixed& m2);
+    friend Mixed operator-(const Mixed& m1, const Mixed& m2);
     operator std::string() const;
 private:
     long long int integer;
