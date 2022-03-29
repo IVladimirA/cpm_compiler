@@ -76,34 +76,29 @@ static void write_cpp(const std::string& file_path) {
 }
 
 int main(int argc, char** argv) {
-    std::string program_name = argv[0];
+    const std::string program_name = argv[0];
     if (argc < 2)
         throw std::invalid_argument("No input file. Try '" + program_name + " --help' for more information.");
     if (argc > 3)
         throw std::invalid_argument("Too many arguments: " + std::to_string(argc - 1) + " given. Try '" + program_name + " --help' for more information.");
 
-    std::string source_path = argv[1]; // .cpm source file location
-    std::string out_dir = ".";  // resulting directory with .cpp and .out files location
-    if (argc == 3)
-        out_dir = argv[2];
+    const std::string source_path = argv[1]; // .cpm source file location
     if (source_path == "-h" || source_path == "--help") {
         print_usage(program_name);
         return 0;
     }
-    
-    std::string cpm_path = program_name;  // path to compiler
-    const size_t path_ending = cpm_path.rfind("/");
-    if (path_ending != std::string::npos)
-        cpm_path = cpm_path.substr(0, path_ending + 1);
-    else
-        cpm_path = "./";
+    const std::string out_path = (argc == 3) ? argv[2] : ".";  // resulting directory with .cpp and .out files location
+
+    const size_t path_ending = program_name.rfind("/");
+    const std::string compiler_path = (path_ending == std::string::npos)
+        ? "./" : program_name.substr(0, path_ending + 1);  // path to compiler
 
     parse_file(source_path); // parsing source code
-    system(("mkdir -p " + cpm_path + "out").c_str()); // creating "out" directory
-    write_cpp(cpm_path + "out/a.cpp"); // writing transpiled code to .cpp file
+    system(("mkdir -p " + compiler_path + "out").c_str()); // creating "out" directory
+    write_cpp(compiler_path + "out/a.cpp"); // writing transpiled code to .cpp file
 
-    system(("g++ " + cpm_path + "out/a.cpp " + cpm_path + "libmixed.so -o" + cpm_path + "out/a.out").c_str()); // compiling .cpp into .out file
-    system(("cp -rf " + cpm_path + "out " + out_dir).c_str()); // moving "out" directory
-    system(("rm -rf " + cpm_path + "out").c_str());
+    system(("g++ " + compiler_path + "out/a.cpp " + compiler_path + "libmixed.so -o" + compiler_path + "out/a.out").c_str()); // compiling .cpp into .out file
+    system(("cp -rf " + compiler_path + "out " + out_path).c_str()); // moving "out" directory
+    system(("rm -rf " + compiler_path + "out").c_str());
     return 0;
 }
