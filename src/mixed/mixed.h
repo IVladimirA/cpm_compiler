@@ -16,10 +16,10 @@ public:
     friend Mixed operator-(const Mixed& m1, const Mixed& m2);
     operator std::string() const;
 private:
+    MixedType type;
     long long int integer;
     double floating;
     std::string str;
-    MixedType type;
 };
 
 int is_numeric(const std::string& s);

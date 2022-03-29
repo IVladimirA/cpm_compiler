@@ -1,63 +1,52 @@
 #include <iostream>
 #include "mixed.h"
 
-Mixed::Mixed() {
-    type = UNDEF;
+Mixed::Mixed()
+    : type {UNDEF}, integer{0}, floating {0}, str{""} {
 }
 
-Mixed::Mixed(long long int num) {
-    type = INT;
-    integer = num;
+Mixed::Mixed(long long int num)
+    : type {INT}, integer{num}, floating {0}, str{""} {
 }
 
-Mixed::Mixed(int num) {
-    type = INT;
-    integer = num;
+Mixed::Mixed(int num)
+    : type {INT}, integer{num}, floating {0}, str{""} {
 }
 
-Mixed::Mixed(double num) {
-    type = FLOAT;
-    floating = num;
+Mixed::Mixed(double num)
+    : type {FLOAT}, integer{0}, floating {num}, str{""} {
 }
 
-Mixed::Mixed(const std::string& string) {
-    type = STR;
-    str = string;
+Mixed::Mixed(const std::string& string)
+    : type {STR}, integer{0}, floating {0}, str{string} {
 }
 
 Mixed operator+(const Mixed& m1, const Mixed& m2) {
-    Mixed result;
     if (m1.type == UNDEF || m2.type == UNDEF) {
-        throw std::invalid_argument("Mixed operator+(const Mixed&, const Mixed&) arguments cannot have type \"UNDEF\"");
+        throw std::invalid_argument("Mixed argument has type \"UNDEF\"");
     }
     if (m1.type == STR || m2.type == STR) {
-        result = Mixed((m1.operator std::string()) + (m2.operator std::string()));
-    } else {
-        switch (m1.type) {
-            case INT:
-                if (m2.type == INT)
-                    result = Mixed(m1.integer + m2.integer);
-                else
-                    result = Mixed(m1.integer + m2.floating);
-                break;
-            case FLOAT:
-                if (m2.type == INT)
-                    result = Mixed(m1.floating + m2.integer);
-                else
-                    result = Mixed(m1.floating + m2.floating);
-                break;
-            default:
-                break;
-        }
+        return Mixed((m1.operator std::string()) + (m2.operator std::string()));
     }
-    return result;
+    switch (m1.type) {
+        case INT:
+            if (m2.type == INT)
+                return Mixed(m1.integer + m2.integer);
+            return Mixed(m1.integer + m2.floating);
+        case FLOAT:
+            if (m2.type == INT)
+                return Mixed(m1.floating + m2.integer);
+            return Mixed(m1.floating + m2.floating);
+        default:
+            return Mixed();
+    }
 }
 
 Mixed operator-(const Mixed& m1, const Mixed& m2) {
     if (m1.type == UNDEF || m2.type == UNDEF) {
-        throw std::invalid_argument("Mixed operator-(const Mixed&, const Mixed&) arguments cannot have type \"UNDEF\"");
+        throw std::invalid_argument("Mixed argument has type \"UNDEF\"");
     }
-    Mixed left, right;
+    Mixed left(0), right(0);
     switch (m1.type) {
         case STR:
             switch(is_numeric(m1.str)) {
@@ -67,14 +56,10 @@ Mixed operator-(const Mixed& m1, const Mixed& m2) {
                 case 2:
                     left = Mixed(std::stod(m1.str));
                     break;
-                case 0:
                 default:
-                    left = Mixed(0);
                     break;
             }
             break;
-        case INT:
-        case FLOAT:
         default:
             left = m1;
             break;
@@ -88,9 +73,7 @@ Mixed operator-(const Mixed& m1, const Mixed& m2) {
                 case 2:
                     right = Mixed(-std::stod(m2.str));
                     break;
-                case 0:
                 default:
-                    right = Mixed(0);
                     break;
             }
             break;
@@ -101,33 +84,24 @@ Mixed operator-(const Mixed& m1, const Mixed& m2) {
             right = Mixed(-m2.floating);
             break;
         default:
-            right = Mixed(0);
             break;
     }
     return left + right;
 }
 
 Mixed::operator std::string() const {
-    std::string strMixed;
     switch (type) {
-        case STR:
-            strMixed = str;
-            break;
-        case INT:
-            strMixed = std::to_string(integer);
-            break;
-        case FLOAT:
-            strMixed = std::to_string(floating);
-            strMixed.erase(strMixed.find_last_not_of('0') + 1, std::string::npos);
-            if (strMixed.back() == '.')
-                strMixed.push_back('0');
-            break;
-        case UNDEF:
         default:
-            strMixed = "STR ERROR";
-            break;
+            return str;
+        case INT:
+            return std::to_string(integer);
+        case FLOAT:
+            std::string str_float = std::to_string(floating);
+            str_float.erase(str_float.find_last_not_of('0') + 1, std::string::npos);
+            if (str_float.back() == '.')
+                str_float.push_back('0');
+            return str_float;
     }
-    return strMixed;
 }
 
 /* Checks if string numeric */
@@ -157,9 +131,7 @@ void print(const Mixed& m) {
 
 Mixed input(const Mixed& m) {
     std::string value;
-    Mixed result;
     std::cout << m.operator std::string();
-    std::cin >> value;
-    result = Mixed(value);
-    return result;
+    std::getline(std::cin, value);
+    return Mixed(value);
 }
