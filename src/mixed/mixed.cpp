@@ -20,7 +20,7 @@ Mixed::Mixed(double num) {
     floating = num;
 }
 
-Mixed::Mixed(std::string string) {
+Mixed::Mixed(const std::string& string) {
     type = STR;
     str = string;
 }
