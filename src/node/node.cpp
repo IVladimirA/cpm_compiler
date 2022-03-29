@@ -36,62 +36,59 @@ std::string Node::generate_command() const {
 }
 
 bool Node::check_command(std::unordered_set<std::string>& consts, std::unordered_set<std::string>& vars_defined, std::unordered_set<std::string>& vars_declared, std::array<int, 4>& errors) const {
-    bool error = false;
     switch (op) {
         case PLUS:
         case MINUS:
-            error |= left->check_command(consts, vars_defined, vars_declared, errors);
-            error |= right->check_command(consts, vars_defined, vars_declared, errors);
-            break;
-        case EQUATION:
-            error |= right->check_command(consts, vars_defined, vars_declared, errors);
+            return left->check_command(consts, vars_defined, vars_declared, errors)
+                || right->check_command(consts, vars_defined, vars_declared, errors);
+        case EQUATION: {
+            bool declaration_error = right->check_command(consts, vars_defined, vars_declared, errors);
             if (left->op == VAR_NAME && consts.find(left->value) != consts.end()) {
                 ++errors[3];
-                error = true;
-            } else if (left->op == VAR_NAME)
-                vars_defined.insert(left->value);
-            error |= left->check_command(consts, vars_defined, vars_declared, errors);
-            break;
+                return true;
+            }
+            if (left->op == VAR_NAME)
+                vars_defined.insert(left->value); // not all cases of definition covered
+            return left->check_command(consts, vars_defined, vars_declared, errors)
+                || declaration_error;
+        }
         case CONST_DECL:
             if (consts.find(left->value) != consts.end()) {
                 ++errors[0];
-                error = true;
-            } else if (vars_declared.find(left->value) != vars_declared.end()) {
-                ++errors[1];
-                error = true;
-            } else {
-                consts.insert(left->value);
+                return true;
             }
-            break;
+            if (vars_declared.find(left->value) != vars_declared.end()) {
+                ++errors[1];
+                return true;
+            }
+            consts.insert(left->value);
+            return false;
         case VAR_DECL:
             if (consts.find(left->value) != consts.end()) {
                 ++errors[0];
-                error = true;
-            } else if (vars_declared.find(left->value) != vars_declared.end()) {
-                ++errors[1];
-                error = true;
-            } else {
-                vars_declared.insert(left->value);
+                return true;
             }
-            break;
+            if (vars_declared.find(left->value) != vars_declared.end()) {
+                ++errors[1];
+                return true;
+            }
+            vars_declared.insert(left->value);
+            return false;
         case COMMAND:
         case PRINT_F:
         case INPUT_F:
-            error |= left->check_command(consts, vars_defined, vars_declared, errors);
-            break;
+            return left->check_command(consts, vars_defined, vars_declared, errors);
         case VAR_NAME:
             if (consts.find(value) == consts.end() && vars_declared.find(value) == vars_declared.end()) {
                 ++errors[2];
-                error = true;
+                return true;
             }
-            break;
+            return false;
         case LIT:
         case COMM:
-            break;
         default:
-            throw std::logic_error("Incorrect op of Node");;
+            return false;
     }
-    return error;
 }
 
 Node::~Node() {
