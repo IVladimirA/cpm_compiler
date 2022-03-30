@@ -5,49 +5,49 @@ Grammar
     1 Input: Command
     2      | Input Command
 
-    3 Command: COMMENT
-    4        | Expression COMMAND_END
-    5        | Declaration OP_EQUATION Expression COMMAND_END
-    6        | Variable OP_EQUATION Expression COMMAND_END
+    3 Command: t_comment
+    4        | Expression t_command_ending
+    5        | Declaration t_equals Expression t_command_ending
+    6        | Variable t_equals Expression t_command_ending
 
-    7 Expression: Expression OP_PLUS Expression
-    8           | Expression OP_MINUS Expression
+    7 Expression: Expression t_plus Expression
+    8           | Expression t_minus Expression
     9           | Function
    10           | Variable
    11           | Literal
 
-   12 Function: PRINT LEFT_BRACKET Expression RIGHT_BRACKET
-   13         | INPUT LEFT_BRACKET Expression RIGHT_BRACKET
+   12 Function: t_print t_left_bracket Expression t_right_bracket
+   13         | t_input t_left_bracket Expression t_right_bracket
 
-   14 Declaration: VAR_D Variable
-   15            | CONST_D Variable
+   14 Declaration: t_variable_declaration Variable
+   15            | t_constant_declaration Variable
 
-   16 Variable: VAR
+   16 Variable: t_variable
 
-   17 Literal: INT_L
-   18        | FLOAT_L
-   19        | STRING_L
+   17 Literal: t_integer_literal
+   18        | t_float_literal
+   19        | t_string_literal
 
 
 Terminals, with rules where they appear
 
     $end (0) 0
     error (256)
-    VAR <name> (258) 16
-    INT_L <name> (259) 17
-    FLOAT_L <name> (260) 18
-    STRING_L <name> (261) 19
-    COMMENT <name> (262) 3
-    VAR_D (263) 14
-    CONST_D (264) 15
-    OP_PLUS (265) 7
-    OP_MINUS (266) 8
-    OP_EQUATION (267) 5 6
-    COMMAND_END (268) 4 5 6
-    LEFT_BRACKET (269) 12 13
-    RIGHT_BRACKET (270) 12 13
-    PRINT (271) 12
-    INPUT (272) 13
+    t_variable <name> (258) 16
+    t_integer_literal <name> (259) 17
+    t_float_literal <name> (260) 18
+    t_string_literal <name> (261) 19
+    t_comment <name> (262) 3
+    t_variable_declaration (263) 14
+    t_constant_declaration (264) 15
+    t_plus (265) 7
+    t_minus (266) 8
+    t_equals (267) 5 6
+    t_command_ending (268) 4 5 6
+    t_left_bracket (269) 12 13
+    t_right_bracket (270) 12 13
+    t_print (271) 12
+    t_input (272) 13
 
 
 Nonterminals, with rules where they appear
@@ -81,15 +81,15 @@ State 0
 
     0 $accept: . Input $end
 
-    VAR       shift, and go to state 1
-    INT_L     shift, and go to state 2
-    FLOAT_L   shift, and go to state 3
-    STRING_L  shift, and go to state 4
-    COMMENT   shift, and go to state 5
-    VAR_D     shift, and go to state 6
-    CONST_D   shift, and go to state 7
-    PRINT     shift, and go to state 8
-    INPUT     shift, and go to state 9
+    t_variable              shift, and go to state 1
+    t_integer_literal       shift, and go to state 2
+    t_float_literal         shift, and go to state 3
+    t_string_literal        shift, and go to state 4
+    t_comment               shift, and go to state 5
+    t_variable_declaration  shift, and go to state 6
+    t_constant_declaration  shift, and go to state 7
+    t_print                 shift, and go to state 8
+    t_input                 shift, and go to state 9
 
     Input        go to state 10
     Command      go to state 11
@@ -102,69 +102,69 @@ State 0
 
 State 1
 
-   16 Variable: VAR .
+   16 Variable: t_variable .
 
     $default  reduce using rule 16 (Variable)
 
 
 State 2
 
-   17 Literal: INT_L .
+   17 Literal: t_integer_literal .
 
     $default  reduce using rule 17 (Literal)
 
 
 State 3
 
-   18 Literal: FLOAT_L .
+   18 Literal: t_float_literal .
 
     $default  reduce using rule 18 (Literal)
 
 
 State 4
 
-   19 Literal: STRING_L .
+   19 Literal: t_string_literal .
 
     $default  reduce using rule 19 (Literal)
 
 
 State 5
 
-    3 Command: COMMENT .
+    3 Command: t_comment .
 
     $default  reduce using rule 3 (Command)
 
 
 State 6
 
-   14 Declaration: VAR_D . Variable
+   14 Declaration: t_variable_declaration . Variable
 
-    VAR  shift, and go to state 1
+    t_variable  shift, and go to state 1
 
     Variable  go to state 17
 
 
 State 7
 
-   15 Declaration: CONST_D . Variable
+   15 Declaration: t_constant_declaration . Variable
 
-    VAR  shift, and go to state 1
+    t_variable  shift, and go to state 1
 
     Variable  go to state 18
 
 
 State 8
 
-   12 Function: PRINT . LEFT_BRACKET Expression RIGHT_BRACKET
+   12 Function: t_print . t_left_bracket Expression t_right_bracket
 
-    LEFT_BRACKET  shift, and go to state 19
+    t_left_bracket  shift, and go to state 19
 
 
 State 9
 
-   13 Function: INPUT . LEFT_BRACKET Expression RIGHT_BRACKET
+   13 Function: t_input . t_left_bracket Expression t_right_bracket
 
-    LEFT_BRACKET  shift, and go to state 20
+    t_left_bracket  shift, and go to state 20
 
 
 State 10
@@ -172,16 +172,16 @@ State 10
     0 $accept: Input . $end
     2 Input: Input . Command
 
-    $end      shift, and go to state 21
-    VAR       shift, and go to state 1
-    INT_L     shift, and go to state 2
-    FLOAT_L   shift, and go to state 3
-    STRING_L  shift, and go to state 4
-    COMMENT   shift, and go to state 5
-    VAR_D     shift, and go to state 6
-    CONST_D   shift, and go to state 7
-    PRINT     shift, and go to state 8
-    INPUT     shift, and go to state 9
+    $end                    shift, and go to state 21
+    t_variable              shift, and go to state 1
+    t_integer_literal       shift, and go to state 2
+    t_float_literal         shift, and go to state 3
+    t_string_literal        shift, and go to state 4
+    t_comment               shift, and go to state 5
+    t_variable_declaration  shift, and go to state 6
+    t_constant_declaration  shift, and go to state 7
+    t_print                 shift, and go to state 8
+    t_input                 shift, and go to state 9
 
     Command      go to state 22
     Expression   go to state 12
@@ -200,13 +200,13 @@ State 11
 
 State 12
 
-    4 Command: Expression . COMMAND_END
-    7 Expression: Expression . OP_PLUS Expression
-    8           | Expression . OP_MINUS Expression
+    4 Command: Expression . t_command_ending
+    7 Expression: Expression . t_plus Expression
+    8           | Expression . t_minus Expression
 
-    OP_PLUS      shift, and go to state 23
-    OP_MINUS     shift, and go to state 24
-    COMMAND_END  shift, and go to state 25
+    t_plus            shift, and go to state 23
+    t_minus           shift, and go to state 24
+    t_command_ending  shift, and go to state 25
 
 
 State 13
@@ -218,17 +218,17 @@ State 13
 
 State 14
 
-    5 Command: Declaration . OP_EQUATION Expression COMMAND_END
+    5 Command: Declaration . t_equals Expression t_command_ending
 
-    OP_EQUATION  shift, and go to state 26
+    t_equals  shift, and go to state 26
 
 
 State 15
 
-    6 Command: Variable . OP_EQUATION Expression COMMAND_END
+    6 Command: Variable . t_equals Expression t_command_ending
    10 Expression: Variable .
 
-    OP_EQUATION  shift, and go to state 27
+    t_equals  shift, and go to state 27
 
     $default  reduce using rule 10 (Expression)
 
@@ -242,28 +242,28 @@ State 16
 
 State 17
 
-   14 Declaration: VAR_D Variable .
+   14 Declaration: t_variable_declaration Variable .
 
     $default  reduce using rule 14 (Declaration)
 
 
 State 18
 
-   15 Declaration: CONST_D Variable .
+   15 Declaration: t_constant_declaration Variable .
 
     $default  reduce using rule 15 (Declaration)
 
 
 State 19
 
-   12 Function: PRINT LEFT_BRACKET . Expression RIGHT_BRACKET
+   12 Function: t_print t_left_bracket . Expression t_right_bracket
 
-    VAR       shift, and go to state 1
-    INT_L     shift, and go to state 2
-    FLOAT_L   shift, and go to state 3
-    STRING_L  shift, and go to state 4
-    PRINT     shift, and go to state 8
-    INPUT     shift, and go to state 9
+    t_variable         shift, and go to state 1
+    t_integer_literal  shift, and go to state 2
+    t_float_literal    shift, and go to state 3
+    t_string_literal   shift, and go to state 4
+    t_print            shift, and go to state 8
+    t_input            shift, and go to state 9
 
     Expression  go to state 28
     Function    go to state 13
@@ -273,14 +273,14 @@ State 19
 
 State 20
 
-   13 Function: INPUT LEFT_BRACKET . Expression RIGHT_BRACKET
+   13 Function: t_input t_left_bracket . Expression t_right_bracket
 
-    VAR       shift, and go to state 1
-    INT_L     shift, and go to state 2
-    FLOAT_L   shift, and go to state 3
-    STRING_L  shift, and go to state 4
-    PRINT     shift, and go to state 8
-    INPUT     shift, and go to state 9
+    t_variable         shift, and go to state 1
+    t_integer_literal  shift, and go to state 2
+    t_float_literal    shift, and go to state 3
+    t_string_literal   shift, and go to state 4
+    t_print            shift, and go to state 8
+    t_input            shift, and go to state 9
 
     Expression  go to state 30
     Function    go to state 13
@@ -304,14 +304,14 @@ State 22
 
 State 23
 
-    7 Expression: Expression OP_PLUS . Expression
+    7 Expression: Expression t_plus . Expression
 
-    VAR       shift, and go to state 1
-    INT_L     shift, and go to state 2
-    FLOAT_L   shift, and go to state 3
-    STRING_L  shift, and go to state 4
-    PRINT     shift, and go to state 8
-    INPUT     shift, and go to state 9
+    t_variable         shift, and go to state 1
+    t_integer_literal  shift, and go to state 2
+    t_float_literal    shift, and go to state 3
+    t_string_literal   shift, and go to state 4
+    t_print            shift, and go to state 8
+    t_input            shift, and go to state 9
 
     Expression  go to state 31
     Function    go to state 13
@@ -321,14 +321,14 @@ State 23
 
 State 24
 
-    8 Expression: Expression OP_MINUS . Expression
+    8 Expression: Expression t_minus . Expression
 
-    VAR       shift, and go to state 1
-    INT_L     shift, and go to state 2
-    FLOAT_L   shift, and go to state 3
-    STRING_L  shift, and go to state 4
-    PRINT     shift, and go to state 8
-    INPUT     shift, and go to state 9
+    t_variable         shift, and go to state 1
+    t_integer_literal  shift, and go to state 2
+    t_float_literal    shift, and go to state 3
+    t_string_literal   shift, and go to state 4
+    t_print            shift, and go to state 8
+    t_input            shift, and go to state 9
 
     Expression  go to state 32
     Function    go to state 13
@@ -338,21 +338,21 @@ State 24
 
 State 25
 
-    4 Command: Expression COMMAND_END .
+    4 Command: Expression t_command_ending .
 
     $default  reduce using rule 4 (Command)
 
 
 State 26
 
-    5 Command: Declaration OP_EQUATION . Expression COMMAND_END
+    5 Command: Declaration t_equals . Expression t_command_ending
 
-    VAR       shift, and go to state 1
-    INT_L     shift, and go to state 2
-    FLOAT_L   shift, and go to state 3
-    STRING_L  shift, and go to state 4
-    PRINT     shift, and go to state 8
-    INPUT     shift, and go to state 9
+    t_variable         shift, and go to state 1
+    t_integer_literal  shift, and go to state 2
+    t_float_literal    shift, and go to state 3
+    t_string_literal   shift, and go to state 4
+    t_print            shift, and go to state 8
+    t_input            shift, and go to state 9
 
     Expression  go to state 33
     Function    go to state 13
@@ -362,14 +362,14 @@ State 26
 
 State 27
 
-    6 Command: Variable OP_EQUATION . Expression COMMAND_END
+    6 Command: Variable t_equals . Expression t_command_ending
 
-    VAR       shift, and go to state 1
-    INT_L     shift, and go to state 2
-    FLOAT_L   shift, and go to state 3
-    STRING_L  shift, and go to state 4
-    PRINT     shift, and go to state 8
-    INPUT     shift, and go to state 9
+    t_variable         shift, and go to state 1
+    t_integer_literal  shift, and go to state 2
+    t_float_literal    shift, and go to state 3
+    t_string_literal   shift, and go to state 4
+    t_print            shift, and go to state 8
+    t_input            shift, and go to state 9
 
     Expression  go to state 34
     Function    go to state 13
@@ -379,13 +379,13 @@ State 27
 
 State 28
 
-    7 Expression: Expression . OP_PLUS Expression
-    8           | Expression . OP_MINUS Expression
-   12 Function: PRINT LEFT_BRACKET Expression . RIGHT_BRACKET
+    7 Expression: Expression . t_plus Expression
+    8           | Expression . t_minus Expression
+   12 Function: t_print t_left_bracket Expression . t_right_bracket
 
-    OP_PLUS        shift, and go to state 23
-    OP_MINUS       shift, and go to state 24
-    RIGHT_BRACKET  shift, and go to state 35
+    t_plus           shift, and go to state 23
+    t_minus          shift, and go to state 24
+    t_right_bracket  shift, and go to state 35
 
 
 State 29
@@ -397,80 +397,78 @@ State 29
 
 State 30
 
-    7 Expression: Expression . OP_PLUS Expression
-    8           | Expression . OP_MINUS Expression
-   13 Function: INPUT LEFT_BRACKET Expression . RIGHT_BRACKET
+    7 Expression: Expression . t_plus Expression
+    8           | Expression . t_minus Expression
+   13 Function: t_input t_left_bracket Expression . t_right_bracket
 
-    OP_PLUS        shift, and go to state 23
-    OP_MINUS       shift, and go to state 24
-    RIGHT_BRACKET  shift, and go to state 36
+    t_plus           shift, and go to state 23
+    t_minus          shift, and go to state 24
+    t_right_bracket  shift, and go to state 36
 
 
 State 31
 
-    7 Expression: Expression . OP_PLUS Expression
-    7           | Expression OP_PLUS Expression .
-    8           | Expression . OP_MINUS Expression
-
-    OP_MINUS  shift, and go to state 24
+    7 Expression: Expression . t_plus Expression
+    7           | Expression t_plus Expression .
+    8           | Expression . t_minus Expression
 
     $default  reduce using rule 7 (Expression)
 
 
 State 32
 
-    7 Expression: Expression . OP_PLUS Expression
-    8           | Expression . OP_MINUS Expression
-    8           | Expression OP_MINUS Expression .
+    7 Expression: Expression . t_plus Expression
+    8           | Expression . t_minus Expression
+    8           | Expression t_minus Expression .
 
     $default  reduce using rule 8 (Expression)
 
 
 State 33
 
-    5 Command: Declaration OP_EQUATION Expression . COMMAND_END
-    7 Expression: Expression . OP_PLUS Expression
-    8           | Expression . OP_MINUS Expression
+    5 Command: Declaration t_equals Expression . t_command_ending
+    7 Expression: Expression . t_plus Expression
+    8           | Expression . t_minus Expression
 
-    OP_PLUS      shift, and go to state 23
-    OP_MINUS     shift, and go to state 24
-    COMMAND_END  shift, and go to state 37
+    t_plus            shift, and go to state 23
+    t_minus           shift, and go to state 24
+    t_command_ending  shift, and go to state 37
 
 
 State 34
 
-    6 Command: Variable OP_EQUATION Expression . COMMAND_END
-    7 Expression: Expression . OP_PLUS Expression
-    8           | Expression . OP_MINUS Expression
+    6 Command: Variable t_equals Expression . t_command_ending
+    7 Expression: Expression . t_plus Expression
+    8           | Expression . t_minus Expression
 
-    OP_PLUS      shift, and go to state 23
-    OP_MINUS     shift, and go to state 24
-    COMMAND_END  shift, and go to state 38
+    t_plus            shift, and go to state 23
+    t_minus           shift, and go to state 24
+    t_command_ending  shift, and go to state 38
 
 
 State 35
 
-   12 Function: PRINT LEFT_BRACKET Expression RIGHT_BRACKET .
+   12 Function: t_print t_left_bracket Expression t_right_bracket .
 
     $default  reduce using rule 12 (Function)
 
 
 State 36
 
-   13 Function: INPUT LEFT_BRACKET Expression RIGHT_BRACKET .
+   13 Function: t_input t_left_bracket Expression t_right_bracket .
 
     $default  reduce using rule 13 (Function)
 
 
 State 37
 
-    5 Command: Declaration OP_EQUATION Expression COMMAND_END .
+    5 Command: Declaration t_equals Expression t_command_ending .
 
     $default  reduce using rule 5 (Command)
 
 
 State 38
 
-    6 Command: Variable OP_EQUATION Expression COMMAND_END .
+    6 Command: Variable t_equals Expression t_command_ending .
 
     $default  reduce using rule 6 (Command)

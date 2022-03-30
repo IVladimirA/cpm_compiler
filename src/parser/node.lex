@@ -22,55 +22,55 @@ comment ({blank}?"//"[^\n]*)|({blank}?"/*"([^\n]|"\n")*"*/")
 
 "var" {
     yylval.name = new std::string(yytext);
-    return VAR_D;
+    return t_variable_declaration;
 }
 
 "val" {
     yylval.name = new std::string(yytext);
-    return CONST_D;
+    return t_constant_declaration;
 }
 
 "print" {
     yylval.name = new std::string(yytext);
-    return PRINT;
+    return t_print;
 }
 
 "input" {
     yylval.name = new std::string(yytext);
-    return INPUT;
+    return t_input;
 }
 
 {comment} {
     yylval.name = new std::string(yytext);
-    return COMMENT;
+    return t_comment;
 }
 
 {string} {
     yylval.name = new std::string(yytext);
-    return STRING_L;
+    return t_string_literal;
 }
 
 {variable} {
     yylval.name = new std::string(yytext);
-    return VAR;
+    return t_variable;
 }
 
 {integer} {
     yylval.name = new std::string(yytext);
-    return INT_L;
+    return t_integer_literal;
 }
 
 {float} {
     yylval.name = new std::string(yytext);
-    return FLOAT_L;
+    return t_float_literal;
 }
 
 {blank} ;
-"(" return LEFT_BRACKET;
-")" return RIGHT_BRACKET;
-"=" return OP_EQUATION;
-"+" return OP_PLUS;
-"-" return OP_MINUS;
-";" return COMMAND_END;
+"(" return t_left_bracket;
+")" return t_right_bracket;
+"=" return t_equals;
+"+" return t_plus;
+"-" return t_minus;
+";" return t_command_ending;
 
 %%

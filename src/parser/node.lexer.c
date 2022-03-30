@@ -767,7 +767,7 @@ YY_RULE_SETUP
 #line 23 "src/parser/node.lex"
 {
     yylval.name = new std::string(yytext);
-    return VAR_D;
+    return t_variable_declaration;
 }
 	YY_BREAK
 case 2:
@@ -775,7 +775,7 @@ YY_RULE_SETUP
 #line 28 "src/parser/node.lex"
 {
     yylval.name = new std::string(yytext);
-    return CONST_D;
+    return t_constant_declaration;
 }
 	YY_BREAK
 case 3:
@@ -783,7 +783,7 @@ YY_RULE_SETUP
 #line 33 "src/parser/node.lex"
 {
     yylval.name = new std::string(yytext);
-    return PRINT;
+    return t_print;
 }
 	YY_BREAK
 case 4:
@@ -791,7 +791,7 @@ YY_RULE_SETUP
 #line 38 "src/parser/node.lex"
 {
     yylval.name = new std::string(yytext);
-    return INPUT;
+    return t_input;
 }
 	YY_BREAK
 case 5:
@@ -800,7 +800,7 @@ YY_RULE_SETUP
 #line 43 "src/parser/node.lex"
 {
     yylval.name = new std::string(yytext);
-    return COMMENT;
+    return t_comment;
 }
 	YY_BREAK
 case 6:
@@ -809,7 +809,7 @@ YY_RULE_SETUP
 #line 48 "src/parser/node.lex"
 {
     yylval.name = new std::string(yytext);
-    return STRING_L;
+    return t_string_literal;
 }
 	YY_BREAK
 case 7:
@@ -817,7 +817,7 @@ YY_RULE_SETUP
 #line 53 "src/parser/node.lex"
 {
     yylval.name = new std::string(yytext);
-    return VAR;
+    return t_variable;
 }
 	YY_BREAK
 case 8:
@@ -825,7 +825,7 @@ YY_RULE_SETUP
 #line 58 "src/parser/node.lex"
 {
     yylval.name = new std::string(yytext);
-    return INT_L;
+    return t_integer_literal;
 }
 	YY_BREAK
 case 9:
@@ -833,7 +833,7 @@ YY_RULE_SETUP
 #line 63 "src/parser/node.lex"
 {
     yylval.name = new std::string(yytext);
-    return FLOAT_L;
+    return t_float_literal;
 }
 	YY_BREAK
 case 10:
@@ -845,32 +845,32 @@ YY_RULE_SETUP
 case 11:
 YY_RULE_SETUP
 #line 69 "src/parser/node.lex"
-return LEFT_BRACKET;
+return t_left_bracket;
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 70 "src/parser/node.lex"
-return RIGHT_BRACKET;
+return t_right_bracket;
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 71 "src/parser/node.lex"
-return OP_EQUATION;
+return t_equals;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 72 "src/parser/node.lex"
-return OP_PLUS;
+return t_plus;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 73 "src/parser/node.lex"
-return OP_MINUS;
+return t_minus;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 74 "src/parser/node.lex"
-return COMMAND_END;
+return t_command_ending;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP

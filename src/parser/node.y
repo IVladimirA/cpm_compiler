@@ -18,16 +18,14 @@ std::vector<const Node*> code;
     const std::string* name;
 }
 
-%token <name> VAR INT_L FLOAT_L STRING_L COMMENT
-%token VAR_D CONST_D
-%token OP_PLUS OP_MINUS OP_EQUATION
-%token COMMAND_END
-%token LEFT_BRACKET RIGHT_BRACKET
-%token PRINT INPUT
+%token <name> t_variable t_integer_literal t_float_literal t_string_literal t_comment
+%token t_variable_declaration t_constant_declaration
+%token t_plus t_minus t_equals
+%token t_command_ending
+%token t_left_bracket t_right_bracket
+%token t_print t_input
 
-%right OP_EQUATION
-%left OP_PLUS
-%left OP_MINUS
+%left t_plus t_minus
 
 %type <node> Input Command Expression Function Declaration Variable Literal
 
@@ -39,33 +37,33 @@ Input: Command { code.push_back($1); }
 | Input Command { code.push_back($2); }
 ;
 
-Command: COMMENT { $$ = new Node(*$1, op_comment); }
-| Expression COMMAND_END { $$ = new Node(op_command, $1); }
-| Declaration OP_EQUATION Expression COMMAND_END { $$ = new Node(op_command, new Node(op_equation, $1, $3)); }
-| Variable OP_EQUATION Expression COMMAND_END { $$ = new Node(op_command, new Node(op_equation, $1, $3)); }
+Command: t_comment { $$ = new Node(*$1, op_comment); }
+| Expression t_command_ending { $$ = new Node(op_command, $1); }
+| Declaration t_equals Expression t_command_ending { $$ = new Node(op_command, new Node(op_equation, $1, $3)); }
+| Variable t_equals Expression t_command_ending { $$ = new Node(op_command, new Node(op_equation, $1, $3)); }
 ;
 
-Expression: Expression OP_PLUS Expression { $$ = new Node(op_plus, $1, $3); }
-| Expression OP_MINUS Expression { $$ = new Node(op_minus, $1, $3); }
+Expression: Expression t_plus Expression { $$ = new Node(op_addition, $1, $3); }
+| Expression t_minus Expression { $$ = new Node(op_subtraction, $1, $3); }
 | Function { $$ = $1; }
 | Variable { $$ = $1; }
 | Literal {$$ = $1; }
 ;
 
-Function: PRINT LEFT_BRACKET Expression RIGHT_BRACKET { $$ = new Node(op_print, $3); }
-| INPUT LEFT_BRACKET Expression RIGHT_BRACKET { $$ = new Node(op_input, $3); }
+Function: t_print t_left_bracket Expression t_right_bracket { $$ = new Node(op_print, $3); }
+| t_input t_left_bracket Expression t_right_bracket { $$ = new Node(op_input, $3); }
 ;
 
-Declaration: VAR_D Variable { $$ = new Node(op_var_decl, $2); }
-| CONST_D Variable { $$ = new Node(op_const_decl, $2); }
+Declaration: t_variable_declaration Variable { $$ = new Node(op_var_decl, $2); }
+| t_constant_declaration Variable { $$ = new Node(op_const_decl, $2); }
 ;
 
-Variable: VAR { $$ = new Node(*$1, op_variable); }
+Variable: t_variable { $$ = new Node(*$1, op_variable); }
 ;
 
-Literal: INT_L { $$ = new Node(*$1); }
-| FLOAT_L { $$ = new Node(*$1); }
-| STRING_L { $$ = new Node(*$1); }
+Literal: t_integer_literal { $$ = new Node(*$1); }
+| t_float_literal { $$ = new Node(*$1); }
+| t_string_literal { $$ = new Node(*$1); }
 ;
 
 %%

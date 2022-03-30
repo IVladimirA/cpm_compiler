@@ -49,21 +49,21 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    VAR = 258,
-    INT_L = 259,
-    FLOAT_L = 260,
-    STRING_L = 261,
-    COMMENT = 262,
-    VAR_D = 263,
-    CONST_D = 264,
-    OP_PLUS = 265,
-    OP_MINUS = 266,
-    OP_EQUATION = 267,
-    COMMAND_END = 268,
-    LEFT_BRACKET = 269,
-    RIGHT_BRACKET = 270,
-    PRINT = 271,
-    INPUT = 272
+    t_variable = 258,
+    t_integer_literal = 259,
+    t_float_literal = 260,
+    t_string_literal = 261,
+    t_comment = 262,
+    t_variable_declaration = 263,
+    t_constant_declaration = 264,
+    t_plus = 265,
+    t_minus = 266,
+    t_equals = 267,
+    t_command_ending = 268,
+    t_left_bracket = 269,
+    t_right_bracket = 270,
+    t_print = 271,
+    t_input = 272
   };
 #endif
 
