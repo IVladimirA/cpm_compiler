@@ -1,58 +1,58 @@
 #include "node.h"
 
-Node::Node(const std::string& string, OpType operation) 
-    : left{nullptr}, right{nullptr}, value {string}, op {operation} {
+Node::Node(const std::string& string, OperationType op) 
+    : left{nullptr}, right{nullptr}, value{string}, operation{op} {
 }
 
-Node::Node(OpType operation, const Node* l, const Node* r, const std::string& val) 
-    : left{l}, right{r}, value {val}, op {operation} {
+Node::Node(OperationType op, const Node* left_node, const Node* right_node, const std::string& val) 
+    : left{left_node}, right{right_node}, value{val}, operation{op} {
 }
 
 std::string Node::generate_command() const {
-    switch (op) {
-        case COMMAND:
+    switch (operation) {
+        case op_command:
             return "\n" + left->generate_command() + ";";
-        case PLUS:
+        case op_plus:
             return left->generate_command() + " + " + right->generate_command();
-        case MINUS:
+        case op_minus:
             return left->generate_command() + " - " + right->generate_command();
-        case EQUATION:
+        case op_equation:
             return left->generate_command() + " = " + right->generate_command();
-        case CONST_DECL:
+        case op_const_decl:
             return "const Mixed " + left->generate_command();
-        case VAR_DECL:
+        case op_var_decl:
             return "Mixed " + left->generate_command();
-        case PRINT_F:
+        case op_print:
             return "print(" + left->generate_command() + ")";
-        case INPUT_F:
+        case op_input:
             return "input(" + left->generate_command() + ")";
-        case LIT:
+        case op_literal:
             return "Mixed(" + value + ")";
-        case VAR_NAME:
-        case COMM:
+        case op_variable:
+        case op_comment:
         default:
             return value;
     }
 }
 
 bool Node::check_command(std::unordered_set<std::string>& consts, std::unordered_set<std::string>& vars_defined, std::unordered_set<std::string>& vars_declared, std::array<int, 4>& errors) const {
-    switch (op) {
-        case PLUS:
-        case MINUS:
+    switch (operation) {
+        case op_plus:
+        case op_minus:
             return left->check_command(consts, vars_defined, vars_declared, errors)
                 || right->check_command(consts, vars_defined, vars_declared, errors);
-        case EQUATION: {
+        case op_equation: {
             bool declaration_error = right->check_command(consts, vars_defined, vars_declared, errors);
-            if (left->op == VAR_NAME && consts.find(left->value) != consts.end()) {
+            if (left->operation == op_variable && consts.find(left->value) != consts.end()) {
                 ++errors[3];
                 return true;
             }
-            if (left->op == VAR_NAME)
+            if (left->operation == op_variable)
                 vars_defined.insert(left->value); // not all cases of definition covered
             return left->check_command(consts, vars_defined, vars_declared, errors)
                 || declaration_error;
         }
-        case CONST_DECL:
+        case op_const_decl:
             if (consts.find(left->value) != consts.end()) {
                 ++errors[0];
                 return true;
@@ -63,7 +63,7 @@ bool Node::check_command(std::unordered_set<std::string>& consts, std::unordered
             }
             consts.insert(left->value);
             return false;
-        case VAR_DECL:
+        case op_var_decl:
             if (consts.find(left->value) != consts.end()) {
                 ++errors[0];
                 return true;
@@ -74,18 +74,18 @@ bool Node::check_command(std::unordered_set<std::string>& consts, std::unordered
             }
             vars_declared.insert(left->value);
             return false;
-        case COMMAND:
-        case PRINT_F:
-        case INPUT_F:
+        case op_command:
+        case op_print:
+        case op_input:
             return left->check_command(consts, vars_defined, vars_declared, errors);
-        case VAR_NAME:
+        case op_variable:
             if (consts.find(value) == consts.end() && vars_declared.find(value) == vars_declared.end()) {
                 ++errors[2];
                 return true;
             }
             return false;
-        case LIT:
-        case COMM:
+        case op_literal:
+        case op_comment:
         default:
             return false;
     }

@@ -5,16 +5,17 @@
 #include <string>
 #include <array>
 
-enum OpType {
-    PLUS, MINUS, CONST_DECL, VAR_DECL, EQUATION,
-    PRINT_F, INPUT_F,
-    VAR_NAME, LIT, COMM, COMMAND
+enum OperationType {
+    op_comment, op_command,
+    op_plus, op_minus, op_const_decl, op_var_decl, op_equation,
+    op_print, op_input,
+    op_variable, op_literal
 };
 
 class Node {
 public:
-    Node(const std::string& string, OpType operation = LIT);
-    Node(OpType operation, const Node* l, const Node* r = nullptr, const std::string& val = "");
+    Node(const std::string& string, OperationType op = op_literal);
+    Node(OperationType op, const Node* left_node, const Node* right_node = nullptr, const std::string& val = "");
     std::string generate_command() const;
     bool check_command(std::unordered_set<std::string>& consts, std::unordered_set<std::string>& vars_defined, std::unordered_set<std::string>& vars_declared, std::array<int, 4>& errors) const;
     ~Node();
@@ -22,7 +23,7 @@ private:
     const Node* left;
     const Node* right;
     const std::string value;
-    const OpType op;
+    const OperationType operation;
 };
 
 #endif
