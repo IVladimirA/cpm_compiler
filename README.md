@@ -63,9 +63,9 @@ Flex (Fast Lexical Analyzer Generator) and Bison (parser generator) are being us
     ```
 ## Setup
 Download `cpm_compiler.zip` archive. Files inside:
-    1. `c+-` - compiler from .cpm source to .out executable
-    2. `mixed.h` - mixed type declaration header
-    3. `libmixed.a` - mixed methods definition static library
+1. `c+-` - compiler from .cpm source to .out executable
+2. `mixed.h` - mixed type declaration header
+3. `libmixed.a` - mixed methods definition static library
 
 To use compiler specify the path to source .cpm file and (optionally) destination directory. Note that header and library files required to be in the same location as compiler.
 ```
