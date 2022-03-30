@@ -52,10 +52,10 @@ static int generate_cpp(std::ostream& out_file) {
     out_file << "int main() {";
     int wrong_commands = 0; // Count of commands with errors
     for (const Node* command : code) {
-        if (command->check_command(consts, vars_declared, vars_defined, errors)) {
+        if (command->check_statement(consts, vars_declared, vars_defined, errors)) {
             ++wrong_commands;
         } else
-            out_file << command->generate_command();
+            out_file << command->generate_statement();
         delete command;
     }
     out_file << "\nreturn 0;\n}\n";

@@ -8,25 +8,25 @@ Node::Node(OperationType op, const Node* left_node, const Node* right_node, cons
     : left{left_node}, right{right_node}, value{val}, operation{op} {
 }
 
-// Generate cpp code of command
-std::string Node::generate_command() const {
+// Generate cpp code of statement
+std::string Node::generate_statement() const {
     switch (operation) {
-        case op_command:
-            return "\n" + left->generate_command() + ";";
+        case op_statement:
+            return "\n" + left->generate_statement() + ";";
         case op_addition:
-            return left->generate_command() + " + " + right->generate_command();
+            return left->generate_statement() + " + " + right->generate_statement();
         case op_subtraction:
-            return left->generate_command() + " - " + right->generate_command();
+            return left->generate_statement() + " - " + right->generate_statement();
         case op_equation:
-            return left->generate_command() + " = " + right->generate_command();
+            return left->generate_statement() + " = " + right->generate_statement();
         case op_const_decl:
-            return "const Mixed " + left->generate_command();
+            return "const Mixed " + left->generate_statement();
         case op_var_decl:
-            return "Mixed " + left->generate_command();
+            return "Mixed " + left->generate_statement();
         case op_print:
-            return "print(" + left->generate_command() + ")";
+            return "print(" + left->generate_statement() + ")";
         case op_input:
-            return "input(" + left->generate_command() + ")";
+            return "input(" + left->generate_statement() + ")";
         case op_literal:
             return "Mixed(" + value + ")";
         case op_variable:
@@ -36,15 +36,15 @@ std::string Node::generate_command() const {
     }
 }
 
-// Check presence of command's errors
+// Check presence of statement's errors
 // Also update sets of seen constants and variables
-bool Node::check_command(std::unordered_set<std::string>& consts, std::unordered_set<std::string>& vars_defined,
+bool Node::check_statement(std::unordered_set<std::string>& consts, std::unordered_set<std::string>& vars_defined,
     std::unordered_set<std::string>& vars_declared, std::array<int, 4>& errors) const {
     switch (operation) {
         case op_addition:
         case op_subtraction:
-            return left->check_command(consts, vars_defined, vars_declared, errors)
-                || right->check_command(consts, vars_defined, vars_declared, errors);
+            return left->check_statement(consts, vars_defined, vars_declared, errors)
+                || right->check_statement(consts, vars_defined, vars_declared, errors);
         case op_equation: {
             if (left->operation == op_variable && consts.find(left->value) != consts.end()) {
                 ++errors[3];
@@ -54,13 +54,13 @@ bool Node::check_command(std::unordered_set<std::string>& consts, std::unordered
                 ++errors[2];
                 return true;
             }
-            if (right->check_command(consts, vars_defined, vars_declared, errors))
+            if (right->check_statement(consts, vars_defined, vars_declared, errors))
                 return true;
             if (left->operation == op_variable) {
                 vars_defined.insert(left->value);
                 return false;
             }
-            return left->check_command(consts, vars_defined, vars_declared, errors);
+            return left->check_statement(consts, vars_defined, vars_declared, errors);
         }
         case op_const_decl:
             if (consts.find(left->value) != consts.end()) {
@@ -84,10 +84,10 @@ bool Node::check_command(std::unordered_set<std::string>& consts, std::unordered
             }
             vars_declared.insert(left->value);
             return false;
-        case op_command:
+        case op_statement:
         case op_print:
         case op_input:
-            return left->check_command(consts, vars_defined, vars_declared, errors);
+            return left->check_statement(consts, vars_defined, vars_declared, errors);
         case op_variable:
             if (consts.find(value) == consts.end() && vars_declared.find(value) == vars_declared.end()) {
                 ++errors[2];
