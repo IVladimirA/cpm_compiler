@@ -2,14 +2,19 @@ CXX := g++
 node := src/node/node.h src/node/node.cpp
 mixed := src/mixed/mixed.h src/mixed/mixed.cpp
 library := cpm_compiler/libmixed.a cpm_compiler/mixed.h
-example := examples/subtraction.cpm
+example := examples/a.cpm
 CXXFLAGS+=-std=c++17 -Wall -O2
 
-.PHONY: all clean run pack
+.PHONY: all clean run pack rerun
 
 all: cpm_compiler cpm_compiler/c+- $(library)
 
 run: cpm_compiler out/a.out
+	out/a.out
+
+rerun: cpm_compiler cpm_compiler/c+- $(library)
+	rm -fr out
+	cpm_compiler/c+- $(example)
 	out/a.out
 
 out/a.out: $(example) cpm_compiler/c+- $(library)
@@ -18,7 +23,7 @@ out/a.out: $(example) cpm_compiler/c+- $(library)
 $(library): $(mixed)
 	cp src/mixed/mixed.h cpm_compiler/mixed.h
 	$(CXX) src/mixed/mixed.cpp $(CXXFLAGS) -c -o cpm_compiler/mixed.o
-	ar ru cpm_compiler/libmixed.a cpm_compiler/mixed.o
+	ar r cpm_compiler/libmixed.a cpm_compiler/mixed.o
 	ranlib cpm_compiler/libmixed.a
 	rm -f cpm_compiler/mixed.o
 
@@ -40,5 +45,6 @@ pack: cpm_compiler/c+- $(library)
 	zip cpm_compiler.zip -r cpm_compiler
 
 clean:
-	rm -rf cpm_compiler
 	rm -rf out
+	rm -rf cpm_compiler
+	rm -f src/parser/*.c src/parser/*.h src/parser/*.output
