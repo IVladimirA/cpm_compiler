@@ -104,9 +104,8 @@ Mixed::operator std::string() const {
     }
 }
 
-/* Checks if string numeric */
-/* Return: 0 - nonnumeric, 1 - integer, 2 - floating */
-
+// Checks if string numeric
+// Return codes: 0 - nonnumeric, 1 - integer, 2 - floating
 int is_numeric(const std::string& s) {
     if (s == "" || s == ".")
         return 0;
