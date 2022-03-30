@@ -30,7 +30,7 @@ static void parse_file(const std::string& file_path) {
     infile.close();
 }
 
-static void generate_cpp(std::ostream& outfile) {
+static int generate_cpp(std::ostream& outfile) {
     std::array<int, 4> errors; // stores counts of errors
     errors.fill(0);
     /* 
@@ -47,7 +47,7 @@ static void generate_cpp(std::ostream& outfile) {
     /* Printing code to .cpp file */
 
     outfile << "#include \"../mixed.h\"\n\n";
-    outfile << "int main() {\n";
+    outfile << "int main() {";
     int wrong_commands = 0; // Commands with errors count
     for (const Node* command : code) {
         if (command->check_command(consts, vars_declared, vars_defined, errors)) {
@@ -56,22 +56,24 @@ static void generate_cpp(std::ostream& outfile) {
             outfile << command->generate_command();
         delete command;
     }
-
-    /* Printing error statisitic */
-
     outfile << "\nreturn 0;\n}\n";
-    outfile << "/*\nCommands skipped: " << wrong_commands << "\n";
-    outfile << "Errors:\n";
-    outfile << "Redeclaration of constant: " << errors[0] << "\n";
-    outfile << "Redeclaration of variable: " << errors[1] << "\n";
-    outfile << "Usage of undefined identifier: " << errors[2] << "\n";
-    outfile << "Redifinition of constant: " << errors[3] << "\n*/";
+    if (wrong_commands > 0) {
+        std::cout << "Compilation failed\n";
+        std::cout << "Command(s) with errors: " << wrong_commands << "\n";
+        std::cout << "Redeclaration(s) of constant: " << errors[0] << "\n";
+        std::cout << "Redeclaration(s) of variable: " << errors[1] << "\n";
+        std::cout << "Usage(s) of undefined identifier: " << errors[2] << "\n";
+        std::cout << "Redifinition(s) of constant: " << errors[3] << "\n";
+        return 1;
+    }
+    return 0;
 }
 
-static void write_cpp(const std::string& file_path) {
+static int write_cpp(const std::string& file_path) {
     std::ofstream outfile(file_path);
-    generate_cpp(outfile);
+    const int return_code = generate_cpp(outfile);
     outfile.close();
+    return return_code;
 }
 
 int main(int argc, char** argv) {
@@ -94,9 +96,13 @@ int main(int argc, char** argv) {
 
     parse_file(source_path); // parsing source code
     system(("mkdir -p " + compiler_path + "out").c_str()); // creating "out" directory
-    write_cpp(compiler_path + "out/a.cpp"); // writing transpiled code to .cpp file
-
+    const int return_code = write_cpp(compiler_path + "out/a.cpp"); // writing transpiled code to .cpp file
+    if (return_code != 0) {
+        system(("rm -rf " + compiler_path + "out").c_str());
+        return 1;
+    }
     system(("g++ " + compiler_path + "out/a.cpp " + compiler_path + "libmixed.a -o" + compiler_path + "out/a.out").c_str()); // compiling a.cpp into a.out file
+    std::cout <<  compiler_path << "out/a.out successfully compiled\n";
     system(("mv " + compiler_path + "out " + out_path).c_str()); // moving "out" directory
     return 0;
 }
