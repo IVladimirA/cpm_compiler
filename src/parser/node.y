@@ -39,28 +39,28 @@ Input: Command { code.push_back($1); }
 | Input Command { code.push_back($2); }
 ;
 
-Command: COMMENT { $$ = new Node(*$1, COMM); }
-| Expression COMMAND_END { $$ = new Node(COMMAND, $1); }
-| Declaration OP_EQUATION Expression COMMAND_END { $$ = new Node(COMMAND, new Node(EQUATION, $1, $3)); }
-| Variable OP_EQUATION Expression COMMAND_END { $$ = new Node(COMMAND, new Node(EQUATION, $1, $3)); }
+Command: COMMENT { $$ = new Node(*$1, op_comment); }
+| Expression COMMAND_END { $$ = new Node(op_command, $1); }
+| Declaration OP_EQUATION Expression COMMAND_END { $$ = new Node(op_command, new Node(op_equation, $1, $3)); }
+| Variable OP_EQUATION Expression COMMAND_END { $$ = new Node(op_command, new Node(op_equation, $1, $3)); }
 ;
 
-Expression: Expression OP_PLUS Expression { $$ = new Node(PLUS, $1, $3); }
-| Expression OP_MINUS Expression { $$ = new Node(MINUS, $1, $3); }
+Expression: Expression OP_PLUS Expression { $$ = new Node(op_plus, $1, $3); }
+| Expression OP_MINUS Expression { $$ = new Node(op_minus, $1, $3); }
 | Function { $$ = $1; }
 | Variable { $$ = $1; }
 | Literal {$$ = $1; }
 ;
 
-Function: PRINT LEFT_BRACKET Expression RIGHT_BRACKET { $$ = new Node(PRINT_F, $3); }
-| INPUT LEFT_BRACKET Expression RIGHT_BRACKET { $$ = new Node(INPUT_F, $3); }
+Function: PRINT LEFT_BRACKET Expression RIGHT_BRACKET { $$ = new Node(op_print, $3); }
+| INPUT LEFT_BRACKET Expression RIGHT_BRACKET { $$ = new Node(op_input, $3); }
 ;
 
-Declaration: VAR_D Variable { $$ = new Node(VAR_DECL, $2); }
-| CONST_D Variable { $$ = new Node(CONST_DECL, $2); }
+Declaration: VAR_D Variable { $$ = new Node(op_var_decl, $2); }
+| CONST_D Variable { $$ = new Node(op_const_decl, $2); }
 ;
 
-Variable: VAR { $$ = new Node(*$1, VAR_NAME); }
+Variable: VAR { $$ = new Node(*$1, op_variable); }
 ;
 
 Literal: INT_L { $$ = new Node(*$1); }

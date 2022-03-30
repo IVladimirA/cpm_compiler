@@ -21,47 +21,47 @@ comment ({blank}?"//"[^\n]*)|({blank}?"/*"([^\n]|"\n")*"*/")
 %%
 
 "var" {
-    yylval.name=new std::string(yytext);
+    yylval.name = new std::string(yytext);
     return VAR_D;
 }
 
 "val" {
-    yylval.name=new std::string(yytext);
+    yylval.name = new std::string(yytext);
     return CONST_D;
 }
 
 "print" {
-    yylval.name=new std::string(yytext);
+    yylval.name = new std::string(yytext);
     return PRINT;
 }
 
 "input" {
-    yylval.name=new std::string(yytext);
+    yylval.name = new std::string(yytext);
     return INPUT;
 }
 
 {comment} {
-    yylval.name=new std::string(yytext);
+    yylval.name = new std::string(yytext);
     return COMMENT;
 }
 
 {string} {
-    yylval.name=new std::string(yytext);
+    yylval.name = new std::string(yytext);
     return STRING_L;
 }
 
 {variable} {
-    yylval.name=new std::string(yytext);
+    yylval.name = new std::string(yytext);
     return VAR;
 }
 
 {integer} {
-    yylval.name=new std::string(yytext);
+    yylval.name = new std::string(yytext);
     return INT_L;
 }
 
 {float} {
-    yylval.name=new std::string(yytext);
+    yylval.name = new std::string(yytext);
     return FLOAT_L;
 }
 
