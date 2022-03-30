@@ -35,22 +35,29 @@ std::string Node::generate_command() const {
     }
 }
 
-bool Node::check_command(std::unordered_set<std::string>& consts, std::unordered_set<std::string>& vars_defined, std::unordered_set<std::string>& vars_declared, std::array<int, 4>& errors) const {
+bool Node::check_command(std::unordered_set<std::string>& consts, std::unordered_set<std::string>& vars_defined,
+    std::unordered_set<std::string>& vars_declared, std::array<int, 4>& errors) const {
     switch (operation) {
         case op_plus:
         case op_minus:
             return left->check_command(consts, vars_defined, vars_declared, errors)
                 || right->check_command(consts, vars_defined, vars_declared, errors);
         case op_equation: {
-            bool declaration_error = right->check_command(consts, vars_defined, vars_declared, errors);
             if (left->operation == op_variable && consts.find(left->value) != consts.end()) {
                 ++errors[3];
                 return true;
             }
-            if (left->operation == op_variable)
-                vars_defined.insert(left->value); // not all cases of definition covered
-            return left->check_command(consts, vars_defined, vars_declared, errors)
-                || declaration_error;
+            if (left->operation == op_variable && vars_declared.find(left->value) == vars_declared.end()) {
+                ++errors[2];
+                return true;
+            }
+            if (right->check_command(consts, vars_defined, vars_declared, errors))
+                return true;
+            if (left->operation == op_variable) {
+                vars_defined.insert(left->value);
+                return false;
+            }
+            return left->check_command(consts, vars_defined, vars_declared, errors);
         }
         case op_const_decl:
             if (consts.find(left->value) != consts.end()) {
