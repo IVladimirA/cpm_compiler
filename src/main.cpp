@@ -102,7 +102,10 @@ int main(int argc, char** argv) {
         return 1;
     }
     system(("g++ " + compiler_path + "out/a.cpp " + compiler_path + "libmixed.a -o" + compiler_path + "out/a.out").c_str()); // compiling a.cpp into a.out file
-    std::cout <<  compiler_path << "out/a.out successfully compiled\n";
-    system(("mv " + compiler_path + "out " + out_path).c_str()); // moving "out" directory
-    return 0;
+    std::cout << compiler_path << "out/a.out successfully compiled\n";
+    if (system(("mv " + compiler_path + "out " + out_path).c_str()) == 0) {
+        std::cout << compiler_path << "out successfully moved to " << out_path << "\n";
+        return 0;
+    }
+    std::cout << "Couldn't moved " << compiler_path << "out to " << out_path << "\n";
 }
