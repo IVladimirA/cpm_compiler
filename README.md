@@ -8,7 +8,7 @@ Flex (Fast Lexical Analyzer Generator) and Bison (parser generator) are being us
     3. Addition, subtraction and assignment operators `+`, `-`, `=`
     4. Output function `print()`
     5. Input function `input()`
-    6. Single line and multi-line comments
+    6. Single line and multi-line comments (wasn't specified in task)
 - There are only 3 types of values
     1. Int - 8 byte
     2. String - sequence of characters
@@ -61,35 +61,13 @@ Flex (Fast Lexical Analyzer Generator) and Bison (parser generator) are being us
     Name: Vladimir
     Your name is Vladimir
     ```
-
-
-    
 ## Setup
-Clone repository
-```
-https://github.com/IVladimirA/cpm_compiler.git
-```
-Create `cpm_compiler` folder with compiler and library
-```
-$ make
-```
-Transpile `example/a.cpm` to `out/a.cpp` and then compile to `out/a.out` and run it
-```
-$ make run
-```
-Source file can be changed by changing example path in Makefile
-```
-example := examples/addition.cpm
-```
-All source files and Makefile can be archived
-```
-$ make pack
-```
-All files created after compilation can be deleted
-```
-$ make clean
-```
-Compiler can be used without make, but it requires files from `cpm_compiler` directory and `g++` compiler installed
+Download `cpm_compiler.zip` archive. Files inside:
+    1. `c+-` - compiler from .cpm source to .out executable
+    2. `mixed.h` - mixed type declaration header
+    3. `libmixed.a` - mixed methods definition static library
+
+To use compiler specify the path to source .cpm file and (optionally) destination directory. Note that header and library files required to be in the same location as compiler.
 ```
 $ cpm_compiler/c+- --help
 Usage: cpm_compiler/c+- FILE [DIRECTORY]
@@ -98,55 +76,12 @@ Options:
 Specify the path to .cpm source FILE to create DIRECTORY with a.cpp and a.out files. Directory is "./out" by default.
 ```
 ## Parsing Example
-Running Makefile
 ```
 $ pwd
 /home/vladimir/projects/cpm_compiler
-```
-```
-$ make run
-mkdir -p cpm_compiler
-flex src/parser/node.lex
-mv lex.c src/parser/node.lexer.c
-mv lex.h src/parser/node.lexer.h
-bison -d -v src/parser/node.y -o src/parser/node.tab.c
-g++ src/main.cpp src/node/node.h src/node/node.cpp src/parser/node.lexer.c src/parser/node.tab.c -std=c++17 -Wall -O2 -w -o cpm_compiler/c+-
-cp src/mixed/mixed.h cpm_compiler/mixed.h
-g++ src/mixed/mixed.cpp -std=c++17 -Wall -O2 -fPIC -c -o cpm_compiler/mixed.o
-g++ cpm_compiler/mixed.o -fPIC -shared -o cpm_compiler/libmixed.so
-rm -f cpm_compiler/mixed.o
-cpm_compiler/c+- examples/perimeter.cpm
-out/a.out
-Calculating perimeter of rectangle
-Enter length of one side: 5.5
-Enter length of another side: 123.4
-Perimeter: 5.55.5123.4123.4
-Oops... strings concatenated
-Let's try another time!
-Perimeter: 257.8
-```
-Running `c+-` compiler directly
-```
-$ pwd
-/home/vladimir/projects/cpm_compiler
-```
-```
-$ make
-mkdir -p cpm_compiler
-flex src/parser/node.lex
-mv lex.c src/parser/node.lexer.c
-mv lex.h src/parser/node.lexer.h
-bison -d -v src/parser/node.y -o src/parser/node.tab.c
-g++ src/main.cpp src/node/node.h src/node/node.cpp src/parser/node.lexer.c src/parser/node.tab.c -std=c++17 -Wall -O2 -w -o cpm_compiler/c+-
-cp src/mixed/mixed.h cpm_compiler/mixed.h
-g++ src/mixed/mixed.cpp -std=c++17 -Wall -O2 -fPIC -c -o cpm_compiler/mixed.o
-g++ cpm_compiler/mixed.o -fPIC -shared -o cpm_compiler/libmixed.so
-rm -f cpm_compiler/mixed.o
-```
-```
 $ cpm_compiler/c+- examples/perimeter.cpm
-```
-```
+cpm_compiler/out/a.out successfully compiled
+cpm_compiler/out successfully moved to .
 $ out/a.out
 Calculating perimeter of rectangle
 Enter length of one side: 5.5
@@ -155,28 +90,6 @@ Perimeter: 5.55.5123.4123.4
 Oops... strings concatenated
 Let's try another time!
 Perimeter: 257.8
-```
-Running `c+-` compiler from another location (with source `examples/errors.cpm`)
-```
-$ pwd
-/home/vladimir/projects/cpm_compiler
-$ mkdir ../test
-$ cd ../test
-$ pwd
-/home/vladimir/projects/test
-```
-```
-$ ../cpm_compiler/cpm_compiler/c+- ../cpm_compiler/examples/errors.cpm ./result
-$ ls -R
-.:
-result
-
-./result:
-a.cpp  a.out
-```
-```
-$ result/a.out
-10
 ```
 ### perimeter.cpm source file
 ```
@@ -197,7 +110,6 @@ print("Perimeter: " + answer);
 #include "../mixed.h"
 
 int main() {
-
 print(Mixed("Calculating perimeter of rectangle"));
 const Mixed a = input(Mixed("Enter length of one side: "));
 const Mixed b = input(Mixed("Enter length of another side: "));
@@ -211,27 +123,29 @@ print(Mixed("Let's try another time!"));
 print(Mixed("Perimeter: ") + answer);
 return 0;
 }
-/*
-Commands skipped: 0
-Errors:
-Redeclaration of constant: 0
-Redeclaration of variable: 0
-Usage of undefined identifier: 0
-Redifinition of constant: 0
-*/
 ```
-### a.out execution output
+## Example with errors
 ```
-Calculating perimeter of rectangle
-Enter length of one side: 5.5
-Enter length of another side: 123.4
-Perimeter: 5.55.5123.4123.4
-Oops... strings concatenated
-Let's try another time!
-Perimeter: 257.8
+$ pwd
+/home/vladimir/projects/cpm_compiler
+$ cpm_compiler/c+- examples/errors.cpm
+Compilation failed
+Command(s) with errors: 4
+Redeclaration(s) of constant: 1
+Redeclaration(s) of variable: 0
+Usage(s) of undefined identifier: 2
+Redifinition(s) of constant: 1
 ```
 ## Requirements
 - `g++` >= 9.3.0
 - `flex` >= 2.6.4
 - `bison` >= 3.5.1
 - `make` >= 4.2.1
+
+## Makefile
+Makefile can be used to do the following:
+- `$ make` create cpm_compiler directory and its files
+- `$ make run` compile example and run produced executable, change `$(example)` variale in `Makefile` to try another example
+- `$ make rerun` delete `out` directory and then `make run`
+- `$ make pack` make `cpm_compiler.zip` archive with compiler files
+- `$ make clean` deleta all files except sources. Note that you'll need to generate parser files again using `flex` and `bison`
