@@ -8,6 +8,7 @@ Node::Node(OperationType op, const Node* left_node, const Node* right_node, cons
     : left{left_node}, right{right_node}, value{val}, operation{op} {
 }
 
+// Generate cpp code of command
 std::string Node::generate_command() const {
     switch (operation) {
         case op_command:
@@ -35,6 +36,8 @@ std::string Node::generate_command() const {
     }
 }
 
+// Check presence of command's errors
+// Also update sets of seen constants and variables
 bool Node::check_command(std::unordered_set<std::string>& consts, std::unordered_set<std::string>& vars_defined,
     std::unordered_set<std::string>& vars_declared, std::array<int, 4>& errors) const {
     switch (operation) {
