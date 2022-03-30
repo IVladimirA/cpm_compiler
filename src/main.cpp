@@ -96,8 +96,7 @@ int main(int argc, char** argv) {
     system(("mkdir -p " + compiler_path + "out").c_str()); // creating "out" directory
     write_cpp(compiler_path + "out/a.cpp"); // writing transpiled code to .cpp file
 
-    system(("g++ " + compiler_path + "out/a.cpp " + compiler_path + "libmixed.so -o" + compiler_path + "out/a.out").c_str()); // compiling .cpp into .out file
-    system(("cp -rf " + compiler_path + "out " + out_path).c_str()); // moving "out" directory
-    system(("rm -rf " + compiler_path + "out").c_str());
+    system(("g++ " + compiler_path + "out/a.cpp " + compiler_path + "libmixed.a -o" + compiler_path + "out/a.out").c_str()); // compiling a.cpp into a.out file
+    system(("mv " + compiler_path + "out " + out_path).c_str()); // moving "out" directory
     return 0;
 }
