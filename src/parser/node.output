@@ -1,0 +1,476 @@
+Grammar
+
+    0 $accept: Input $end
+
+    1 Input: Command
+    2      | Input Command
+
+    3 Command: COMMENT
+    4        | Expression COMMAND_END
+    5        | Declaration OP_EQUATION Expression COMMAND_END
+    6        | Variable OP_EQUATION Expression COMMAND_END
+
+    7 Expression: Expression OP_PLUS Expression
+    8           | Expression OP_MINUS Expression
+    9           | Function
+   10           | Variable
+   11           | Literal
+
+   12 Function: PRINT LEFT_BRACKET Expression RIGHT_BRACKET
+   13         | INPUT LEFT_BRACKET Expression RIGHT_BRACKET
+
+   14 Declaration: VAR_D Variable
+   15            | CONST_D Variable
+
+   16 Variable: VAR
+
+   17 Literal: INT_L
+   18        | FLOAT_L
+   19        | STRING_L
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    error (256)
+    VAR <name> (258) 16
+    INT_L <name> (259) 17
+    FLOAT_L <name> (260) 18
+    STRING_L <name> (261) 19
+    COMMENT <name> (262) 3
+    VAR_D (263) 14
+    CONST_D (264) 15
+    OP_PLUS (265) 7
+    OP_MINUS (266) 8
+    OP_EQUATION (267) 5 6
+    COMMAND_END (268) 4 5 6
+    LEFT_BRACKET (269) 12 13
+    RIGHT_BRACKET (270) 12 13
+    PRINT (271) 12
+    INPUT (272) 13
+
+
+Nonterminals, with rules where they appear
+
+    $accept (18)
+        on left: 0
+    Input <node> (19)
+        on left: 1 2
+        on right: 0 2
+    Command <node> (20)
+        on left: 3 4 5 6
+        on right: 1 2
+    Expression <node> (21)
+        on left: 7 8 9 10 11
+        on right: 4 5 6 7 8 12 13
+    Function <node> (22)
+        on left: 12 13
+        on right: 9
+    Declaration <node> (23)
+        on left: 14 15
+        on right: 5
+    Variable <node> (24)
+        on left: 16
+        on right: 6 10 14 15
+    Literal <node> (25)
+        on left: 17 18 19
+        on right: 11
+
+
+State 0
+
+    0 $accept: . Input $end
+
+    VAR       shift, and go to state 1
+    INT_L     shift, and go to state 2
+    FLOAT_L   shift, and go to state 3
+    STRING_L  shift, and go to state 4
+    COMMENT   shift, and go to state 5
+    VAR_D     shift, and go to state 6
+    CONST_D   shift, and go to state 7
+    PRINT     shift, and go to state 8
+    INPUT     shift, and go to state 9
+
+    Input        go to state 10
+    Command      go to state 11
+    Expression   go to state 12
+    Function     go to state 13
+    Declaration  go to state 14
+    Variable     go to state 15
+    Literal      go to state 16
+
+
+State 1
+
+   16 Variable: VAR .
+
+    $default  reduce using rule 16 (Variable)
+
+
+State 2
+
+   17 Literal: INT_L .
+
+    $default  reduce using rule 17 (Literal)
+
+
+State 3
+
+   18 Literal: FLOAT_L .
+
+    $default  reduce using rule 18 (Literal)
+
+
+State 4
+
+   19 Literal: STRING_L .
+
+    $default  reduce using rule 19 (Literal)
+
+
+State 5
+
+    3 Command: COMMENT .
+
+    $default  reduce using rule 3 (Command)
+
+
+State 6
+
+   14 Declaration: VAR_D . Variable
+
+    VAR  shift, and go to state 1
+
+    Variable  go to state 17
+
+
+State 7
+
+   15 Declaration: CONST_D . Variable
+
+    VAR  shift, and go to state 1
+
+    Variable  go to state 18
+
+
+State 8
+
+   12 Function: PRINT . LEFT_BRACKET Expression RIGHT_BRACKET
+
+    LEFT_BRACKET  shift, and go to state 19
+
+
+State 9
+
+   13 Function: INPUT . LEFT_BRACKET Expression RIGHT_BRACKET
+
+    LEFT_BRACKET  shift, and go to state 20
+
+
+State 10
+
+    0 $accept: Input . $end
+    2 Input: Input . Command
+
+    $end      shift, and go to state 21
+    VAR       shift, and go to state 1
+    INT_L     shift, and go to state 2
+    FLOAT_L   shift, and go to state 3
+    STRING_L  shift, and go to state 4
+    COMMENT   shift, and go to state 5
+    VAR_D     shift, and go to state 6
+    CONST_D   shift, and go to state 7
+    PRINT     shift, and go to state 8
+    INPUT     shift, and go to state 9
+
+    Command      go to state 22
+    Expression   go to state 12
+    Function     go to state 13
+    Declaration  go to state 14
+    Variable     go to state 15
+    Literal      go to state 16
+
+
+State 11
+
+    1 Input: Command .
+
+    $default  reduce using rule 1 (Input)
+
+
+State 12
+
+    4 Command: Expression . COMMAND_END
+    7 Expression: Expression . OP_PLUS Expression
+    8           | Expression . OP_MINUS Expression
+
+    OP_PLUS      shift, and go to state 23
+    OP_MINUS     shift, and go to state 24
+    COMMAND_END  shift, and go to state 25
+
+
+State 13
+
+    9 Expression: Function .
+
+    $default  reduce using rule 9 (Expression)
+
+
+State 14
+
+    5 Command: Declaration . OP_EQUATION Expression COMMAND_END
+
+    OP_EQUATION  shift, and go to state 26
+
+
+State 15
+
+    6 Command: Variable . OP_EQUATION Expression COMMAND_END
+   10 Expression: Variable .
+
+    OP_EQUATION  shift, and go to state 27
+
+    $default  reduce using rule 10 (Expression)
+
+
+State 16
+
+   11 Expression: Literal .
+
+    $default  reduce using rule 11 (Expression)
+
+
+State 17
+
+   14 Declaration: VAR_D Variable .
+
+    $default  reduce using rule 14 (Declaration)
+
+
+State 18
+
+   15 Declaration: CONST_D Variable .
+
+    $default  reduce using rule 15 (Declaration)
+
+
+State 19
+
+   12 Function: PRINT LEFT_BRACKET . Expression RIGHT_BRACKET
+
+    VAR       shift, and go to state 1
+    INT_L     shift, and go to state 2
+    FLOAT_L   shift, and go to state 3
+    STRING_L  shift, and go to state 4
+    PRINT     shift, and go to state 8
+    INPUT     shift, and go to state 9
+
+    Expression  go to state 28
+    Function    go to state 13
+    Variable    go to state 29
+    Literal     go to state 16
+
+
+State 20
+
+   13 Function: INPUT LEFT_BRACKET . Expression RIGHT_BRACKET
+
+    VAR       shift, and go to state 1
+    INT_L     shift, and go to state 2
+    FLOAT_L   shift, and go to state 3
+    STRING_L  shift, and go to state 4
+    PRINT     shift, and go to state 8
+    INPUT     shift, and go to state 9
+
+    Expression  go to state 30
+    Function    go to state 13
+    Variable    go to state 29
+    Literal     go to state 16
+
+
+State 21
+
+    0 $accept: Input $end .
+
+    $default  accept
+
+
+State 22
+
+    2 Input: Input Command .
+
+    $default  reduce using rule 2 (Input)
+
+
+State 23
+
+    7 Expression: Expression OP_PLUS . Expression
+
+    VAR       shift, and go to state 1
+    INT_L     shift, and go to state 2
+    FLOAT_L   shift, and go to state 3
+    STRING_L  shift, and go to state 4
+    PRINT     shift, and go to state 8
+    INPUT     shift, and go to state 9
+
+    Expression  go to state 31
+    Function    go to state 13
+    Variable    go to state 29
+    Literal     go to state 16
+
+
+State 24
+
+    8 Expression: Expression OP_MINUS . Expression
+
+    VAR       shift, and go to state 1
+    INT_L     shift, and go to state 2
+    FLOAT_L   shift, and go to state 3
+    STRING_L  shift, and go to state 4
+    PRINT     shift, and go to state 8
+    INPUT     shift, and go to state 9
+
+    Expression  go to state 32
+    Function    go to state 13
+    Variable    go to state 29
+    Literal     go to state 16
+
+
+State 25
+
+    4 Command: Expression COMMAND_END .
+
+    $default  reduce using rule 4 (Command)
+
+
+State 26
+
+    5 Command: Declaration OP_EQUATION . Expression COMMAND_END
+
+    VAR       shift, and go to state 1
+    INT_L     shift, and go to state 2
+    FLOAT_L   shift, and go to state 3
+    STRING_L  shift, and go to state 4
+    PRINT     shift, and go to state 8
+    INPUT     shift, and go to state 9
+
+    Expression  go to state 33
+    Function    go to state 13
+    Variable    go to state 29
+    Literal     go to state 16
+
+
+State 27
+
+    6 Command: Variable OP_EQUATION . Expression COMMAND_END
+
+    VAR       shift, and go to state 1
+    INT_L     shift, and go to state 2
+    FLOAT_L   shift, and go to state 3
+    STRING_L  shift, and go to state 4
+    PRINT     shift, and go to state 8
+    INPUT     shift, and go to state 9
+
+    Expression  go to state 34
+    Function    go to state 13
+    Variable    go to state 29
+    Literal     go to state 16
+
+
+State 28
+
+    7 Expression: Expression . OP_PLUS Expression
+    8           | Expression . OP_MINUS Expression
+   12 Function: PRINT LEFT_BRACKET Expression . RIGHT_BRACKET
+
+    OP_PLUS        shift, and go to state 23
+    OP_MINUS       shift, and go to state 24
+    RIGHT_BRACKET  shift, and go to state 35
+
+
+State 29
+
+   10 Expression: Variable .
+
+    $default  reduce using rule 10 (Expression)
+
+
+State 30
+
+    7 Expression: Expression . OP_PLUS Expression
+    8           | Expression . OP_MINUS Expression
+   13 Function: INPUT LEFT_BRACKET Expression . RIGHT_BRACKET
+
+    OP_PLUS        shift, and go to state 23
+    OP_MINUS       shift, and go to state 24
+    RIGHT_BRACKET  shift, and go to state 36
+
+
+State 31
+
+    7 Expression: Expression . OP_PLUS Expression
+    7           | Expression OP_PLUS Expression .
+    8           | Expression . OP_MINUS Expression
+
+    OP_MINUS  shift, and go to state 24
+
+    $default  reduce using rule 7 (Expression)
+
+
+State 32
+
+    7 Expression: Expression . OP_PLUS Expression
+    8           | Expression . OP_MINUS Expression
+    8           | Expression OP_MINUS Expression .
+
+    $default  reduce using rule 8 (Expression)
+
+
+State 33
+
+    5 Command: Declaration OP_EQUATION Expression . COMMAND_END
+    7 Expression: Expression . OP_PLUS Expression
+    8           | Expression . OP_MINUS Expression
+
+    OP_PLUS      shift, and go to state 23
+    OP_MINUS     shift, and go to state 24
+    COMMAND_END  shift, and go to state 37
+
+
+State 34
+
+    6 Command: Variable OP_EQUATION Expression . COMMAND_END
+    7 Expression: Expression . OP_PLUS Expression
+    8           | Expression . OP_MINUS Expression
+
+    OP_PLUS      shift, and go to state 23
+    OP_MINUS     shift, and go to state 24
+    COMMAND_END  shift, and go to state 38
+
+
+State 35
+
+   12 Function: PRINT LEFT_BRACKET Expression RIGHT_BRACKET .
+
+    $default  reduce using rule 12 (Function)
+
+
+State 36
+
+   13 Function: INPUT LEFT_BRACKET Expression RIGHT_BRACKET .
+
+    $default  reduce using rule 13 (Function)
+
+
+State 37
+
+    5 Command: Declaration OP_EQUATION Expression COMMAND_END .
+
+    $default  reduce using rule 5 (Command)
+
+
+State 38
+
+    6 Command: Variable OP_EQUATION Expression COMMAND_END .
+
+    $default  reduce using rule 6 (Command)

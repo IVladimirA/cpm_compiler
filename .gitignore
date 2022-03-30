@@ -1,6 +1,1 @@
-cpm_compiler
 out
-cpm_compiler.zip
-src/parser/*.c
-src/parser/*.h
-src/parser/*.output
