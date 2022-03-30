@@ -3,7 +3,7 @@
 
 #include <string>
 
-enum MixedType { INT, FLOAT, STR, UNDEF };
+enum DataType { dt_int, dt_float, dt_string, dt_undef };
 
 class Mixed {
 public:
@@ -16,10 +16,10 @@ public:
     friend Mixed operator-(const Mixed& m1, const Mixed& m2);
     operator std::string() const;
 private:
-    MixedType type;
+    DataType type;
     long long int integer;
     double floating;
-    std::string str;
+    std::string string;
 };
 
 int is_numeric(const std::string& s);
