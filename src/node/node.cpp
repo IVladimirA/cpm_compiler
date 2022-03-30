@@ -13,9 +13,9 @@ std::string Node::generate_command() const {
     switch (operation) {
         case op_command:
             return "\n" + left->generate_command() + ";";
-        case op_plus:
+        case op_addition:
             return left->generate_command() + " + " + right->generate_command();
-        case op_minus:
+        case op_subtraction:
             return left->generate_command() + " - " + right->generate_command();
         case op_equation:
             return left->generate_command() + " = " + right->generate_command();
@@ -41,8 +41,8 @@ std::string Node::generate_command() const {
 bool Node::check_command(std::unordered_set<std::string>& consts, std::unordered_set<std::string>& vars_defined,
     std::unordered_set<std::string>& vars_declared, std::array<int, 4>& errors) const {
     switch (operation) {
-        case op_plus:
-        case op_minus:
+        case op_addition:
+        case op_subtraction:
             return left->check_command(consts, vars_defined, vars_declared, errors)
                 || right->check_command(consts, vars_defined, vars_declared, errors);
         case op_equation: {

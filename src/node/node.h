@@ -7,7 +7,7 @@
 
 enum OperationType {
     op_comment, op_command,
-    op_plus, op_minus, op_const_decl, op_var_decl, op_equation,
+    op_addition, op_subtraction, op_const_decl, op_var_decl, op_equation,
     op_print, op_input,
     op_variable, op_literal
 };
