@@ -61,6 +61,9 @@ Flex (Fast Lexical Analyzer Generator) and Bison (parser generator) are being us
     Name: Vladimir
     Your name is Vladimir
     ```
+## Requirements
+- `Ubuntu` >= 18
+- `g++` >= 9.3.0
 ## Setup
 Download `cpm_compiler.zip` archive. Files inside:
 1. `c+-` - compiler from .cpm source to .out executable
@@ -136,11 +139,6 @@ Redeclaration(s) of variable: 0
 Usage(s) of undefined identifier: 2
 Redifinition(s) of constant: 1
 ```
-## Requirements
-- `g++` >= 9.3.0
-- `flex` >= 2.6.4
-- `bison` >= 3.5.1
-- `make` >= 4.2.1
 
 ## Makefile
 Makefile can be used to do the following:
@@ -148,4 +146,4 @@ Makefile can be used to do the following:
 - `$ make run` compile example and run produced executable, change `$(example)` variale in `Makefile` to try another example
 - `$ make rerun` delete `out` directory and then `make run`
 - `$ make pack` make `cpm_compiler.zip` archive with compiler files
-- `$ make clean` deleta all files except sources. Note that you'll need to generate parser files again using `flex` and `bison`
+- `$ make clean` delete all files except sources. Note that you'll need to generate parser files again using `flex` >= 2.6.4 and `bison` >= 3.5.1
