@@ -3,7 +3,12 @@
 
 #include <string>
 
-enum DataType { dt_int, dt_float, dt_string, dt_undef };
+enum DataType {
+    dt_int,
+    dt_float,
+    dt_string,
+    dt_undef
+};
 
 class Mixed {
 public:
