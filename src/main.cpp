@@ -50,10 +50,10 @@ static int generate_cpp(std::ostream& out_file) {
     // Error checking, code generating and writing
     out_file << "#include \"../mixed.h\"\n\n";
     out_file << "int main() {";
-    int wrong_commands = 0; // Count of commands with errors
+    int wrong_statements = 0; // Number of statements with errors
     for (const Node* command : code) {
         if (command->check_statement(consts, vars_declared, vars_defined, errors)) {
-            ++wrong_commands;
+            ++wrong_statements;
         } else
             out_file << command->generate_statement();
         delete command;
@@ -61,9 +61,9 @@ static int generate_cpp(std::ostream& out_file) {
     out_file << "\nreturn 0;\n}\n";
 
     // Output of failure message
-    if (wrong_commands > 0) {
+    if (wrong_statements > 0) {
         std::cout << "Compilation failed"
-            << "\nCommand(s) with errors: " << wrong_commands
+            << "\nCommand(s) with errors: " << wrong_statements
             << "\nRedeclaration(s) of constant: " << errors[0]
             << "\nRedeclaration(s) of variable: " << errors[1]
             << "\nUsage(s) of undefined identifier: " << errors[2]

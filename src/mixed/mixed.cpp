@@ -91,16 +91,17 @@ Mixed operator-(const Mixed& m1, const Mixed& m2) {
 
 Mixed::operator std::string() const {
     switch (type) {
-        default:
-            return string;
         case dt_int:
             return std::to_string(integer);
-        case dt_float:
+        case dt_float: {
             std::string str_float = std::to_string(floating);
             str_float.erase(str_float.find_last_not_of('0') + 1, std::string::npos);
             if (str_float.back() == '.')
                 str_float.push_back('0');
             return str_float;
+        }
+        default:
+            return string;
     }
 }
 

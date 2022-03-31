@@ -38,8 +38,11 @@ std::string Node::generate_statement() const {
 
 // Check presence of statement's errors
 // Also update sets of seen constants and variables
-bool Node::check_statement(std::unordered_set<std::string>& consts, std::unordered_set<std::string>& vars_defined,
-    std::unordered_set<std::string>& vars_declared, std::array<int, 4>& errors) const {
+bool Node::check_statement(
+    std::unordered_set<std::string>& consts,
+    std::unordered_set<std::string>& vars_defined,
+    std::unordered_set<std::string>& vars_declared,
+    std::array<int, 4>& errors) const {
     switch (operation) {
         case op_addition:
         case op_subtraction:
