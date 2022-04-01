@@ -12,7 +12,7 @@ enum OperationType {
     op_subtraction,
     op_const_decl,
     op_var_decl,
-    op_equation,
+    op_assignment,
     op_print,
     op_input,
     op_variable,

@@ -17,7 +17,7 @@ std::string Node::generate_statement() const {
             return left->generate_statement() + " + " + right->generate_statement();
         case op_subtraction:
             return left->generate_statement() + " - " + right->generate_statement();
-        case op_equation:
+        case op_assignment:
             return left->generate_statement() + " = " + right->generate_statement();
         case op_const_decl:
             return "const Mixed " + left->generate_statement();
@@ -48,7 +48,7 @@ bool Node::check_statement(
         case op_subtraction:
             return left->check_statement(consts, vars_defined, vars_declared, errors)
                 || right->check_statement(consts, vars_defined, vars_declared, errors);
-        case op_equation: {
+        case op_assignment: {
             if (left->operation == op_variable && consts.find(left->value) != consts.end()) {
                 ++errors[3];
                 return true;

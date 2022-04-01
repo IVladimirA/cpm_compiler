@@ -44,8 +44,8 @@ Statement: t_comment { $$ = new Node(*$1, op_comment); }
 
 Command: Expression { $$ = $1; }
 | t_print t_left_bracket Expression t_right_bracket { $$ = new Node(op_print, $3); }
-| Declaration t_equals Expression { $$ = new Node(op_equation, $1, $3); }
-| Variable t_equals Expression { $$ = new Node(op_equation, $1, $3); }
+| Declaration t_equals Expression { $$ = new Node(op_assignment, $1, $3); }
+| Variable t_equals Expression { $$ = new Node(op_assignment, $1, $3); }
 ;
 
 Expression: Expression t_plus Expression { $$ = new Node(op_addition, $1, $3); }

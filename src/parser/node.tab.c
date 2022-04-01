@@ -1386,13 +1386,13 @@ yyreduce:
 
   case 8:
 #line 47 "src/parser/node.y"
-                                  { (yyval.node) = new Node(op_equation, (yyvsp[-2].node), (yyvsp[0].node)); }
+                                  { (yyval.node) = new Node(op_assignment, (yyvsp[-2].node), (yyvsp[0].node)); }
 #line 1391 "src/parser/node.tab.c"
     break;
 
   case 9:
 #line 48 "src/parser/node.y"
-                               { (yyval.node) = new Node(op_equation, (yyvsp[-2].node), (yyvsp[0].node)); }
+                               { (yyval.node) = new Node(op_assignment, (yyvsp[-2].node), (yyvsp[0].node)); }
 #line 1397 "src/parser/node.tab.c"
     break;
 
