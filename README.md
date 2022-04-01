@@ -3,12 +3,12 @@
 Flex (Fast Lexical Analyzer Generator) and Bison (parser generator) are being used to parse C+- toy language source file `.cpm` and create abstract syntax tree (AST). Then corresponding C++ file `.cpp` is generated and compiled into executable.
 ## C+- description
 - C+- consists only of
-    1. Variables `var a;` and constants `val b`
+    1. Variables `var a;` and constants `val b;`
     2. Numeric and string literals (`43`, `12.3`, `"my string"`, etc)
     3. Addition, subtraction and assignment operators `+`, `-`, `=`
     4. Output function `print()`
     5. Input function `input()`
-    6. Single line and multi-line comments (wasn't specified in task)
+    6. Single line and multi-line comments (wasn't specified in the task)
 - There are only 3 types of values
     1. Int - 8 byte
     2. String - sequence of characters
@@ -21,9 +21,9 @@ Flex (Fast Lexical Analyzer Generator) and Bison (parser generator) are being us
         a = 34.5;
         ```
     2. Operators follow rules (order of arguments doesn't matter)
-        - String + Int/Float: Numeric converts to string
-        - String - Int/Float: String converts to Int/Float, if it's not possible String value considered to be `0`
-        - Int/Float + Int/Float: Int converts to Float if necessary
+        - String + Int/Float: Numeric is converted to string
+        - String - Int/Float: String is converted to Int/Float, if it's not possible String value considered to be `0`
+        - Int/Float + Int/Float: Integer is converted to Float if necessary
 - Code example
     ```
     var str = "Hello"; // variable declared using var
@@ -70,7 +70,7 @@ Download `cpm_compiler.zip` archive. Files inside:
 2. `mixed.h` - mixed type declaration header
 3. `libmixed.a` - mixed methods definition static library
 
-To use compiler specify the path to source .cpm file and (optionally) destination directory. Note that header and library files required to be in the same location as compiler.
+To use the compiler specify the path to source .cpm file and (optionally) destination directory. Note that header and library files are required to be in the same location as compiler. Created directory contains both transpiled `a.cpp` and compiled `a.out` files.
 ```
 $ cpm_compiler/c+- --help
 Usage: cpm_compiler/c+- FILE [DIRECTORY]
@@ -144,6 +144,6 @@ Redifinition(s) of constant: 1
 Makefile can be used to do the following:
 - `$ make` create cpm_compiler directory and its files
 - `$ make run` compile example and run produced executable, change `$(example)` variale in `Makefile` to try another example
-- `$ make rerun` delete `out` directory and then `make run`
+- `$ make rerun` delete `out` directory and then execute `make run`
 - `$ make pack` make `cpm_compiler.zip` archive with compiler files
 - `$ make clean` delete all files except sources. Note that you'll need to generate parser files again using `flex` >= 2.6.4 and `bison` >= 3.5.1
