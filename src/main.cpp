@@ -37,6 +37,9 @@ static void parse_file(const std::string& file_path) {
 static int generate_cpp(std::ostream& out_file) {
     std::array<int, 4> errors; // Stores counts of errors
     errors.fill(0);
+    // Такой способ не очень хорош.
+    // Все же лучше было бы выводить конкретные ошибки, а не их количество
+    // тогда для пользователя это было бы в разы удобнее.
     // 0 - redeclaration of constant
     // 1 - redeclaration of variable
     // 2 - usage of undefined identifier
@@ -52,6 +55,9 @@ static int generate_cpp(std::ostream& out_file) {
     out_file << "int main() {";
     int wrong_statements = 0; // Number of statements with errors
     for (const Node* command : code) {
+        // Вот здесь анализатор дает такую ошибку:
+        // Arguments passed in possibly wrong order. Review following parameters and
+        // their corresponding arguments: vars_defined(vars_declared), vars_declared(vars_defined)
         if (command->check_statement(consts, vars_declared, vars_defined, errors)) {
             ++wrong_statements;
         } else
@@ -109,8 +115,11 @@ int main(int argc, char** argv) {
 
     // Compiling a.cpp into a.out file
     system(("g++ " + compiler_path + "out/a.cpp " + compiler_path + "libmixed.a -o" + compiler_path + "out/a.out").c_str());
+    // Вот это сообщение выводиться почему-то даже при синтаксической ошибке, что выглядит странно.
     std::cout << compiler_path << "out/a.out successfully compiled\n";
 
+    // Вот это перемещение немного смещает, я запускал компилятор напрямую и каждый раз
+    // приходилось чистить папку. Мне кажется это нужно пофиксить.
     // Moving out directory to destination location
     if (system(("mv " + compiler_path + "out " + out_path).c_str()) == 0) {
         std::cout << compiler_path << "out successfully moved to " << out_path << "\n";

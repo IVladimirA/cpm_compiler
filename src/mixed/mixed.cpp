@@ -105,6 +105,8 @@ Mixed::operator std::string() const {
     }
 }
 
+// Здесь как мне кажется лучше было ввести перечисление, чтобы избежать
+// магических чисел.
 // Checks if string numeric
 // Return codes: 0 - nonnumeric, 1 - integer, 2 - floating
 int is_numeric(const std::string& s) {
