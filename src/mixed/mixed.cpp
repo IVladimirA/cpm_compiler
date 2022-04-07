@@ -50,10 +50,10 @@ Mixed operator-(const Mixed& m1, const Mixed& m2) {
     switch (m1.type) {
         case dt_string:
             switch(is_numeric(m1.string)) {
-                case 1:
+                case str_int:
                     left = Mixed(std::stoll(m1.string));
                     break;
-                case 2:
+                case str_float:
                     left = Mixed(std::stod(m1.string));
                     break;
                 default:
@@ -67,10 +67,10 @@ Mixed operator-(const Mixed& m1, const Mixed& m2) {
     switch (m2.type) {
         case dt_string:
             switch(is_numeric(m2.string)) {
-                case 1:
+                case str_int:
                     right = Mixed(-std::stoll(m2.string));
                     break;
-                case 2:
+                case str_float:
                     right = Mixed(-std::stod(m2.string));
                     break;
                 default:
@@ -106,23 +106,22 @@ Mixed::operator std::string() const {
 }
 
 // Checks if string numeric
-// Return codes: 0 - nonnumeric, 1 - integer, 2 - floating
-int is_numeric(const std::string& s) {
+StringType is_numeric(const std::string& s) {
     if (s == "" || s == ".")
-        return 0;
+        return str_nonnumeric;
     bool point = false;
     for (const char& c : s) {
         if (!std::isdigit(c) && c != '.')
-            return 0;
+            return str_nonnumeric;
         else if (c == '.') {
             if (point)
-                return 0;
+                return str_nonnumeric;
             point = true;
         }
     }
     if (point)
-        return 2;
-    return 1;
+        return str_float;
+    return str_int;
 }
 
 void print(const Mixed& m) {

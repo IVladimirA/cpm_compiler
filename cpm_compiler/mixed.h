@@ -10,6 +10,13 @@ enum DataType {
     dt_undef
 };
 
+// Used as return value when checking string type
+enum StringType {
+    str_int,
+    str_float,
+    str_nonnumeric
+};
+
 class Mixed {
 public:
     Mixed();
@@ -27,7 +34,7 @@ private:
     std::string string;
 };
 
-int is_numeric(const std::string& s);
+StringType is_numeric(const std::string& s);
 void print(const Mixed& m);
 Mixed input(const Mixed& m);
 
