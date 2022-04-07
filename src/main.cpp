@@ -52,7 +52,7 @@ static int generate_cpp(std::ostream& out_file) {
     out_file << "int main() {";
     int wrong_statements = 0; // Number of statements with errors
     for (const Node* command : code) {
-        if (command->check_statement(consts, vars_declared, vars_defined, errors)) {
+        if (command->check_statement(consts, vars_defined, vars_declared, errors)) {
             ++wrong_statements;
         } else
             out_file << command->generate_statement();
@@ -108,9 +108,15 @@ int main(int argc, char** argv) {
     }
 
     // Compiling a.cpp into a.out file
-    system(("g++ " + compiler_path + "out/a.cpp " + compiler_path + "libmixed.a -o" + compiler_path + "out/a.out").c_str());
+    if (system(("g++ " + compiler_path + "out/a.cpp " + compiler_path + "libmixed.a -o" + compiler_path + "out/a.out").c_str()) != 0) {
+        system(("rm -rf " + compiler_path + "out").c_str());
+        std::cout << "Compilation failed of a.cpp failed\n";
+        return 1;
+    }
     std::cout << compiler_path << "out/a.out successfully compiled\n";
-
+    if (out_path + "/" == compiler_path) {
+        return 0;
+    }
     // Moving out directory to destination location
     if (system(("mv " + compiler_path + "out " + out_path).c_str()) == 0) {
         std::cout << compiler_path << "out successfully moved to " << out_path << "\n";
