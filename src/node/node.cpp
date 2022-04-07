@@ -42,7 +42,7 @@ bool Node::check_statement(
     std::unordered_set<std::string>& consts,
     std::unordered_set<std::string>& vars_defined,
     std::unordered_set<std::string>& vars_declared,
-    std::array<int, 4>& errors) const {
+    std::vector<const Error*>& errors) const {
     switch (operation) {
         case op_addition:
         case op_subtraction:
@@ -50,39 +50,39 @@ bool Node::check_statement(
                 || right->check_statement(consts, vars_defined, vars_declared, errors);
         case op_assignment: {
             if (left->operation == op_variable && consts.find(left->value) != consts.end()) {
-                ++errors[3];
+                errors.push_back(new ConstantRedefinition({left->value}));
                 return true;
             }
             if (left->operation == op_variable && vars_declared.find(left->value) == vars_declared.end()) {
-                ++errors[2];
+                errors.push_back(new UndeclaredIdentifier({left->value}));
                 return true;
             }
             if (right->check_statement(consts, vars_defined, vars_declared, errors))
                 return true;
             if (left->operation == op_variable) {
-                vars_defined.insert(left->value);
+                vars_defined.insert({left->value});
                 return false;
             }
             return left->check_statement(consts, vars_defined, vars_declared, errors);
         }
         case op_const_decl:
             if (consts.find(left->value) != consts.end()) {
-                ++errors[0];
+                errors.push_back(new ConstantRedeclaration({left->value}));
                 return true;
             }
             if (vars_declared.find(left->value) != vars_declared.end()) {
-                ++errors[1];
+                errors.push_back(new VariableRedeclaration({left->value}));
                 return true;
             }
             consts.insert(left->value);
             return false;
         case op_var_decl:
             if (consts.find(left->value) != consts.end()) {
-                ++errors[0];
+                errors.push_back(new ConstantRedeclaration({left->value}));
                 return true;
             }
             if (vars_declared.find(left->value) != vars_declared.end()) {
-                ++errors[1];
+                errors.push_back(new VariableRedeclaration({left->value}));
                 return true;
             }
             vars_declared.insert(left->value);
@@ -93,7 +93,7 @@ bool Node::check_statement(
             return left->check_statement(consts, vars_defined, vars_declared, errors);
         case op_variable:
             if (consts.find(value) == consts.end() && vars_declared.find(value) == vars_declared.end()) {
-                ++errors[2];
+                errors.push_back(new UndeclaredIdentifier({value}));
                 return true;
             }
             return false;

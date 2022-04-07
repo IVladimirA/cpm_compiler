@@ -2,8 +2,8 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
-#include <array>
 #include "node/node.h"
+#include "error/error.h"
 #include "parser/node.tab.h"
 #include "parser/node.lexer.h"
 
@@ -35,14 +35,7 @@ static void parse_file(const std::string& file_path) {
 
 // Generate code and write it to .cpp file
 static int generate_cpp(std::ostream& out_file) {
-    std::array<int, 4> errors; // Stores counts of errors
-    errors.fill(0);
-    // 0 - redeclaration of constant
-    // 1 - redeclaration of variable
-    // 2 - usage of undefined identifier
-    // 3 - redifinition of constant
-    
-    
+    std::vector<const Error*> errors;
     std::unordered_set<std::string> consts; // Identifiers of defined constants
     std::unordered_set<std::string> vars_defined; // Identifiers of defined variables
     std::unordered_set<std::string> vars_declared; // Identifiers of declared variables
@@ -62,12 +55,11 @@ static int generate_cpp(std::ostream& out_file) {
 
     // Output of failure message
     if (wrong_statements > 0) {
-        std::cout << "Compilation failed"
-            << "\nCommand(s) with errors: " << wrong_statements
-            << "\nRedeclaration(s) of constant: " << errors[0]
-            << "\nRedeclaration(s) of variable: " << errors[1]
-            << "\nUsage(s) of undefined identifier: " << errors[2]
-            << "\nRedifinition(s) of constant: " << errors[3] << "\n";
+        std::cout << "Compilation failed\nCommand(s) with errors: " << wrong_statements << "\n";
+        for (const Error* e: errors) {
+            std::cout << "Error: " << e->create_message() << "\n";
+            delete e;
+        }
         return 1;
     }
     return 0;

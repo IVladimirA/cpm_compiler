@@ -2,8 +2,7 @@
 #define CPM_COMPILER_NODE_NODE_H_
 
 #include <unordered_set>
-#include <string>
-#include <array>
+#include "../error/error.h"
 
 enum OperationType {
     op_statement,
@@ -28,7 +27,7 @@ public:
         std::unordered_set<std::string>& consts,
         std::unordered_set<std::string>& vars_defined,
         std::unordered_set<std::string>& vars_declared,
-        std::array<int, 4>& errors) const;
+        std::vector<const Error*>& errors) const;
     ~Node();
 private:
     const Node* left;
