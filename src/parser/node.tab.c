@@ -1362,13 +1362,13 @@ yyreduce:
 
   case 4:
 #line 41 "src/parser/node.y"
-                     { (yyval.node) = new Node(*(yyvsp[0].name), op_comment); }
+                     { (yyval.node) = new Comment(*(yyvsp[0].name)); }
 #line 1367 "src/parser/node.tab.c"
     break;
 
   case 5:
 #line 42 "src/parser/node.y"
-                           { (yyval.node) = new Node(op_statement, (yyvsp[-1].node)); }
+                           { (yyval.node) = new Statement((yyvsp[-1].node)); }
 #line 1373 "src/parser/node.tab.c"
     break;
 
@@ -1380,37 +1380,37 @@ yyreduce:
 
   case 7:
 #line 46 "src/parser/node.y"
-                                                    { (yyval.node) = new Node(op_print, (yyvsp[-1].node)); }
+                                                    { (yyval.node) = new UnaryArgFunction(un_f_print, (yyvsp[-1].node)); }
 #line 1385 "src/parser/node.tab.c"
     break;
 
   case 8:
 #line 47 "src/parser/node.y"
-                                  { (yyval.node) = new Node(op_assignment, (yyvsp[-2].node), (yyvsp[0].node)); }
+                                  { (yyval.node) = new BinaryOperation(assignment_op, (yyvsp[-2].node), (yyvsp[0].node)); }
 #line 1391 "src/parser/node.tab.c"
     break;
 
   case 9:
 #line 48 "src/parser/node.y"
-                               { (yyval.node) = new Node(op_assignment, (yyvsp[-2].node), (yyvsp[0].node)); }
+                               { (yyval.node) = new BinaryOperation(assignment_op, (yyvsp[-2].node), (yyvsp[0].node)); }
 #line 1397 "src/parser/node.tab.c"
     break;
 
   case 10:
 #line 51 "src/parser/node.y"
-                                         { (yyval.node) = new Node(op_addition, (yyvsp[-2].node), (yyvsp[0].node)); }
+                                         { (yyval.node) = new BinaryOperation(addition_op, (yyvsp[-2].node), (yyvsp[0].node)); }
 #line 1403 "src/parser/node.tab.c"
     break;
 
   case 11:
 #line 52 "src/parser/node.y"
-                                { (yyval.node) = new Node(op_subtraction, (yyvsp[-2].node), (yyvsp[0].node)); }
+                                { (yyval.node) = new BinaryOperation(subtraction_op, (yyvsp[-2].node), (yyvsp[0].node)); }
 #line 1409 "src/parser/node.tab.c"
     break;
 
   case 12:
 #line 53 "src/parser/node.y"
-                                                    { (yyval.node) = new Node(op_input, (yyvsp[-1].node)); }
+                                                    { (yyval.node) = new UnaryArgFunction(un_f_input, (yyvsp[-1].node)); }
 #line 1415 "src/parser/node.tab.c"
     break;
 
@@ -1428,37 +1428,37 @@ yyreduce:
 
   case 15:
 #line 58 "src/parser/node.y"
-                                             { (yyval.node) = new Node(op_var_decl, (yyvsp[0].node)); }
+                                             { (yyval.node) = new Declaration(var_decl, (yyvsp[0].node)); }
 #line 1433 "src/parser/node.tab.c"
     break;
 
   case 16:
 #line 59 "src/parser/node.y"
-                                  { (yyval.node) = new Node(op_const_decl, (yyvsp[0].node)); }
+                                  { (yyval.node) = new Declaration(const_decl, (yyvsp[0].node)); }
 #line 1439 "src/parser/node.tab.c"
     break;
 
   case 17:
 #line 62 "src/parser/node.y"
-                     { (yyval.node) = new Node(*(yyvsp[0].name), op_variable); }
+                     { (yyval.node) = new Identifier(*(yyvsp[0].name)); }
 #line 1445 "src/parser/node.tab.c"
     break;
 
   case 18:
 #line 65 "src/parser/node.y"
-                           { (yyval.node) = new Node(*(yyvsp[0].name)); }
+                           { (yyval.node) = new Literal(*(yyvsp[0].name)); }
 #line 1451 "src/parser/node.tab.c"
     break;
 
   case 19:
 #line 66 "src/parser/node.y"
-                  { (yyval.node) = new Node(*(yyvsp[0].name)); }
+                  { (yyval.node) = new Literal(*(yyvsp[0].name)); }
 #line 1457 "src/parser/node.tab.c"
     break;
 
   case 20:
 #line 67 "src/parser/node.y"
-                   { (yyval.node) = new Node(*(yyvsp[0].name)); }
+                   { (yyval.node) = new Literal(*(yyvsp[0].name)); }
 #line 1463 "src/parser/node.tab.c"
     break;
 

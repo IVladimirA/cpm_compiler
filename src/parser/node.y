@@ -38,33 +38,33 @@ Input: Statement { code.push_back($1); }
 | Input Statement { code.push_back($2); }
 ;
 
-Statement: t_comment { $$ = new Node(*$1, op_comment); }
-| Command t_command_ending { $$ = new Node(op_statement, $1); }
+Statement: t_comment { $$ = new Comment(*$1); }
+| Command t_command_ending { $$ = new Statement($1); }
 ;
 
 Command: Expression { $$ = $1; }
-| t_print t_left_bracket Expression t_right_bracket { $$ = new Node(op_print, $3); }
-| Declaration t_equals Expression { $$ = new Node(op_assignment, $1, $3); }
-| Variable t_equals Expression { $$ = new Node(op_assignment, $1, $3); }
+| t_print t_left_bracket Expression t_right_bracket { $$ = new UnaryArgFunction(un_f_print, $3); }
+| Declaration t_equals Expression { $$ = new BinaryOperation(assignment_op, $1, $3); }
+| Variable t_equals Expression { $$ = new BinaryOperation(assignment_op, $1, $3); }
 ;
 
-Expression: Expression t_plus Expression { $$ = new Node(op_addition, $1, $3); }
-| Expression t_minus Expression { $$ = new Node(op_subtraction, $1, $3); }
-| t_input t_left_bracket Expression t_right_bracket { $$ = new Node(op_input, $3); }
+Expression: Expression t_plus Expression { $$ = new BinaryOperation(addition_op, $1, $3); }
+| Expression t_minus Expression { $$ = new BinaryOperation(subtraction_op, $1, $3); }
+| t_input t_left_bracket Expression t_right_bracket { $$ = new UnaryArgFunction(un_f_input, $3); }
 | Variable { $$ = $1; }
 | Literal { $$ = $1; }
 ;
 
-Declaration: t_variable_declaration Variable { $$ = new Node(op_var_decl, $2); }
-| t_constant_declaration Variable { $$ = new Node(op_const_decl, $2); }
+Declaration: t_variable_declaration Variable { $$ = new Declaration(var_decl, $2); }
+| t_constant_declaration Variable { $$ = new Declaration(const_decl, $2); }
 ;
 
-Variable: t_variable { $$ = new Node(*$1, op_variable); }
+Variable: t_variable { $$ = new Identifier(*$1); }
 ;
 
-Literal: t_integer_literal { $$ = new Node(*$1); }
-| t_float_literal { $$ = new Node(*$1); }
-| t_string_literal { $$ = new Node(*$1); }
+Literal: t_integer_literal { $$ = new Literal(*$1); }
+| t_float_literal { $$ = new Literal(*$1); }
+| t_string_literal { $$ = new Literal(*$1); }
 ;
 
 %%
