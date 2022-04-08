@@ -6,6 +6,7 @@
 #include "error/error.h"
 #include "parser/node.tab.h"
 #include "parser/node.lexer.h"
+#include "visitor/visitor.h"
 
 // Program's parsed commands
 extern std::vector<const Node*> code;
@@ -35,6 +36,7 @@ static void parse_file(const std::string& file_path) {
 
 // Generate code and write it to .cpp file
 static int generate_cpp(std::ostream& out_file) {
+    bool seen_error = false;
     std::vector<const Error*> errors;
     std::unordered_set<std::string> consts; // Identifiers of defined constants
     std::unordered_set<std::string> vars_defined; // Identifiers of defined variables
@@ -43,23 +45,34 @@ static int generate_cpp(std::ostream& out_file) {
     // Error checking, code generating and writing
     out_file << "#include \"../mixed.h\"\n\n";
     out_file << "int main() {";
+    
     int wrong_statements = 0; // Number of statements with errors
+    std::string* current_line = new std::string("");
+    CodeGenerator writer = CodeGenerator(current_line);
+    CodeChecker checker = CodeChecker(&errors, &consts, &vars_declared, &vars_defined);
     for (const Node* command : code) {
-        if (command->check_statement(consts, vars_defined, vars_declared, errors)) {
-            ++wrong_statements;
-        } else
-            out_file << command->generate_statement();
+        command->accept(checker);
+        command->accept(writer);
+        if (errors.size() > 0) {
+            seen_error = true;
+            for (const Error* e : errors) {
+                std::cout << "Error: " << e->get_message() << "\n";
+                delete e;
+            }
+            std::cout << "In command:";
+            std::cout << *current_line << "\n";
+        }
+        errors.clear();
+        out_file << *current_line;
+        std::string* old_line = current_line;
+        current_line = new std::string("");
+        delete old_line;
+        writer.update_string(current_line);
         delete command;
     }
     out_file << "\nreturn 0;\n}\n";
-
-    // Output of failure message
-    if (wrong_statements > 0) {
-        std::cout << "Compilation failed\nCommand(s) with errors: " << wrong_statements << "\n";
-        for (const Error* e: errors) {
-            std::cout << "Error: " << e->create_message() << "\n";
-            delete e;
-        }
+    delete current_line;
+    if (seen_error) {
         return 1;
     }
     return 0;
@@ -96,13 +109,14 @@ int main(int argc, char** argv) {
     const int return_code = write_cpp(compiler_path + "out/a.cpp"); // Writing transpiled code to .cpp file
     if (return_code != 0) {
         system(("rm -rf " + compiler_path + "out").c_str());
+        std::cout << "Compilation of " << source_path << " failed\n";
         return 1;
     }
 
     // Compiling a.cpp into a.out file
     if (system(("g++ " + compiler_path + "out/a.cpp " + compiler_path + "libmixed.a -o" + compiler_path + "out/a.out").c_str()) != 0) {
-        system(("rm -rf " + compiler_path + "out").c_str());
-        std::cout << "Compilation failed of a.cpp failed\n";
+        //system(("rm -rf " + compiler_path + "out").c_str());
+        std::cout << "Compilation of a.cpp failed\n";
         return 1;
     }
     std::cout << compiler_path << "out/a.out successfully compiled\n";
