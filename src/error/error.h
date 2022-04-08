@@ -6,33 +6,34 @@
 
 class Error {
 public:
-    Error();
+    virtual std::string get_message() const = 0;
     Error(const std::vector<std::string>& info);
-    virtual std::string create_message() const;
 protected:
-    std::vector<std::string> information;
+    const std::vector<std::string> information;
 };
 
 class ConstantRedeclaration : public Error {
 public:
-    using Error::Error;
-    std::string create_message() const override;
+    ConstantRedeclaration(const std::vector<std::string>& info) : Error(info) {};
+    std::string get_message() const override;
 };
 
 class VariableRedeclaration : public Error {
 public:
-    using Error::Error;
-    std::string create_message() const override;
+    VariableRedeclaration(const std::vector<std::string>& info) : Error(info) {};
+    std::string get_message() const override;
 };
 
-class UndeclaredIdentifier : public Error {
+class UndefinedIdentifier : public Error {
 public:
-    using Error::Error;
-    std::string create_message() const override;
+    UndefinedIdentifier(const std::vector<std::string>& info) : Error(info) {};
+    std::string get_message() const override;
 };
+
 class ConstantRedefinition : public Error {
 public:
-    using Error::Error;
-    std::string create_message() const override;
+    ConstantRedefinition(const std::vector<std::string>& info) : Error(info) {};
+    std::string get_message() const override;
 };
+
 #endif
