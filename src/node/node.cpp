@@ -1,110 +1,161 @@
 #include "node.h"
+#include "../visitor/visitor.h"
 
-Node::Node(const std::string& string, OperationType op) 
-    : left{nullptr}, right{nullptr}, value{string}, operation{op} {
+// Все слиплось, выглядит не очень.
+
+// Как по мне эту строку можно записать красивее:
+//   Literal::Literal(const std::string& val) : value(val) {}
+Literal::Literal(const std::string& val)
+    : value{val} { // Хм, а почему там фигурные скобки, а не круглые?
+
+}
+std::string Literal::get_value() const {
+    return value;
+}
+void Literal::accept(Visitor& visitor) const {
+    visitor.visit(this);
+}
+NodeType Literal::get_node_type() const {
+    return node_literal;
 }
 
-Node::Node(OperationType op, const Node* left_node, const Node* right_node, const std::string& val) 
-    : left{left_node}, right{right_node}, value{val}, operation{op} {
+
+Identifier::Identifier(const std::string& val)
+    : name{val} {
+
+}
+std::string Identifier::get_name() const {
+    return name;
+}
+void Identifier::accept(Visitor& visitor) const {
+    visitor.visit(this);
+}
+NodeType Identifier::get_node_type() const {
+    return node_identifier;
 }
 
-// Generate cpp code of statement
-std::string Node::generate_statement() const {
-    switch (operation) {
-        case op_statement:
-            return "\n" + left->generate_statement() + ";";
-        case op_addition:
-            return left->generate_statement() + " + " + right->generate_statement();
-        case op_subtraction:
-            return left->generate_statement() + " - " + right->generate_statement();
-        case op_assignment:
-            return left->generate_statement() + " = " + right->generate_statement();
-        case op_const_decl:
-            return "const Mixed " + left->generate_statement();
-        case op_var_decl:
-            return "Mixed " + left->generate_statement();
-        case op_print:
-            return "print(" + left->generate_statement() + ")";
-        case op_input:
-            return "input(" + left->generate_statement() + ")";
-        case op_literal:
-            return "Mixed(" + value + ")";
-        case op_variable:
-        case op_comment:
-        default:
-            return value;
-    }
+
+Comment::Comment(const std::string& info)
+    : information{info} {
+
+}
+std::string Comment::get_information() const {
+    return information;
+}
+void Comment::accept(Visitor& visitor) const {
+    visitor.visit(this);
+}
+NodeType Comment::get_node_type() const {
+    return node_comment;
 }
 
-// Check presence of statement's errors
-// Also update sets of seen constants and variables
-bool Node::check_statement(
-    std::unordered_set<std::string>& consts,
-    std::unordered_set<std::string>& vars_defined,
-    std::unordered_set<std::string>& vars_declared,
-    std::array<int, 4>& errors) const {
-    switch (operation) {
-        case op_addition:
-        case op_subtraction:
-            return left->check_statement(consts, vars_defined, vars_declared, errors)
-                || right->check_statement(consts, vars_defined, vars_declared, errors);
-        case op_assignment: {
-            if (left->operation == op_variable && consts.find(left->value) != consts.end()) {
-                ++errors[3];
-                return true;
-            }
-            if (left->operation == op_variable && vars_declared.find(left->value) == vars_declared.end()) {
-                ++errors[2];
-                return true;
-            }
-            if (right->check_statement(consts, vars_defined, vars_declared, errors))
-                return true;
-            if (left->operation == op_variable) {
-                vars_defined.insert(left->value);
-                return false;
-            }
-            return left->check_statement(consts, vars_defined, vars_declared, errors);
-        }
-        case op_const_decl:
-            if (consts.find(left->value) != consts.end()) {
-                ++errors[0];
-                return true;
-            }
-            if (vars_declared.find(left->value) != vars_declared.end()) {
-                ++errors[1];
-                return true;
-            }
-            consts.insert(left->value);
-            return false;
-        case op_var_decl:
-            if (consts.find(left->value) != consts.end()) {
-                ++errors[0];
-                return true;
-            }
-            if (vars_declared.find(left->value) != vars_declared.end()) {
-                ++errors[1];
-                return true;
-            }
-            vars_declared.insert(left->value);
-            return false;
-        case op_statement:
-        case op_print:
-        case op_input:
-            return left->check_statement(consts, vars_defined, vars_declared, errors);
-        case op_variable:
-            if (consts.find(value) == consts.end() && vars_declared.find(value) == vars_declared.end()) {
-                ++errors[2];
-                return true;
-            }
-            return false;
-        case op_literal:
-        case op_comment:
-        default:
-            return false;
-    }
+
+Statement::Statement(const Node* comm)
+    : command{comm} {
+
+}
+const Node* Statement::get_command() const {
+    return command;
+}
+void Statement::accept(Visitor& visitor) const {
+    visitor.visit(this);
+}
+Statement::~Statement() {
+    delete command;
+}
+NodeType Statement::get_node_type() const {
+    return node_statement;
 }
 
-Node::~Node() {
+
+Declaration::Declaration(DeclarationType t, const Node* id)
+    : type{t}, identifier{id} {
+
+}
+const Node* Declaration::get_identifier() const {
+    return identifier;
+}
+DeclarationType Declaration::get_type() const {
+    return type;
+}
+void Declaration::accept(Visitor& visitor) const {
+    visitor.visit(this);
+}
+Declaration::~Declaration() {
+    delete identifier; // Delete called on 'Node' that is abstract but has non-virtual destructor
+}
+NodeType Declaration::get_node_type() const {
+    return node_declaration;
+}
+
+
+BinaryOperation::BinaryOperation(BinOpType op, const Node* l, const Node* r)
+    : type(op), left{l}, right{r} {
+
+}
+const Node* BinaryOperation::get_left() const {
+    return left;
+}
+const Node* BinaryOperation::get_right() const {
+    return right;
+}
+BinOpType BinaryOperation::get_type() const {
+    return type;
+}
+void BinaryOperation::accept(Visitor& visitor) const {
+    // Вот тут ты кажется накосячил с паттерном Visitor.
+    // Логика здесь должна описывать логику обхода этого узла.
+    // В текущем варианте здесь этого нет.
+    // Из-за этого в visitor.cpp в функции void CodeChecker::visit(const BinaryOperation* bin_op)
+    // У тебя явные вызовы:
+    //   visit(bin_op->get_right());
+    //   visit(bin_op->get_left());
+    //
+    // А должно быть тут:
+    //   visitor.visit(this);
+    //
+    //   left->accept(visitor);
+    //   right->accept(visitor);
+    //
+    // Но в идеале тогда visit() должен возвращать bool,
+    // чтобы можно было останавливать процесс обхода, если
+    // это не требуется или обход этой части дерева был
+    // уже совершен вручную и повторный обход нежелателен.
+    //
+    //   if (!visitor.visit(this)) {
+    //     return;
+    //   }
+    //
+    //   left->accept(visitor);
+    //   right->accept(visitor);
+   visitor.visit(this);
+}
+BinaryOperation::~BinaryOperation() {
     delete left;
     delete right;
+}
+NodeType BinaryOperation::get_node_type() const {
+    return node_bin_op;
+}
+
+
+UnaryArgFunction::UnaryArgFunction(UnaryArgFuncType t, const Node* arg)
+    : type(t), argument{arg} {
+
+}
+const Node* UnaryArgFunction::get_arg() const {
+    return argument;
+}
+UnaryArgFuncType UnaryArgFunction::get_type() const {
+    return type;
+}
+void UnaryArgFunction::accept(Visitor& visitor) const {
+    visitor.visit(this);
+}
+UnaryArgFunction::~UnaryArgFunction() {
+    delete argument;
+}
+
+NodeType UnaryArgFunction::get_node_type() const {
+    return node_un_arg_func;
 }

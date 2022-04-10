@@ -21,75 +21,14 @@ Mixed::Mixed(const std::string& string)
     : type{dt_string}, integer{0}, floating{0}, string{string} {
 }
 
-Mixed operator+(const Mixed& m1, const Mixed& m2) {
-    if (m1.type == dt_undef || m2.type == dt_undef) {
-        throw std::invalid_argument("Mixed argument has type \"UNDEF\"");
-    }
-    if (m1.type == dt_string || m2.type == dt_string) {
-        return Mixed((m1.operator std::string()) + (m2.operator std::string()));
-    }
-    switch (m1.type) {
-        case dt_int:
-            if (m2.type == dt_int)
-                return Mixed(m1.integer + m2.integer);
-            return Mixed(m1.integer + m2.floating);
-        case dt_float:
-            if (m2.type == dt_int)
-                return Mixed(m1.floating + m2.integer);
-            return Mixed(m1.floating + m2.floating);
-        default:
-            return Mixed();
-    }
-}
-
-Mixed operator-(const Mixed& m1, const Mixed& m2) {
-    if (m1.type == dt_undef || m2.type == dt_undef) {
-        throw std::invalid_argument("Mixed argument has type \"UNDEF\"");
-    }
-    Mixed left(0), right(0);
-    switch (m1.type) {
-        case dt_string:
-            switch(is_numeric(m1.string)) {
-                case 1:
-                    left = Mixed(std::stoll(m1.string));
-                    break;
-                case 2:
-                    left = Mixed(std::stod(m1.string));
-                    break;
-                default:
-                    break;
-            }
-            break;
-        default:
-            left = m1;
-            break;
-    }
-    switch (m2.type) {
-        case dt_string:
-            switch(is_numeric(m2.string)) {
-                case 1:
-                    right = Mixed(-std::stoll(m2.string));
-                    break;
-                case 2:
-                    right = Mixed(-std::stod(m2.string));
-                    break;
-                default:
-                    break;
-            }
-            break;
-        case dt_int:
-            right = Mixed(-m2.integer);
-            break;
-        case dt_float:
-            right = Mixed(-m2.floating);
-            break;
-        default:
-            break;
-    }
-    return left + right;
+bool Mixed::is_defined() const {
+    return type != dt_undef;
 }
 
 Mixed::operator std::string() const {
+    if (!is_defined()) {
+        throw std::logic_error("Undefined data type");
+    }
     switch (type) {
         case dt_int:
             return std::to_string(integer);
@@ -100,31 +39,92 @@ Mixed::operator std::string() const {
                 str_float.push_back('0');
             return str_float;
         }
-        default:
+        case dt_string:
             return string;
+        default:
+            throw std::logic_error("Unknown data type");
     }
 }
 
-// Здесь как мне кажется лучше было ввести перечисление, чтобы избежать
-// магических чисел.
-// Checks if string numeric
-// Return codes: 0 - nonnumeric, 1 - integer, 2 - floating
-int is_numeric(const std::string& s) {
-    if (s == "" || s == ".")
-        return 0;
+StringType is_numeric(const std::string& s) {
+    if (s == "" || s == ".") // Clang-Tidy: The 'empty' method should be used to check for emptiness instead of comparing to an empty object
+        return str_nonnumeric;
+    // Лучше было бы назвать wasPoint, текущее название не отражает сути.
     bool point = false;
     for (const char& c : s) {
         if (!std::isdigit(c) && c != '.')
-            return 0;
+            return str_nonnumeric;
         else if (c == '.') {
             if (point)
-                return 0;
+                return str_nonnumeric;
             point = true;
         }
     }
     if (point)
-        return 2;
-    return 1;
+        return str_float;
+    return str_int;
+}
+
+Mixed to_numeric(const Mixed& m) {
+    if (!m.is_defined()) {
+        throw std::logic_error("Undefined data type");
+    }
+    switch (m.type) {
+        case dt_string:
+            switch(is_numeric(m.string)) {
+                case str_int:
+                    return Mixed(std::stoll(m.string)); // Clang-Tidy: Avoid repeating the return type from the declaration; use a braced initializer list instead
+                case str_float:
+                    return Mixed(std::stod(m.string));
+                case str_nonnumeric:
+                    return Mixed(0);
+                default:
+                    throw std::logic_error("Unknown str type");
+            }
+        case dt_int:
+            return Mixed(m.integer);
+        case dt_float:
+            return Mixed(m.floating);
+        default:
+            throw std::logic_error("Unknown data type");;
+    }
+}
+
+Mixed operator+(const Mixed& m1, const Mixed& m2) {
+    if (!m1.is_defined() || !m2.is_defined()) {
+        throw std::invalid_argument("Mixed argument undefined");
+    }
+    if (m1.type == dt_string || m2.type == dt_string) {
+        return Mixed((m1.operator std::string()) + (m2.operator std::string()));
+    }
+    if (m1.type == dt_int && m2.type == dt_int) {
+        return Mixed(m1.integer + m2.integer);
+    }
+    if (m1.type == dt_int && m2.type == dt_float) {
+        return Mixed(m1.integer + m2.floating);
+    }
+    if (m1.type == dt_float && m2.type == dt_int) {
+        return Mixed(m1.floating + m2.integer);
+    }
+    if (m1.type == dt_float && m2.type == dt_float) {
+        return Mixed(m1.floating + m2.floating);
+    }
+    throw std::invalid_argument("Invalid pair of Mixed datatypes");
+}
+
+Mixed operator-(const Mixed& m1, const Mixed& m2) {
+    if (!m1.is_defined() || !m2.is_defined()) {
+        throw std::invalid_argument("Mixed argument undefined");
+    }
+    Mixed left = to_numeric(m1);
+    Mixed right = to_numeric(m2);
+    if (right.type == dt_int) {
+        right = Mixed(-right.integer);
+    }
+    if (right.type == dt_float) {
+        right = Mixed(-right.floating);
+    }
+    return left + right;
 }
 
 void print(const Mixed& m) {
