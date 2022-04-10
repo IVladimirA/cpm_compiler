@@ -85,12 +85,16 @@ static int write_cpp(const std::string& file_path) {
     return return_code;
 }
 
-int main(int argc, char** argv) {
-    const std::string program_name = argv[0];
+static void check_argc(int argc, const std::string& program_name) {
     if (argc < 2)
         throw std::invalid_argument("No input file. Try '" + program_name + " --help' for more information.");
     if (argc > 3)
         throw std::invalid_argument("Too many arguments: " + std::to_string(argc - 1) + " given. Try '" + program_name + " --help' for more information.");
+}
+
+int main(int argc, char** argv) {
+    const std::string program_name = argv[0];
+    check_argc(argc, program_name);
 
     const std::string source_path = argv[1]; // .cpm source file location
     if (source_path == "-h" || source_path == "--help") {
@@ -127,6 +131,6 @@ int main(int argc, char** argv) {
         std::cout << compiler_path << "out successfully moved to " << out_path << "\n";
         return 0;
     }
-    std::cout << "Couldn't moved " << compiler_path << "out to " << out_path << "\n";
+    std::cout << "Couldn't move " << compiler_path << "out to " << out_path << "\n";
     return 1;
 }
