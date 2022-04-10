@@ -21,25 +21,30 @@ Mixed::Mixed(const std::string& string)
     : type{dt_string}, integer{0}, floating{0}, string{string} {
 }
 
+bool Mixed::is_defined() const {
+    return type != dt_undef;
+}
+
 Mixed operator+(const Mixed& m1, const Mixed& m2) {
-    if (m1.type == dt_undef || m2.type == dt_undef) {
+    if (!m1.is_defined() || !m2.is_defined()) {
         throw std::invalid_argument("Mixed argument has type \"UNDEF\"");
     }
     if (m1.type == dt_string || m2.type == dt_string) {
         return Mixed((m1.operator std::string()) + (m2.operator std::string()));
     }
-    switch (m1.type) {
-        case dt_int:
-            if (m2.type == dt_int)
-                return Mixed(m1.integer + m2.integer);
-            return Mixed(m1.integer + m2.floating);
-        case dt_float:
-            if (m2.type == dt_int)
-                return Mixed(m1.floating + m2.integer);
-            return Mixed(m1.floating + m2.floating);
-        default:
-            return Mixed();
+    if (m1.type == dt_int && m2.type == dt_int) {
+        return Mixed(m1.integer + m2.integer);
     }
+    if (m1.type == dt_int && m2.type == dt_float) {
+        return Mixed(m1.integer + m2.floating);
+    }
+    if (m1.type == dt_float && m2.type == dt_int) {
+        return Mixed(m1.floating + m2.integer);
+    }
+    if (m1.type == dt_float && m2.type == dt_float) {
+        return Mixed(m1.floating + m2.floating);
+    }
+    throw std::invalid_argument("Invalid pair of Mixed datatypes");
 }
 
 Mixed operator-(const Mixed& m1, const Mixed& m2) {
