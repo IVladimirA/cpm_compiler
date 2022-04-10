@@ -17,11 +17,12 @@ public:
     Mixed(int num);
     Mixed(double num);
     Mixed(const std::string& string);
+    bool is_defined() const;
+    operator std::string() const;
+    friend Mixed to_numeric(const Mixed& m);
     friend Mixed operator+(const Mixed& m1, const Mixed& m2);
     friend Mixed operator-(const Mixed& m1, const Mixed& m2);
-    operator std::string() const;
 private:
-    bool is_defined() const;
     DataType type;
     long long int integer;
     double floating;
@@ -34,6 +35,7 @@ enum StringType {
     str_float,
     str_nonnumeric
 };
+
 StringType is_numeric(const std::string& s);
 
 void print(const Mixed& m);
