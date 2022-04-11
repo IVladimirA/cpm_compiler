@@ -30,7 +30,6 @@ static void parse_code(std::ifstream& in_file) {
 static void parse_file(const std::string& file_path) {
     std::ifstream in_file(file_path);
     parse_code(in_file);
-    in_file.close();
 }
 
 // Generate code and write it to .cpp file
@@ -81,7 +80,6 @@ static int generate_cpp(std::ostream& out_file) {
 static int write_cpp(const std::string& file_path) {
     std::ofstream out_file(file_path);
     const int return_code = generate_cpp(out_file);
-    out_file.close();
     return return_code;
 }
 
