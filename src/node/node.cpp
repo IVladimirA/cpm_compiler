@@ -12,7 +12,7 @@ void Literal::accept(Visitor& visitor) const {
     visitor.visit(this);
 }
 NodeType Literal::get_node_type() const {
-    return node_literal;
+    return NodeType::LITERAL;
 }
 
 
@@ -27,7 +27,7 @@ void Identifier::accept(Visitor& visitor) const {
     visitor.visit(this);
 }
 NodeType Identifier::get_node_type() const {
-    return node_identifier;
+    return NodeType::IDENTIFIER;
 }
 
 
@@ -42,7 +42,7 @@ void Comment::accept(Visitor& visitor) const {
     visitor.visit(this);
 }
 NodeType Comment::get_node_type() const {
-    return node_comment;
+    return NodeType::COMMENT;
 }
 
 
@@ -60,7 +60,7 @@ Statement::~Statement() {
     delete command;
 }
 NodeType Statement::get_node_type() const {
-    return node_statement;
+    return NodeType::STATEMENT;
 }
 
 
@@ -81,7 +81,7 @@ Declaration::~Declaration() {
     delete identifier;
 }
 NodeType Declaration::get_node_type() const {
-    return node_declaration;
+    return NodeType::DECLARATION;
 }
 
 
@@ -106,7 +106,7 @@ BinaryOperation::~BinaryOperation() {
     delete right;
 }
 NodeType BinaryOperation::get_node_type() const {
-    return node_bin_op;
+    return NodeType::BIN_OP;
 }
 
 
@@ -128,5 +128,5 @@ UnaryArgFunction::~UnaryArgFunction() {
 }
 
 NodeType UnaryArgFunction::get_node_type() const {
-    return node_un_arg_func;
+    return NodeType::UN_ARG_FUNC;
 }

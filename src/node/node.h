@@ -1,16 +1,15 @@
-#ifndef CPM_COMPILER_NODE_NODE_H_
-#define CPM_COMPILER_NODE_NODE_H_
+#pragma once
 
 #include <unordered_set>
 
-enum NodeType {
-    node_literal,
-    node_identifier,
-    node_comment,
-    node_statement,
-    node_declaration,
-    node_bin_op,
-    node_un_arg_func
+enum class NodeType {
+    LITERAL,
+    IDENTIFIER,
+    COMMENT,
+    STATEMENT,
+    DECLARATION,
+    BIN_OP,
+    UN_ARG_FUNC
 };
 
 class Visitor;
@@ -19,6 +18,7 @@ class Node {
 public:
     virtual void accept(Visitor& visitor) const = 0;
     virtual NodeType get_node_type() const = 0;
+    virtual ~Node() = default;
 };
 
 class Literal : public Node {
@@ -118,5 +118,3 @@ private:
     const UnaryArgFuncType type;
     const Node* argument;
 };
-
-#endif
