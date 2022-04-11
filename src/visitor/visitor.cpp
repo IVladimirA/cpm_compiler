@@ -5,25 +5,25 @@
 
 void Visitor::visit(const Node* tree) {
     switch(tree->get_node_type()) {
-        case node_literal:
+        case NodeType::LITERAL:
             visit(static_cast<const Literal*>(tree));
             break;
-        case node_identifier:
+        case NodeType::IDENTIFIER:
             visit(static_cast<const Identifier*>(tree));
             break;
-        case node_comment:
+        case NodeType::COMMENT:
             visit(static_cast<const Comment*>(tree));
             break;
-        case node_statement:
+        case NodeType::STATEMENT:
             visit(static_cast<const Statement*>(tree));
             break;
-        case node_declaration:
+        case NodeType::DECLARATION:
             visit(static_cast<const Declaration*>(tree));
             break;
-        case node_bin_op:
+        case NodeType::BIN_OP:
             visit(static_cast<const BinaryOperation*>(tree));
             break;
-        case node_un_arg_func:
+        case NodeType::UN_ARG_FUNC:
             visit(static_cast<const UnaryArgFunction*>(tree));
             break;
         default:
@@ -127,7 +127,7 @@ void CodeChecker::update(
     errors = err;
     consts = con;
     vars_declared = vars_decl;
-    vars_defined = vars_defined;
+    vars_defined = vars_def;
 }
 
 void CodeChecker::visit(const Node* tree) {
@@ -183,7 +183,7 @@ void CodeChecker::visit(const BinaryOperation* bin_op) {
             visit(bin_op->get_left());
             break;
         case assignment_op:
-            if (bin_op->get_left()->get_node_type() == node_identifier) {
+            if (bin_op->get_left()->get_node_type() == NodeType::IDENTIFIER) {
                 const Identifier* id = static_cast<const Identifier*>(bin_op->get_left());
                 if (consts->find(id->get_name()) != consts->end()) {
                     errors->push_back(new ConstantRedefinition({id->get_name()}));
@@ -195,7 +195,7 @@ void CodeChecker::visit(const BinaryOperation* bin_op) {
             }
             }
             visit(bin_op->get_left());
-            if (errors->size() == 0 && bin_op->get_left()->get_node_type() == node_declaration) {
+            if (errors->size() == 0 && bin_op->get_left()->get_node_type() == NodeType::DECLARATION) {
                 const Declaration* decl = static_cast<const Declaration*>(bin_op->get_left());
                 if (decl->get_type() == var_decl) {
                     vars_defined->insert(static_cast<const Identifier*>(decl->get_identifier())->get_name());
