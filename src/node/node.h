@@ -2,22 +2,11 @@
 
 #include <unordered_set>
 
-enum class NodeType {
-    LITERAL,
-    IDENTIFIER,
-    COMMENT,
-    STATEMENT,
-    DECLARATION,
-    BIN_OP,
-    UN_ARG_FUNC
-};
-
 class Visitor;
 
 class Node {
 public:
     virtual void accept(Visitor& visitor) const = 0;
-    virtual NodeType get_node_type() const = 0;
     virtual ~Node() = default;
     template<typename T>
     const T* cast() const {
@@ -30,7 +19,6 @@ public:
     Literal(const std::string& string);
     std::string get_value() const;
     void accept(Visitor& visitor) const override;
-    NodeType get_node_type() const override;
 private:
     const std::string value;
 };
@@ -40,7 +28,6 @@ public:
     Identifier(const std::string& string);
     std::string get_name() const;
     void accept(Visitor& visitor) const override;
-    NodeType get_node_type() const override;
 private:
     const std::string name;
 };
@@ -50,7 +37,6 @@ public:
     Comment(const std::string& info);
     std::string get_information() const;
     void accept(Visitor& visitor) const override;
-    NodeType get_node_type() const override;
 private:
     const std::string information;
 };
@@ -60,7 +46,6 @@ public:
     Statement(const Node* comm);
     const Node* get_command() const;
     void accept(Visitor& visitor) const override;
-    NodeType get_node_type() const override;
     ~Statement();
 private:
     const Node* command;
@@ -77,7 +62,6 @@ public:
     const Node* get_identifier() const;
     DeclarationType get_type() const;
     void accept(Visitor& visitor) const override;
-    NodeType get_node_type() const override;
     ~Declaration();
 private:
     const DeclarationType type;
@@ -97,7 +81,6 @@ public:
     const Node* get_right() const;
     BinOpType get_type() const;
     void accept(Visitor& visitor) const override;
-    NodeType get_node_type() const override;
     ~BinaryOperation();
 private:
     const BinOpType type;
@@ -116,7 +99,6 @@ public:
     const Node* get_arg() const;
     UnaryArgFuncType get_type() const;
     void accept(Visitor& visitor) const override;
-    NodeType get_node_type() const override;
     ~UnaryArgFunction();
 private:
     const UnaryArgFuncType type;

@@ -5,25 +5,25 @@
 
 
 bool Visitor::visit(const Node* tree) {
-    if (const auto* literal = tree->cast<Literal>()) {
+    if (tree->cast<Literal>()) {
         return visit(tree->cast<Literal>());
     }
-    if (const auto* identifier = tree->cast<Identifier>()) {
+    if (tree->cast<Identifier>()) {
         return visit(tree->cast<Identifier>());
     }
-    if (const auto* comment = tree->cast<Comment>()) {
+    if (tree->cast<Comment>()) {
         return visit(tree->cast<Comment>());
     }
-    if (const auto* statement = tree->cast<Statement>()) {
+    if (tree->cast<Statement>()) {
         return visit(tree->cast<Statement>());
     }
-    if (const auto* declaration = tree->cast<Declaration>()) {
+    if (tree->cast<Declaration>()) {
         return visit(tree->cast<Declaration>());
     }
-    if (const auto* binary_operation = tree->cast<BinaryOperation>()) {
+    if (tree->cast<BinaryOperation>()) {
         return visit(tree->cast<BinaryOperation>());
     }
-    if (const auto* un_arg_func = tree->cast<UnaryArgFunction>()) {
+    if (tree->cast<UnaryArgFunction>()) {
         return visit(tree->cast<UnaryArgFunction>());
     }
     throw std::invalid_argument("Unknown Node type");
@@ -160,7 +160,7 @@ bool CodeChecker::visit(const Statement* st) {
 }
 
 bool CodeChecker::visit(const Declaration* decl) {
-    const Identifier* id = static_cast<const Identifier*>(decl->get_identifier());
+    const Identifier* id = decl->get_identifier()->cast<Identifier>();
     if (consts->find(id->get_name()) != consts->end()) {
         errors->push_back(new ConstantRedeclaration({id->get_name()}));
         return true;
@@ -190,8 +190,8 @@ bool CodeChecker::visit(const BinaryOperation* bin_op) {
             visit(bin_op->get_left());
             break;
         case assignment_op:
-            if (bin_op->get_left()->get_node_type() == NodeType::IDENTIFIER) {
-                const Identifier* id = static_cast<const Identifier*>(bin_op->get_left());
+            if (bin_op->get_left()->cast<Identifier>()) {
+                const Identifier* id = bin_op->get_left()->cast<Identifier>();
                 if (consts->find(id->get_name()) != consts->end()) {
                     errors->push_back(new ConstantRedefinition({id->get_name()}));
                     break;
@@ -202,10 +202,10 @@ bool CodeChecker::visit(const BinaryOperation* bin_op) {
             }
             }
             visit(bin_op->get_left());
-            if (errors->size() == 0 && bin_op->get_left()->get_node_type() == NodeType::DECLARATION) {
-                const Declaration* decl = static_cast<const Declaration*>(bin_op->get_left());
+            if (errors->size() == 0 && bin_op->get_left()->cast<Declaration>()) {
+                const Declaration* decl = bin_op->get_left()->cast<Declaration>();
                 if (decl->get_type() == var_decl) {
-                    vars_defined->insert(static_cast<const Identifier*>(decl->get_identifier())->get_name());
+                    vars_defined->insert(decl->get_identifier()->cast<Identifier>()->get_name());
                 }
             }
             break;

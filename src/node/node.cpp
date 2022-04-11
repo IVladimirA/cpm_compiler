@@ -11,9 +11,6 @@ std::string Literal::get_value() const {
 void Literal::accept(Visitor& visitor) const {
     visitor.visit(this);
 }
-NodeType Literal::get_node_type() const {
-    return NodeType::LITERAL;
-}
 
 
 Identifier::Identifier(const std::string& val)
@@ -26,9 +23,6 @@ std::string Identifier::get_name() const {
 void Identifier::accept(Visitor& visitor) const {
     visitor.visit(this);
 }
-NodeType Identifier::get_node_type() const {
-    return NodeType::IDENTIFIER;
-}
 
 
 Comment::Comment(const std::string& info)
@@ -40,9 +34,6 @@ std::string Comment::get_information() const {
 }
 void Comment::accept(Visitor& visitor) const {
     visitor.visit(this);
-}
-NodeType Comment::get_node_type() const {
-    return NodeType::COMMENT;
 }
 
 
@@ -58,9 +49,6 @@ void Statement::accept(Visitor& visitor) const {
 }
 Statement::~Statement() {
     delete command;
-}
-NodeType Statement::get_node_type() const {
-    return NodeType::STATEMENT;
 }
 
 
@@ -79,9 +67,6 @@ void Declaration::accept(Visitor& visitor) const {
 }
 Declaration::~Declaration() {
     delete identifier;
-}
-NodeType Declaration::get_node_type() const {
-    return NodeType::DECLARATION;
 }
 
 
@@ -105,9 +90,6 @@ BinaryOperation::~BinaryOperation() {
     delete left;
     delete right;
 }
-NodeType BinaryOperation::get_node_type() const {
-    return NodeType::BIN_OP;
-}
 
 
 UnaryArgFunction::UnaryArgFunction(UnaryArgFuncType t, const Node* arg)
@@ -125,8 +107,4 @@ void UnaryArgFunction::accept(Visitor& visitor) const {
 }
 UnaryArgFunction::~UnaryArgFunction() {
     delete argument;
-}
-
-NodeType UnaryArgFunction::get_node_type() const {
-    return NodeType::UN_ARG_FUNC;
 }
