@@ -23,8 +23,8 @@ bool Visitor::visit(const Node* tree) {
     if (tree->cast<BinaryOperation>()) {
         return visit(tree->cast<BinaryOperation>());
     }
-    if (tree->cast<UnaryArgFunction>()) {
-        return visit(tree->cast<UnaryArgFunction>());
+    if (tree->cast<FunctionCall>()) {
+        return visit(tree->cast<FunctionCall>());
     }
     throw std::invalid_argument("Unknown Node type");
 }
@@ -97,18 +97,18 @@ bool CodeGenerator::visit(const BinaryOperation* bin_op) {
     return true;
 }
 
-bool CodeGenerator::visit(const UnaryArgFunction* func) {
+bool CodeGenerator::visit(const FunctionCall* func) {
     switch(func->type) {
-        case UnaryArgFuncType::INPUT:
+        case FunctionType::INPUT:
             *statement += "input(";
             break;
-        case UnaryArgFuncType::PRINT:
+        case FunctionType::PRINT:
             *statement += "print(";
             break;
         default:
             throw std::invalid_argument("Unknown function type");
     }
-    visit(func->argument);
+    visit(func->arguments[0]);
     *statement += ")";
     return true;
 }
@@ -215,11 +215,11 @@ bool CodeChecker::visit(const BinaryOperation* bin_op) {
     return true;
 }
 
-bool CodeChecker::visit(const UnaryArgFunction* func) {
+bool CodeChecker::visit(const FunctionCall* func) {
     switch(func->type) {
-        case UnaryArgFuncType::PRINT:
-        case UnaryArgFuncType::INPUT:
-            visit(func->argument);            
+        case FunctionType::PRINT:
+        case FunctionType::INPUT:
+            visit(func->arguments[0]);            
             break;
         default:
             throw std::invalid_argument("Unknown function type");

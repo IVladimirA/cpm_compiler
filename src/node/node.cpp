@@ -1,3 +1,4 @@
+#include <vector>
 #include "node.h"
 #include "../visitor/visitor.h"
 
@@ -65,13 +66,15 @@ BinaryOperation::~BinaryOperation() {
 }
 
 
-UnaryArgFunction::UnaryArgFunction(UnaryArgFuncType t, const Node* arg)
-    : type(t), argument(arg) {
+FunctionCall::FunctionCall(FunctionType t, std::vector<const Node*> args)
+    : type(t), arguments(args) {
 
 }
-void UnaryArgFunction::accept(Visitor& visitor) const {
+void FunctionCall::accept(Visitor& visitor) const {
     visitor.visit(this);
 }
-UnaryArgFunction::~UnaryArgFunction() {
-    delete argument;
+FunctionCall::~FunctionCall() {
+    for (const Node* tree : arguments) {
+        delete tree;
+    }
 }

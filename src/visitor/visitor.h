@@ -11,7 +11,7 @@ class Comment;
 class Statement;
 class Declaration;
 class BinaryOperation;
-class UnaryArgFunction;
+class FunctionCall;
 class Error;
 
 class Visitor {
@@ -23,7 +23,7 @@ public:
     virtual bool visit(const Statement* st) = 0;
     virtual bool visit(const Declaration* decl) = 0;
     virtual bool visit(const BinaryOperation* op) = 0;
-    virtual bool visit(const UnaryArgFunction* f) = 0;
+    virtual bool visit(const FunctionCall* f) = 0;
     virtual ~Visitor() = default;
 };
 
@@ -38,7 +38,7 @@ public:
     bool visit(const Statement* st) override;
     bool visit(const Declaration* decl) override;
     bool visit(const BinaryOperation* op) override;
-    bool visit(const UnaryArgFunction* func) override;
+    bool visit(const FunctionCall* func) override;
 private:
     std::string* statement;
 };
@@ -62,7 +62,7 @@ public:
     bool visit(const Statement* st) override;
     bool visit(const Declaration* decl) override;
     bool visit(const BinaryOperation* op) override;
-    bool visit(const UnaryArgFunction* func) override;
+    bool visit(const FunctionCall* func) override;
 private:
     std::vector<const Error*>* errors;
     std::unordered_set<std::string>* consts;

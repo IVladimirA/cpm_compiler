@@ -1380,7 +1380,7 @@ yyreduce:
 
   case 7:
 #line 46 "src/parser/node.y"
-                                                    { (yyval.node) = new UnaryArgFunction(UnaryArgFuncType::PRINT, (yyvsp[-1].node)); }
+                                                    { (yyval.node) = new FunctionCall(FunctionType::PRINT, {(yyvsp[-1].node)}); }
 #line 1385 "src/parser/node.tab.c"
     break;
 
@@ -1410,7 +1410,7 @@ yyreduce:
 
   case 12:
 #line 53 "src/parser/node.y"
-                                                    { (yyval.node) = new UnaryArgFunction(UnaryArgFuncType::INPUT, (yyvsp[-1].node)); }
+                                                    { (yyval.node) = new FunctionCall(FunctionType::INPUT, {(yyvsp[-1].node)}); }
 #line 1415 "src/parser/node.tab.c"
     break;
 

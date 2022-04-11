@@ -1,6 +1,7 @@
 #pragma once
 
 #include <unordered_set>
+#include <vector>
 
 class Visitor;
 
@@ -73,16 +74,16 @@ public:
     const Node* right;
 };
 
-enum class UnaryArgFuncType {
+enum class FunctionType {
     PRINT,
     INPUT
 };
 
-class UnaryArgFunction : public Node {
+class FunctionCall : public Node {
 public:
-    UnaryArgFunction(UnaryArgFuncType t, const Node* arg);
+    FunctionCall(FunctionType t, std::vector<const Node*> args);
     void accept(Visitor& visitor) const override;
-    ~UnaryArgFunction();
-    const UnaryArgFuncType type;
-    const Node* argument;
+    ~FunctionCall();
+    const FunctionType type;
+    std::vector<const Node*> arguments;
 };

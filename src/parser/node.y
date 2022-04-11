@@ -43,14 +43,14 @@ Statement: t_comment { $$ = new Comment(*$1); }
 ;
 
 Command: Expression { $$ = $1; }
-| t_print t_left_bracket Expression t_right_bracket { $$ = new UnaryArgFunction(UnaryArgFuncType::PRINT, $3); }
+| t_print t_left_bracket Expression t_right_bracket { $$ = new FunctionCall(FunctionType::PRINT, {$3}); }
 | Declaration t_equals Expression { $$ = new BinaryOperation(BinOpType::ASSIGNMENT, $1, $3); }
 | Variable t_equals Expression { $$ = new BinaryOperation(BinOpType::ASSIGNMENT, $1, $3); }
 ;
 
 Expression: Expression t_plus Expression { $$ = new BinaryOperation(BinOpType::ADDITION, $1, $3); }
 | Expression t_minus Expression { $$ = new BinaryOperation(BinOpType::SUBTRACTION, $1, $3); }
-| t_input t_left_bracket Expression t_right_bracket { $$ = new UnaryArgFunction(UnaryArgFuncType::INPUT, $3); }
+| t_input t_left_bracket Expression t_right_bracket { $$ = new FunctionCall(FunctionType::INPUT, {$3}); }
 | Variable { $$ = $1; }
 | Literal { $$ = $1; }
 ;
