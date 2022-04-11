@@ -43,9 +43,9 @@ public:
     const Node* command;
 };
 
-enum DeclarationType {
-    const_decl,
-    var_decl
+enum class DeclarationType {
+    CONST,
+    VAR
 };
 
 class Declaration : public Node {
@@ -57,10 +57,10 @@ public:
     const Node* identifier;
 };
 
-enum BinOpType {
-    addition_op,
-    subtraction_op,
-    assignment_op
+enum class BinOpType {
+    ADDITION,
+    SUBTRACTION,
+    ASSIGNMENT
 };
 
 class BinaryOperation : public Node {
@@ -73,9 +73,9 @@ public:
     const Node* right;
 };
 
-enum UnaryArgFuncType {
-    un_f_print,
-    un_f_input
+enum class UnaryArgFuncType {
+    PRINT,
+    INPUT
 };
 
 class UnaryArgFunction : public Node {

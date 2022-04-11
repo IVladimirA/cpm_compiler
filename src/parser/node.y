@@ -43,20 +43,20 @@ Statement: t_comment { $$ = new Comment(*$1); }
 ;
 
 Command: Expression { $$ = $1; }
-| t_print t_left_bracket Expression t_right_bracket { $$ = new UnaryArgFunction(un_f_print, $3); }
-| Declaration t_equals Expression { $$ = new BinaryOperation(assignment_op, $1, $3); }
-| Variable t_equals Expression { $$ = new BinaryOperation(assignment_op, $1, $3); }
+| t_print t_left_bracket Expression t_right_bracket { $$ = new UnaryArgFunction(UnaryArgFuncType::PRINT, $3); }
+| Declaration t_equals Expression { $$ = new BinaryOperation(BinOpType::ASSIGNMENT, $1, $3); }
+| Variable t_equals Expression { $$ = new BinaryOperation(BinOpType::ASSIGNMENT, $1, $3); }
 ;
 
-Expression: Expression t_plus Expression { $$ = new BinaryOperation(addition_op, $1, $3); }
-| Expression t_minus Expression { $$ = new BinaryOperation(subtraction_op, $1, $3); }
-| t_input t_left_bracket Expression t_right_bracket { $$ = new UnaryArgFunction(un_f_input, $3); }
+Expression: Expression t_plus Expression { $$ = new BinaryOperation(BinOpType::ADDITION, $1, $3); }
+| Expression t_minus Expression { $$ = new BinaryOperation(BinOpType::SUBTRACTION, $1, $3); }
+| t_input t_left_bracket Expression t_right_bracket { $$ = new UnaryArgFunction(UnaryArgFuncType::INPUT, $3); }
 | Variable { $$ = $1; }
 | Literal { $$ = $1; }
 ;
 
-Declaration: t_variable_declaration Variable { $$ = new Declaration(var_decl, $2); }
-| t_constant_declaration Variable { $$ = new Declaration(const_decl, $2); }
+Declaration: t_variable_declaration Variable { $$ = new Declaration(DeclarationType::VAR, $2); }
+| t_constant_declaration Variable { $$ = new Declaration(DeclarationType::CONST, $2); }
 ;
 
 Variable: t_variable { $$ = new Identifier(*$1); }

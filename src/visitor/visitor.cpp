@@ -65,10 +65,10 @@ bool CodeGenerator::visit(const Statement* st) {
 
 bool CodeGenerator::visit(const Declaration* decl) {
     switch(decl->type) {
-        case const_decl:
+        case DeclarationType::CONST:
             *statement += "const Mixed ";
             break;
-        case var_decl:
+        case DeclarationType::VAR:
             *statement += "Mixed ";
             break;
         default:
@@ -81,13 +81,13 @@ bool CodeGenerator::visit(const Declaration* decl) {
 bool CodeGenerator::visit(const BinaryOperation* bin_op) {
     visit(bin_op->left);
     switch(bin_op->type) {
-        case addition_op:
+        case BinOpType::ADDITION:
             *statement += " + ";
             break;
-        case subtraction_op:
+        case BinOpType::SUBTRACTION:
             *statement += " - ";
             break;
-        case assignment_op:
+        case BinOpType::ASSIGNMENT:
            *statement += " = ";
             break;
         default:
@@ -99,10 +99,10 @@ bool CodeGenerator::visit(const BinaryOperation* bin_op) {
 
 bool CodeGenerator::visit(const UnaryArgFunction* func) {
     switch(func->type) {
-        case un_f_input:
+        case UnaryArgFuncType::INPUT:
             *statement += "input(";
             break;
-        case un_f_print:
+        case UnaryArgFuncType::PRINT:
             *statement += "print(";
             break;
         default:
@@ -170,10 +170,10 @@ bool CodeChecker::visit(const Declaration* decl) {
         return true;
     }
     switch(decl->type) {
-        case const_decl:
+        case DeclarationType::CONST:
             consts->insert(id->name);
             break;
-        case var_decl:
+        case DeclarationType::VAR:
             vars_declared->insert(id->name);
             break;
         default:
@@ -185,11 +185,11 @@ bool CodeChecker::visit(const Declaration* decl) {
 bool CodeChecker::visit(const BinaryOperation* bin_op) {
     visit(bin_op->right);
     switch(bin_op->type) {
-        case addition_op:
-        case subtraction_op:
+        case BinOpType::ADDITION:
+        case BinOpType::SUBTRACTION:
             visit(bin_op->left);
             break;
-        case assignment_op:
+        case BinOpType::ASSIGNMENT:
             if (bin_op->left->cast<Identifier>()) {
                 const Identifier* id = bin_op->left->cast<Identifier>();
                 if (consts->find(id->name) != consts->end()) {
@@ -204,7 +204,7 @@ bool CodeChecker::visit(const BinaryOperation* bin_op) {
             visit(bin_op->left);
             if (errors->size() == 0 && bin_op->left->cast<Declaration>()) {
                 const Declaration* decl = bin_op->left->cast<Declaration>();
-                if (decl->type == var_decl) {
+                if (decl->type == DeclarationType::VAR) {
                     vars_defined->insert(decl->identifier->cast<Identifier>()->name);
                 }
             }
@@ -217,8 +217,8 @@ bool CodeChecker::visit(const BinaryOperation* bin_op) {
 
 bool CodeChecker::visit(const UnaryArgFunction* func) {
     switch(func->type) {
-        case un_f_input:
-        case un_f_print:
+        case UnaryArgFuncType::PRINT:
+        case UnaryArgFuncType::INPUT:
             visit(func->argument);            
             break;
         default:

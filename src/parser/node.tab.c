@@ -1380,37 +1380,37 @@ yyreduce:
 
   case 7:
 #line 46 "src/parser/node.y"
-                                                    { (yyval.node) = new UnaryArgFunction(un_f_print, (yyvsp[-1].node)); }
+                                                    { (yyval.node) = new UnaryArgFunction(UnaryArgFuncType::PRINT, (yyvsp[-1].node)); }
 #line 1385 "src/parser/node.tab.c"
     break;
 
   case 8:
 #line 47 "src/parser/node.y"
-                                  { (yyval.node) = new BinaryOperation(assignment_op, (yyvsp[-2].node), (yyvsp[0].node)); }
+                                  { (yyval.node) = new BinaryOperation(BinOpType::ASSIGNMENT, (yyvsp[-2].node), (yyvsp[0].node)); }
 #line 1391 "src/parser/node.tab.c"
     break;
 
   case 9:
 #line 48 "src/parser/node.y"
-                               { (yyval.node) = new BinaryOperation(assignment_op, (yyvsp[-2].node), (yyvsp[0].node)); }
+                               { (yyval.node) = new BinaryOperation(BinOpType::ASSIGNMENT, (yyvsp[-2].node), (yyvsp[0].node)); }
 #line 1397 "src/parser/node.tab.c"
     break;
 
   case 10:
 #line 51 "src/parser/node.y"
-                                         { (yyval.node) = new BinaryOperation(addition_op, (yyvsp[-2].node), (yyvsp[0].node)); }
+                                         { (yyval.node) = new BinaryOperation(BinOpType::ADDITION, (yyvsp[-2].node), (yyvsp[0].node)); }
 #line 1403 "src/parser/node.tab.c"
     break;
 
   case 11:
 #line 52 "src/parser/node.y"
-                                { (yyval.node) = new BinaryOperation(subtraction_op, (yyvsp[-2].node), (yyvsp[0].node)); }
+                                { (yyval.node) = new BinaryOperation(BinOpType::SUBTRACTION, (yyvsp[-2].node), (yyvsp[0].node)); }
 #line 1409 "src/parser/node.tab.c"
     break;
 
   case 12:
 #line 53 "src/parser/node.y"
-                                                    { (yyval.node) = new UnaryArgFunction(un_f_input, (yyvsp[-1].node)); }
+                                                    { (yyval.node) = new UnaryArgFunction(UnaryArgFuncType::INPUT, (yyvsp[-1].node)); }
 #line 1415 "src/parser/node.tab.c"
     break;
 
@@ -1428,13 +1428,13 @@ yyreduce:
 
   case 15:
 #line 58 "src/parser/node.y"
-                                             { (yyval.node) = new Declaration(var_decl, (yyvsp[0].node)); }
+                                             { (yyval.node) = new Declaration(DeclarationType::VAR, (yyvsp[0].node)); }
 #line 1433 "src/parser/node.tab.c"
     break;
 
   case 16:
 #line 59 "src/parser/node.y"
-                                  { (yyval.node) = new Declaration(const_decl, (yyvsp[0].node)); }
+                                  { (yyval.node) = new Declaration(DeclarationType::CONST, (yyvsp[0].node)); }
 #line 1439 "src/parser/node.tab.c"
     break;
 
