@@ -19,6 +19,10 @@ public:
     virtual void accept(Visitor& visitor) const = 0;
     virtual NodeType get_node_type() const = 0;
     virtual ~Node() = default;
+    template<typename T>
+    const T* cast() const {
+        return dynamic_cast<const T*>(this);
+    }
 };
 
 class Literal : public Node {
