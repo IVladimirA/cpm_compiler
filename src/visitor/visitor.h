@@ -16,14 +16,14 @@ class Error;
 
 class Visitor {
 public:
-    virtual void visit(const Node* tree) = 0;
-    virtual void visit(const Literal* lit) = 0;
-    virtual void visit(const Identifier* id) = 0;
-    virtual void visit(const Comment* comm) = 0;
-    virtual void visit(const Statement* st) = 0;
-    virtual void visit(const Declaration* decl) = 0;
-    virtual void visit(const BinaryOperation* op) = 0;
-    virtual void visit(const UnaryArgFunction* f) = 0;
+    virtual bool visit(const Node* tree) = 0;
+    virtual bool visit(const Literal* lit) = 0;
+    virtual bool visit(const Identifier* id) = 0;
+    virtual bool visit(const Comment* comm) = 0;
+    virtual bool visit(const Statement* st) = 0;
+    virtual bool visit(const Declaration* decl) = 0;
+    virtual bool visit(const BinaryOperation* op) = 0;
+    virtual bool visit(const UnaryArgFunction* f) = 0;
     virtual ~Visitor() = default;
 };
 
@@ -31,14 +31,14 @@ class CodeGenerator : public Visitor {
 public:
     CodeGenerator(std::string* st);
     void update_string(std::string* st);
-    void visit(const Node* tree) override;
-    void visit(const Literal* lit) override;
-    void visit(const Identifier* id) override;
-    void visit(const Comment* comm) override;
-    void visit(const Statement* st) override;
-    void visit(const Declaration* decl) override;
-    void visit(const BinaryOperation* op) override;
-    void visit(const UnaryArgFunction* func) override;
+    bool visit(const Node* tree) override;
+    bool visit(const Literal* lit) override;
+    bool visit(const Identifier* id) override;
+    bool visit(const Comment* comm) override;
+    bool visit(const Statement* st) override;
+    bool visit(const Declaration* decl) override;
+    bool visit(const BinaryOperation* op) override;
+    bool visit(const UnaryArgFunction* func) override;
 private:
     std::string* statement;
 };
@@ -55,17 +55,18 @@ public:
         std::unordered_set<std::string>* con,
         std::unordered_set<std::string>* vars_decl,
         std::unordered_set<std::string>* vars_def);
-    void visit(const Node* tree) override;
-    void visit(const Literal* lit) override;
-    void visit(const Identifier* id) override;
-    void visit(const Comment* comm) override;
-    void visit(const Statement* st) override;
-    void visit(const Declaration* decl) override;
-    void visit(const BinaryOperation* op) override;
-    void visit(const UnaryArgFunction* func) override;
+    bool visit(const Node* tree) override;
+    bool visit(const Literal* lit) override;
+    bool visit(const Identifier* id) override;
+    bool visit(const Comment* comm) override;
+    bool visit(const Statement* st) override;
+    bool visit(const Declaration* decl) override;
+    bool visit(const BinaryOperation* op) override;
+    bool visit(const UnaryArgFunction* func) override;
 private:
     std::vector<const Error*>* errors;
     std::unordered_set<std::string>* consts;
     std::unordered_set<std::string>* vars_declared;
     std::unordered_set<std::string>* vars_defined;
 };
+

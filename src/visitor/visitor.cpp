@@ -1,34 +1,32 @@
+#include <iostream>
 #include "visitor.h"
 #include "../error/error.h"
 #include "../node/node.h"
 
 
-void Visitor::visit(const Node* tree) {
-    switch(tree->get_node_type()) {
-        case NodeType::LITERAL:
-            visit(static_cast<const Literal*>(tree));
-            break;
-        case NodeType::IDENTIFIER:
-            visit(static_cast<const Identifier*>(tree));
-            break;
-        case NodeType::COMMENT:
-            visit(static_cast<const Comment*>(tree));
-            break;
-        case NodeType::STATEMENT:
-            visit(static_cast<const Statement*>(tree));
-            break;
-        case NodeType::DECLARATION:
-            visit(static_cast<const Declaration*>(tree));
-            break;
-        case NodeType::BIN_OP:
-            visit(static_cast<const BinaryOperation*>(tree));
-            break;
-        case NodeType::UN_ARG_FUNC:
-            visit(static_cast<const UnaryArgFunction*>(tree));
-            break;
-        default:
-            throw std::invalid_argument("Unknown node type");
+bool Visitor::visit(const Node* tree) {
+    if (const auto* literal = tree->cast<Literal>()) {
+        return visit(tree->cast<Literal>());
     }
+    if (const auto* identifier = tree->cast<Identifier>()) {
+        return visit(tree->cast<Identifier>());
+    }
+    if (const auto* comment = tree->cast<Comment>()) {
+        return visit(tree->cast<Comment>());
+    }
+    if (const auto* statement = tree->cast<Statement>()) {
+        return visit(tree->cast<Statement>());
+    }
+    if (const auto* declaration = tree->cast<Declaration>()) {
+        return visit(tree->cast<Declaration>());
+    }
+    if (const auto* binary_operation = tree->cast<BinaryOperation>()) {
+        return visit(tree->cast<BinaryOperation>());
+    }
+    if (const auto* un_arg_func = tree->cast<UnaryArgFunction>()) {
+        return visit(tree->cast<UnaryArgFunction>());
+    }
+    throw std::invalid_argument("Unknown Node type");
 }
 
 CodeGenerator::CodeGenerator(std::string* st) {
@@ -39,30 +37,33 @@ void CodeGenerator::update_string(std::string* st) {
     statement = st;
 }
 
-void CodeGenerator::visit(const Node* tree) {
-    Visitor::visit(tree);
+bool CodeGenerator::visit(const Node* tree) {
+    return Visitor::visit(tree);
 }
 
-void CodeGenerator::visit(const Literal* lit) {
+bool CodeGenerator::visit(const Literal* lit) {
     *statement += "Mixed(" + lit->get_value() + ")";
-    
+    return true;
 }
 
-void CodeGenerator::visit(const Identifier* id) {
+bool CodeGenerator::visit(const Identifier* id) {
     *statement += id->get_name();
+    return true;
 }
 
-void CodeGenerator::visit(const Comment* comm) {
+bool CodeGenerator::visit(const Comment* comm) {
     *statement += comm->get_information();
+    return true;
 }
 
-void CodeGenerator::visit(const Statement* st) {
+bool CodeGenerator::visit(const Statement* st) {
     *statement += "\n";
     st->get_command()->accept(*this);
     *statement += ";";
+    return true;
 }
 
-void CodeGenerator::visit(const Declaration* decl) {
+bool CodeGenerator::visit(const Declaration* decl) {
     switch(decl->get_type()) {
         case const_decl:
             *statement += "const Mixed ";
@@ -74,9 +75,10 @@ void CodeGenerator::visit(const Declaration* decl) {
             throw std::invalid_argument("Unknown declaration type");
     }
     visit(decl->get_identifier());
+    return true;
 }
 
-void CodeGenerator::visit(const BinaryOperation* bin_op) {
+bool CodeGenerator::visit(const BinaryOperation* bin_op) {
     visit(bin_op->get_left());
     switch(bin_op->get_type()) {
         case addition_op:
@@ -92,9 +94,10 @@ void CodeGenerator::visit(const BinaryOperation* bin_op) {
             throw std::invalid_argument("Unknown binary operation type");
     }
     visit(bin_op->get_right());
+    return true;
 }
 
-void CodeGenerator::visit(const UnaryArgFunction* func) {
+bool CodeGenerator::visit(const UnaryArgFunction* func) {
     switch(func->get_type()) {
         case un_f_input:
             *statement += "input(";
@@ -107,6 +110,7 @@ void CodeGenerator::visit(const UnaryArgFunction* func) {
     }
     visit(func->get_arg());
     *statement += ")";
+    return true;
 }
 
 
@@ -130,38 +134,40 @@ void CodeChecker::update(
     vars_defined = vars_def;
 }
 
-void CodeChecker::visit(const Node* tree) {
-    Visitor::visit(tree);
+bool CodeChecker::visit(const Node* tree) {
+    return Visitor::visit(tree);
 }
 
-void CodeChecker::visit(const Literal* lit) {
-        
+bool CodeChecker::visit(const Literal* lit) {
+    return true;
 }
 
-void CodeChecker::visit(const Identifier* id) {
+bool CodeChecker::visit(const Identifier* id) {
     if (consts->find(id->get_name()) == consts->end()
         && vars_defined->find(id->get_name()) == vars_defined->end()) {
         errors->push_back(new UndefinedIdentifier({id->get_name()}));
     }
+    return true;
 }
 
-void CodeChecker::visit(const Comment* comm) {
-    
+bool CodeChecker::visit(const Comment* comm) {
+    return true;
 }
 
-void CodeChecker::visit(const Statement* st) {
+bool CodeChecker::visit(const Statement* st) {
     visit(st->get_command());
+    return true;
 }
 
-void CodeChecker::visit(const Declaration* decl) {
+bool CodeChecker::visit(const Declaration* decl) {
     const Identifier* id = static_cast<const Identifier*>(decl->get_identifier());
     if (consts->find(id->get_name()) != consts->end()) {
         errors->push_back(new ConstantRedeclaration({id->get_name()}));
-        return;
+        return true;
     }
     if (vars_declared->find(id->get_name()) != vars_declared->end()) {
         errors->push_back(new VariableRedeclaration({id->get_name()}));
-        return;
+        return true;
     }
     switch(decl->get_type()) {
         case const_decl:
@@ -173,9 +179,10 @@ void CodeChecker::visit(const Declaration* decl) {
         default:
             throw std::invalid_argument("Unknown declaration type");
     }
+    return true;
 }
 
-void CodeChecker::visit(const BinaryOperation* bin_op) {
+bool CodeChecker::visit(const BinaryOperation* bin_op) {
     visit(bin_op->get_right());
     switch(bin_op->get_type()) {
         case addition_op:
@@ -205,9 +212,10 @@ void CodeChecker::visit(const BinaryOperation* bin_op) {
         default:
             throw std::invalid_argument("Unknown operation type");
     }
+    return true;
 }
 
-void CodeChecker::visit(const UnaryArgFunction* func) {
+bool CodeChecker::visit(const UnaryArgFunction* func) {
     switch(func->get_type()) {
         case un_f_input:
         case un_f_print:
@@ -216,4 +224,5 @@ void CodeChecker::visit(const UnaryArgFunction* func) {
         default:
             throw std::invalid_argument("Unknown function type");
     }
+    return true;
 }
