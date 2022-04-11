@@ -1,5 +1,4 @@
-#ifndef CPM_COMPILER_VISITOR_VISITOR_H_
-#define CPM_COMPILER_VISITOR_VISITOR_H_
+#pragma once
 
 #include <string>
 #include <vector>
@@ -25,6 +24,7 @@ public:
     virtual void visit(const Declaration* decl) = 0;
     virtual void visit(const BinaryOperation* op) = 0;
     virtual void visit(const UnaryArgFunction* f) = 0;
+    virtual ~Visitor() = default;
 };
 
 class CodeGenerator : public Visitor {
@@ -69,5 +69,3 @@ private:
     std::unordered_set<std::string>* vars_declared;
     std::unordered_set<std::string>* vars_defined;
 };
-
-#endif
