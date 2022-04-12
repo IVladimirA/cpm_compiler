@@ -18,7 +18,7 @@ public:
 
 class Literal : public Node {
 public:
-    Literal(const std::string& string);
+    explicit Literal(const std::string& string);
     void accept(Visitor& visitor) const override;
     const Node* get_last() const override;
     const std::string value;
@@ -26,7 +26,7 @@ public:
 
 class Identifier : public Node {
 public:
-    Identifier(const std::string& string);
+    explicit Identifier(const std::string& string);
     void accept(Visitor& visitor) const override;
     const Node* get_last() const override;
     const std::string name;
@@ -34,7 +34,7 @@ public:
 
 class Comment : public Node {
 public:
-    Comment(const std::string& info);
+    explicit Comment(const std::string& info);
     void accept(Visitor& visitor) const override;
     const Node* get_last() const override;
     const std::string information;
@@ -42,7 +42,7 @@ public:
 
 class Statement : public Node {
 public:
-    Statement(const Node* comm);
+    explicit Statement(const Node* comm);
     void accept(Visitor& visitor) const override;
     ~Statement();
     const Node* get_last() const override;
@@ -56,7 +56,7 @@ enum class DeclarationType {
 
 class Declaration : public Node {
 public:
-    Declaration(DeclarationType t, const Node* id);
+    Declaration(DeclarationType tp, const Node* id);
     void accept(Visitor& visitor) const override;
     ~Declaration();
     const Node* get_last() const override;
@@ -72,7 +72,7 @@ enum class BinOpType {
 
 class BinaryOperation : public Node {
 public:
-    BinaryOperation(BinOpType op, const Node* l, const Node* r);
+    BinaryOperation(BinOpType op, const Node* l_arg, const Node* r_arg);
     void accept(Visitor& visitor) const override;
     ~BinaryOperation();
     const Node* get_last() const override;
@@ -88,10 +88,20 @@ enum class FunctionType {
 
 class FunctionCall : public Node {
 public:
-    FunctionCall(FunctionType t, std::vector<const Node*> args);
+    FunctionCall(FunctionType tp, std::vector<const Node*> args);
     void accept(Visitor& visitor) const override;
     ~FunctionCall();
     const Node* get_last() const override;
     const FunctionType type;
     std::vector<const Node*> arguments;
+};
+
+class Root : public Node {
+public:
+    Root();
+    Root(std::vector<const Node*> blocks);
+    void accept(Visitor& visitor) const override;
+    ~Root();
+    const Node* get_last() const override;
+    std::vector<const Node*> code_blocks = {};
 };

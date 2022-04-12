@@ -79,7 +79,7 @@ void yyerror(const char *error) {
     std::cerr << error;
 }
 
-std::vector<const Node*> code;
+Root* root = new Root();
 
 
 #line 86 "src/parser/node.tab.c"
@@ -110,7 +110,7 @@ std::vector<const Node*> code;
 # undef YYERROR_VERBOSE
 # define YYERROR_VERBOSE 1
 #else
-# define YYERROR_VERBOSE 0
+# define YYERROR_VERBOSE 1
 #endif
 
 /* Use api.header.include to #include this header
@@ -152,7 +152,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 17 "src/parser/node.y"
+#line 19 "src/parser/node.y"
 
     const Node* node;
     const std::string* name;
@@ -534,13 +534,13 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    37,    37,    38,    41,    42,    45,    46,    47,    48,
-      51,    52,    53,    54,    55,    58,    59,    62,    65,    66,
-      67
+       0,    39,    39,    40,    43,    44,    47,    48,    49,    50,
+      53,    54,    55,    56,    57,    60,    61,    64,    67,    68,
+      69
 };
 #endif
 
-#if YYDEBUG || YYERROR_VERBOSE || 0
+#if YYDEBUG || YYERROR_VERBOSE || 1
 /* YYTNAME[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM.
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
@@ -1349,115 +1349,115 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 37 "src/parser/node.y"
-                 { code.push_back((yyvsp[0].node)); }
+#line 39 "src/parser/node.y"
+                 { root->code_blocks.push_back((yyvsp[0].node)); }
 #line 1355 "src/parser/node.tab.c"
     break;
 
   case 3:
-#line 38 "src/parser/node.y"
-                  { code.push_back((yyvsp[0].node)); }
+#line 40 "src/parser/node.y"
+                  { root->code_blocks.push_back((yyvsp[0].node)); }
 #line 1361 "src/parser/node.tab.c"
     break;
 
   case 4:
-#line 41 "src/parser/node.y"
+#line 43 "src/parser/node.y"
                      { (yyval.node) = new Comment(*(yyvsp[0].name)); }
 #line 1367 "src/parser/node.tab.c"
     break;
 
   case 5:
-#line 42 "src/parser/node.y"
+#line 44 "src/parser/node.y"
                            { (yyval.node) = new Statement((yyvsp[-1].node)); }
 #line 1373 "src/parser/node.tab.c"
     break;
 
   case 6:
-#line 45 "src/parser/node.y"
+#line 47 "src/parser/node.y"
                     { (yyval.node) = (yyvsp[0].node); }
 #line 1379 "src/parser/node.tab.c"
     break;
 
   case 7:
-#line 46 "src/parser/node.y"
+#line 48 "src/parser/node.y"
                                                     { (yyval.node) = new FunctionCall(FunctionType::PRINT, {(yyvsp[-1].node)}); }
 #line 1385 "src/parser/node.tab.c"
     break;
 
   case 8:
-#line 47 "src/parser/node.y"
+#line 49 "src/parser/node.y"
                                   { (yyval.node) = new BinaryOperation(BinOpType::ASSIGNMENT, (yyvsp[-2].node), (yyvsp[0].node)); }
 #line 1391 "src/parser/node.tab.c"
     break;
 
   case 9:
-#line 48 "src/parser/node.y"
+#line 50 "src/parser/node.y"
                                { (yyval.node) = new BinaryOperation(BinOpType::ASSIGNMENT, (yyvsp[-2].node), (yyvsp[0].node)); }
 #line 1397 "src/parser/node.tab.c"
     break;
 
   case 10:
-#line 51 "src/parser/node.y"
+#line 53 "src/parser/node.y"
                                          { (yyval.node) = new BinaryOperation(BinOpType::ADDITION, (yyvsp[-2].node), (yyvsp[0].node)); }
 #line 1403 "src/parser/node.tab.c"
     break;
 
   case 11:
-#line 52 "src/parser/node.y"
+#line 54 "src/parser/node.y"
                                 { (yyval.node) = new BinaryOperation(BinOpType::SUBTRACTION, (yyvsp[-2].node), (yyvsp[0].node)); }
 #line 1409 "src/parser/node.tab.c"
     break;
 
   case 12:
-#line 53 "src/parser/node.y"
+#line 55 "src/parser/node.y"
                                                     { (yyval.node) = new FunctionCall(FunctionType::INPUT, {(yyvsp[-1].node)}); }
 #line 1415 "src/parser/node.tab.c"
     break;
 
   case 13:
-#line 54 "src/parser/node.y"
+#line 56 "src/parser/node.y"
            { (yyval.node) = (yyvsp[0].node); }
 #line 1421 "src/parser/node.tab.c"
     break;
 
   case 14:
-#line 55 "src/parser/node.y"
+#line 57 "src/parser/node.y"
           { (yyval.node) = (yyvsp[0].node); }
 #line 1427 "src/parser/node.tab.c"
     break;
 
   case 15:
-#line 58 "src/parser/node.y"
+#line 60 "src/parser/node.y"
                                              { (yyval.node) = new Declaration(DeclarationType::VAR, (yyvsp[0].node)); }
 #line 1433 "src/parser/node.tab.c"
     break;
 
   case 16:
-#line 59 "src/parser/node.y"
+#line 61 "src/parser/node.y"
                                   { (yyval.node) = new Declaration(DeclarationType::CONST, (yyvsp[0].node)); }
 #line 1439 "src/parser/node.tab.c"
     break;
 
   case 17:
-#line 62 "src/parser/node.y"
+#line 64 "src/parser/node.y"
                      { (yyval.node) = new Identifier(*(yyvsp[0].name)); }
 #line 1445 "src/parser/node.tab.c"
     break;
 
   case 18:
-#line 65 "src/parser/node.y"
+#line 67 "src/parser/node.y"
                            { (yyval.node) = new Literal(*(yyvsp[0].name)); }
 #line 1451 "src/parser/node.tab.c"
     break;
 
   case 19:
-#line 66 "src/parser/node.y"
+#line 68 "src/parser/node.y"
                   { (yyval.node) = new Literal(*(yyvsp[0].name)); }
 #line 1457 "src/parser/node.tab.c"
     break;
 
   case 20:
-#line 67 "src/parser/node.y"
+#line 69 "src/parser/node.y"
                    { (yyval.node) = new Literal(*(yyvsp[0].name)); }
 #line 1463 "src/parser/node.tab.c"
     break;
@@ -1695,4 +1695,4 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 70 "src/parser/node.y"
+#line 72 "src/parser/node.y"

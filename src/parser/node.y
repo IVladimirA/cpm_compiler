@@ -10,9 +10,11 @@ void yyerror(const char *error) {
     std::cerr << error;
 }
 
-std::vector<const Node*> code;
+Root* root = new Root();
 
 %}
+
+%define parse.error verbose
 
 %union {
     const Node* node;
@@ -34,8 +36,8 @@ std::vector<const Node*> code;
 
 %%
 
-Input: Statement { code.push_back($1); }
-| Input Statement { code.push_back($2); }
+Input: Statement { root->code_blocks.push_back($1); }
+| Input Statement { root->code_blocks.push_back($2); }
 ;
 
 Statement: t_comment { $$ = new Comment(*$1); }

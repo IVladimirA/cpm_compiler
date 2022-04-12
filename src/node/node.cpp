@@ -3,10 +3,8 @@
 #include "node.h"
 #include "../visitor/visitor.h"
 
-Literal::Literal(const std::string& val)
-    : value(val) {
 
-}
+Literal::Literal(const std::string& val) : value(val) {}
 void Literal::accept(Visitor& visitor) const {
     visitor.visit(this);
 }
@@ -15,10 +13,8 @@ const Node* Literal::get_last() const {
 }
 
 
-Identifier::Identifier(const std::string& val)
-    : name(val) {
 
-}
+Identifier::Identifier(const std::string& val) : name(val) {}
 void Identifier::accept(Visitor& visitor) const {
     visitor.visit(this);
 }
@@ -27,10 +23,8 @@ const Node* Identifier::get_last() const {
 }
 
 
-Comment::Comment(const std::string& info)
-    : information{info} {
 
-}
+Comment::Comment(const std::string& info) : information{info} {}
 void Comment::accept(Visitor& visitor) const {
     visitor.visit(this);
 }
@@ -39,10 +33,8 @@ const Node* Comment::get_last() const {
 }
 
 
-Statement::Statement(const Node* comm)
-    : command(comm) {
 
-}
+Statement::Statement(const Node* comm) : command(comm) {}
 void Statement::accept(Visitor& visitor) const {
     if (!visitor.visit(this)) {
         return;
@@ -57,10 +49,9 @@ Statement::~Statement() {
 }
 
 
-Declaration::Declaration(DeclarationType t, const Node* id)
-    : type(t), identifier(id) {
 
-}
+Declaration::Declaration(DeclarationType tp, const Node* id)
+    : type(tp), identifier(id) {}
 void Declaration::accept(Visitor& visitor) const {
     if (!visitor.visit(this)) {
         return;
@@ -75,10 +66,9 @@ Declaration::~Declaration() {
 }
 
 
-BinaryOperation::BinaryOperation(BinOpType op, const Node* l, const Node* r)
-    : type(op), left(l), right(r) {
 
-}
+BinaryOperation::BinaryOperation(BinOpType op, const Node* l_arg, const Node* r_arg)
+    : type(op), left(l_arg), right(r_arg) {}
 void BinaryOperation::accept(Visitor& visitor) const {
     if (!visitor.visit(this)) {
         return;
@@ -95,10 +85,9 @@ BinaryOperation::~BinaryOperation() {
 }
 
 
-FunctionCall::FunctionCall(FunctionType t, std::vector<const Node*> args)
-    : type(t), arguments(args) {
 
-}
+FunctionCall::FunctionCall(FunctionType tp, std::vector<const Node*> args)
+    : type(tp), arguments(args) {}
 void FunctionCall::accept(Visitor& visitor) const {
     if (!visitor.visit(this)) {
         return;
@@ -111,7 +100,28 @@ const Node* FunctionCall::get_last() const {
     return arguments.back();
 }
 FunctionCall::~FunctionCall() {
-    for (const Node* tree : arguments) {
-        delete tree;
+    for (const Node* arg : arguments) {
+        delete arg;
+    }
+}
+
+
+
+Root::Root() {}
+Root::Root(std::vector<const Node*> blocks) : code_blocks(blocks) {}
+void Root::accept(Visitor& visitor) const {
+    if (!visitor.visit(this)) {
+        return;
+    }
+    for (const Node* block : code_blocks) {
+        block->accept(visitor);
+    }
+}
+const Node* Root::get_last() const {
+    return code_blocks.back();
+}
+Root::~Root() {
+    for (const Node* block : code_blocks) {
+        delete block;
     }
 }

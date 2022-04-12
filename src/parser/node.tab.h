@@ -71,7 +71,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 17 "src/parser/node.y"
+#line 19 "src/parser/node.y"
 
     const Node* node;
     const std::string* name;
