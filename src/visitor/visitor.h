@@ -12,6 +12,7 @@ class Statement;
 class Declaration;
 class BinaryOperation;
 class FunctionCall;
+class Root;
 class Error;
 
 class Visitor {
@@ -24,6 +25,7 @@ public:
     virtual bool visit(const Declaration* decl) = 0;
     virtual bool visit(const BinaryOperation* op) = 0;
     virtual bool visit(const FunctionCall* f) = 0;
+    virtual bool visit(const Root* tree) = 0;
     virtual ~Visitor() = default;
 };
 
@@ -33,21 +35,23 @@ public:
     std::string get_code();
     bool clear();
     bool visit(const Node* tree) override;
-    void check_last(const Node* tree);
+    void compute_last(const Node* tree);
     bool visit(const Literal* lit) override;
-    void check_last(const Literal* lit);
+    void compute_last(const Literal* lit);
     bool visit(const Identifier* id) override;
-    void check_last(const Identifier* id);
+    void compute_last(const Identifier* id);
     bool visit(const Comment* comm) override;
-    void check_last(const Comment* comm);
+    void compute_last(const Comment* comm);
     bool visit(const Statement* st) override;
-    void check_last(const Statement* st);
+    void compute_last(const Statement* st);
     bool visit(const Declaration* decl) override;
-    void check_last(const Declaration* decl);
+    void compute_last(const Declaration* decl);
     bool visit(const BinaryOperation* op) override;
-    void check_last(const BinaryOperation* op);
+    void compute_last(const BinaryOperation* op);
     bool visit(const FunctionCall* func) override;
-    void check_last(const FunctionCall* func);
+    void compute_last(const FunctionCall* func);
+    bool visit(const Root* tree) override;
+    void compute_last(const Root* tree);
 private:
     std::vector<std::pair<const Node*, std::vector<std::string>>> seen = {};
     std::string code = "";
@@ -55,16 +59,11 @@ private:
 
 class CodeChecker : public Visitor {
 public:
-    CodeChecker(
-        std::vector<const Error*>* err,
-        std::unordered_set<std::string>* con,
-        std::unordered_set<std::string>* vars_decl,
-        std::unordered_set<std::string>* vars_def);
-    void update(
-        std::vector<const Error*>* err,
-        std::unordered_set<std::string>* con,
-        std::unordered_set<std::string>* vars_decl,
-        std::unordered_set<std::string>* vars_def);
+    CodeChecker();
+    void clear_errors();
+    void clear_seen();
+    void clear();
+    ~CodeChecker();
     bool visit(const Node* tree) override;
     bool visit(const Literal* lit) override;
     bool visit(const Identifier* id) override;
@@ -73,10 +72,11 @@ public:
     bool visit(const Declaration* decl) override;
     bool visit(const BinaryOperation* op) override;
     bool visit(const FunctionCall* func) override;
+    bool visit(const Root* tree) override;
+    std::vector<const Error*> errors = {};
 private:
-    std::vector<const Error*>* errors;
-    std::unordered_set<std::string>* consts;
-    std::unordered_set<std::string>* vars_declared;
-    std::unordered_set<std::string>* vars_defined;
+    std::unordered_set<std::string> consts = {};
+    std::unordered_set<std::string> vars_declared = {};
+    std::unordered_set<std::string> vars_defined = {};
 };
 

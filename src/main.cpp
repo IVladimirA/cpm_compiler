@@ -7,8 +7,7 @@
 #include "parser/node.lexer.h"
 #include "visitor/visitor.h"
 
-// Program's parsed commands
-extern std::vector<const Node*> code;
+extern Root* root;
 
 // Print program usage
 static void print_usage(const std::string& program_name) {
@@ -32,49 +31,27 @@ static void parse_file(const std::string& file_path) {
     parse_code(in_file);
 }
 
-// Generate code and write it to .cpp file
-static int generate_cpp(std::ostream& out_file) {
-    bool seen_error = false;
-    std::vector<const Error*> errors;
-    std::unordered_set<std::string> consts; // Identifiers of defined constants
-    std::unordered_set<std::string> vars_defined; // Identifiers of defined variables
-    std::unordered_set<std::string> vars_declared; // Identifiers of declared variables
-
-    // Error checking, code generating and writing
-    out_file << "#include \"../mixed.h\"\n\n";
-    out_file << "int main() {";
-    
-    CodeGenerator writer = CodeGenerator();
-    CodeChecker checker = CodeChecker(&errors, &consts, &vars_declared, &vars_defined);
-    for (const Node* command : code) {
-        /*command->accept(checker);
-        if (errors.size() > 0) {
-            seen_error = true;
-            for (const Error* e : errors) {
-                std::cout << "Error: " << e->get_message() << "\n";
-                delete e;
-            }
-            //std::cout << "In command:";
-            //std::cout << *current_line << "\n";
+static int check_code(const Node* tree) {
+    CodeChecker checker = CodeChecker();
+    tree->accept(checker);
+    if (!checker.errors.empty()) {
+        std::cout << checker.errors.size() << " errors:\n";
+        for (auto* e : checker.errors) {
+            std::cout << e->get_message() << '\n';
         }
-        errors.clear();*/
-        command->accept(writer);
-        out_file << writer.get_code();
-        writer.clear();
-        delete command;
-    }
-    out_file << "\nreturn 0;\n}\n";
-    if (seen_error) {
         return 1;
     }
     return 0;
 }
 
-// Open .cpp file and run code generating
-static int write_cpp(const std::string& file_path) {
-    std::ofstream out_file(file_path);
-    const int return_code = generate_cpp(out_file);
-    return return_code;
+static std::string generate_cpp(const Node* tree) {
+    std::string code =  "#include \"../mixed.h\"\n\n";
+    code += "int main() {";
+    CodeGenerator writer = CodeGenerator();
+    tree->accept(writer);
+    code += writer.get_code();
+    code += "\nreturn 0;\n}\n";
+    return code;
 }
 
 static void check_argc(int argc, const std::string& program_name) {
@@ -101,12 +78,16 @@ int main(int argc, char** argv) {
 
     parse_file(source_path); // Parsing source code
     system(("mkdir -p " + compiler_path + "out").c_str()); // Creating "out" directory
-    const int return_code = write_cpp(compiler_path + "out/a.cpp"); // Writing transpiled code to .cpp file
-    if (return_code != 0) {
-        system(("rm -rf " + compiler_path + "out").c_str());
+
+    if (check_code(root) != 0) {
         std::cout << "Compilation of " << source_path << " failed\n";
         return 1;
     }
+    
+
+    std::ofstream out_file(compiler_path + "out/a.cpp");
+    out_file << generate_cpp(root); // Writing transpiled code to .cpp file
+    out_file.close();
 
     // Compiling a.cpp into a.out file
     if (system(("g++ " + compiler_path + "out/a.cpp " + compiler_path + "libmixed.a -o" + compiler_path + "out/a.out").c_str()) != 0) {
@@ -114,7 +95,7 @@ int main(int argc, char** argv) {
         std::cout << "Compilation of a.cpp failed\n";
         return 1;
     }
-    std::cout << compiler_path << "out/a.out successfully compiled\n";
+    std::cout << compiler_path << "out/a.out successfully compsiled\n";
     if (out_path + "/" == compiler_path) {
         return 0;
     }

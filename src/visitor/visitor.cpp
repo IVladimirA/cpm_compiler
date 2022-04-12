@@ -26,6 +26,9 @@ bool Visitor::visit(const Node* tree) {
     if (tree->cast<FunctionCall>()) {
         return visit(tree->cast<FunctionCall>());
     }
+    if (tree->cast<Root>()) {
+        return visit(tree->cast<Root>());
+    }
     throw std::invalid_argument("Unknown Node type");
 }
 
@@ -36,37 +39,29 @@ std::string CodeGenerator::get_code() {
 }
 
 bool CodeGenerator::clear() {
-    code = "";
+    code.clear();
     seen.clear();
     return true;
 }
-void CodeGenerator::check_last(const Node* tree) {
-    if (tree->cast<Literal>()) {
-        check_last(tree->cast<Literal>());
-        return;
-    }
-    if (tree->cast<Identifier>()) {
-        check_last(tree->cast<Identifier>());
-        return;
-    }
-    if (tree->cast<Comment>()) {
-        check_last(tree->cast<Comment>());
-        return;
-    }
+void CodeGenerator::compute_last(const Node* tree) {
     if (tree->cast<Statement>()) {
-        check_last(tree->cast<Statement>());
+        compute_last(tree->cast<Statement>());
         return;
     }
     if (tree->cast<Declaration>()) {
-        check_last(tree->cast<Declaration>());
+        compute_last(tree->cast<Declaration>());
         return;
     }
     if (tree->cast<BinaryOperation>()) {
-        check_last(tree->cast<BinaryOperation>());
+        compute_last(tree->cast<BinaryOperation>());
         return;
     }
     if (tree->cast<FunctionCall>()) {
-        check_last(tree->cast<FunctionCall>());
+        compute_last(tree->cast<FunctionCall>());
+        return;
+    }
+    if (tree->cast<Root>()) {
+        compute_last(tree->cast<Root>());
         return;
     }
     throw std::invalid_argument("Unknown Node type");
@@ -78,77 +73,70 @@ bool CodeGenerator::visit(const Node* tree) {
 
 bool CodeGenerator::visit(const Literal* lit) {
     seen.back().second.push_back("Mixed(" + lit->value + ")");
-    check_last(lit);
-    return true;
-}
-void CodeGenerator::check_last(const Literal* lit) {
     if (!seen.empty() && seen.back().first->get_last()->cast<Literal>() == lit) {
-        check_last(seen.back().first);
+        compute_last(seen.back().first);
     }
+    return true;
 }
 
 bool CodeGenerator::visit(const Identifier* id) {
     seen.back().second.push_back(id->name);
-    check_last(id);
-    return true;
-}
-void CodeGenerator::check_last(const Identifier* id) {
     if (!seen.empty() && seen.back().first->get_last()->cast<Identifier>() == id) {
-        check_last(seen.back().first);
+        compute_last(seen.back().first);
     }
+    return true;
 }
 
 bool CodeGenerator::visit(const Comment* comm) {
-    code += comm->information;
-    //std::cout << "Comment: " << code << "\n";
-    //seen.back().second.push_back(comm->information);
-    //check_last(comm);
-    return true;
-}
-void CodeGenerator::check_last(const Comment* comm) {
+    seen.back().second.push_back(comm->information);
     if (!seen.empty() && seen.back().first->get_last()->cast<Comment>() == comm) {
-        //check_last(seen.back().first);
+        compute_last(seen.back().first);
     }
+    return true;
 }
 
 bool CodeGenerator::visit(const Statement* st) {
-    //std::cout << "St visitor\n";
     seen.push_back({st, {}});
     return true;
 }
-void CodeGenerator::check_last(const Statement* st) {
-    code += "\n" + seen.back().second[0] + ";";
-    std::cout << "Statment: " << code << "\n";
+void CodeGenerator::compute_last(const Statement* st) {
+    std::vector<std::string> child_code = seen.back().second;
     seen.pop_back();
-    /*
+    seen.back().second.push_back("\n" + child_code[0] + ";");
     if (!seen.empty() && seen.back().first->get_last()->cast<Statement>() == st) {
-        check_last(seen.back().first->get_last());
-    }*/
+        compute_last(seen.back().first);
+    }
 }
 
 bool CodeGenerator::visit(const Declaration* decl) {
-    //std::cout << "Decl visitor\n";
     seen.push_back({decl, {}});
     return true;
 }
 
-void CodeGenerator::check_last(const Declaration* decl) {
+void CodeGenerator::compute_last(const Declaration* decl) {
     std::vector<std::string> child_code = seen.back().second;
     seen.pop_back();
-    seen.back().second.push_back("Mixed " + child_code[0]);
+    switch (decl->type) {
+        case DeclarationType::CONST:
+            seen.back().second.push_back("const Mixed " + child_code[0]);
+            break;
+        case DeclarationType::VAR:
+            seen.back().second.push_back("Mixed " + child_code[0]);
+            break;
+        default:
+            throw std::invalid_argument("Unknown DeclarationType");
+    }
     if (!seen.empty() && seen.back().first->get_last()->cast<Declaration>() == decl) {
-        check_last(seen.back().first);
+        compute_last(seen.back().first);
     }
 }
 
 bool CodeGenerator::visit(const BinaryOperation* bin_op) {
-    //std::cout << "BinOp visitor\n";
-    //std::cout << seen.size() << '\n';
     seen.push_back({bin_op, {}});
     return true;
 }
 
-void CodeGenerator::check_last(const BinaryOperation* bin_op) {
+void CodeGenerator::compute_last(const BinaryOperation* bin_op) {
     std::vector<std::string> child_code = seen.back().second;
     seen.pop_back();
     switch (bin_op->type) {
@@ -162,10 +150,10 @@ void CodeGenerator::check_last(const BinaryOperation* bin_op) {
             seen.back().second.push_back(child_code[0] + " = " + child_code[1]);
             break;
         default:
-            break;
+            throw std::invalid_argument("Unknown BinOpType");
     }
     if (!seen.empty() && seen.back().first->get_last()->cast<BinaryOperation>() == bin_op) {
-        check_last(seen.back().first);
+        compute_last(seen.back().first);
     }
 }
 
@@ -173,7 +161,7 @@ bool CodeGenerator::visit(const FunctionCall* func) {
     seen.push_back({func, {}});
     return true;
 }
-void CodeGenerator::check_last(const FunctionCall* func) {
+void CodeGenerator::compute_last(const FunctionCall* func) {
     std::vector<std::string> child_code = seen.back().second;
     seen.pop_back();
     switch (func->type) {
@@ -184,109 +172,116 @@ void CodeGenerator::check_last(const FunctionCall* func) {
             seen.back().second.push_back("input(" + child_code[0] + ")");
             break;
         default:
-            break;
+            throw std::invalid_argument("Unknown FunctionType");
     }
     if (!seen.empty() && seen.back().first->get_last()->cast<FunctionCall>() == func) {
-        check_last(seen.back().first);
+        compute_last(seen.back().first);
+    }
+}
+bool CodeGenerator::visit(const Root* tree) {
+    seen.push_back({tree, {}});
+    return true;
+}
+void CodeGenerator::compute_last(const Root* tree) {
+    std::vector<std::string> child_code = seen.back().second;
+    seen.pop_back();
+    for (const std::string& block : child_code) {
+        code += block;
     }
 }
 
 
-CodeChecker::CodeChecker(
-    std::vector<const Error*>* err,
-    std::unordered_set<std::string>* con,
-    std::unordered_set<std::string>* vars_decl,
-    std::unordered_set<std::string>* vars_def)
-    : errors{err}, consts{con}, vars_declared{vars_decl}, vars_defined{vars_def} {
+CodeChecker::CodeChecker() {}
 
+void CodeChecker::clear_errors() {
+    for (const Error* e : errors)
+        delete e;
+    errors.clear();
 }
-
-void CodeChecker::update(
-    std::vector<const Error*>* err,
-    std::unordered_set<std::string>* con,
-    std::unordered_set<std::string>* vars_decl,
-    std::unordered_set<std::string>* vars_def) {
-    errors = err;
-    consts = con;
-    vars_declared = vars_decl;
-    vars_defined = vars_def;
+void CodeChecker::clear_seen() {
+    consts.clear();
+    vars_declared.clear();
+    vars_defined.clear();
 }
-
+void CodeChecker::clear() {
+    clear_errors();
+    clear_seen();
+}
+CodeChecker::~CodeChecker() {
+    clear();
+}
 bool CodeChecker::visit(const Node* tree) {
     return Visitor::visit(tree);
 }
 
 bool CodeChecker::visit(const Literal* lit) {
-    return true;
+    return false;
 }
 
 bool CodeChecker::visit(const Identifier* id) {
-    if (consts->find(id->name) == consts->end()
-        && vars_defined->find(id->name) == vars_defined->end()) {
-        errors->push_back(new UndefinedIdentifier({id->name}));
+    if (consts.find(id->name) == consts.end()
+        && vars_defined.find(id->name) == vars_defined.end()) {
+        errors.push_back(new UndefinedIdentifier({id->name}));
     }
-    return true;
+    return false;
 }
 
 bool CodeChecker::visit(const Comment* comm) {
-    return true;
+    return false;
 }
 
 bool CodeChecker::visit(const Statement* st) {
-    visit(st->command);
     return true;
 }
 
 bool CodeChecker::visit(const Declaration* decl) {
     const Identifier* id = decl->identifier->cast<Identifier>();
-    if (consts->find(id->name) != consts->end()) {
-        errors->push_back(new ConstantRedeclaration({id->name}));
-        return true;
+    if (consts.find(id->name) != consts.end()) {
+        errors.push_back(new ConstantRedeclaration({id->name}));
+        return false;
     }
-    if (vars_declared->find(id->name) != vars_declared->end()) {
-        errors->push_back(new VariableRedeclaration({id->name}));
-        return true;
+    if (vars_declared.find(id->name) != vars_declared.end()) {
+        errors.push_back(new VariableRedeclaration({id->name}));
+        return false;
     }
     switch(decl->type) {
         case DeclarationType::CONST:
-            consts->insert(id->name);
-            break;
+            consts.insert(id->name);
+            return false;
         case DeclarationType::VAR:
-            vars_declared->insert(id->name);
-            break;
+            vars_declared.insert(id->name);
+            return false;
         default:
             throw std::invalid_argument("Unknown declaration type");
     }
-    return true;
+    return false;
 }
 
 bool CodeChecker::visit(const BinaryOperation* bin_op) {
-    visit(bin_op->right);
     switch(bin_op->type) {
         case BinOpType::ADDITION:
         case BinOpType::SUBTRACTION:
-            visit(bin_op->left);
-            break;
+            return true;
         case BinOpType::ASSIGNMENT:
             if (bin_op->left->cast<Identifier>()) {
                 const Identifier* id = bin_op->left->cast<Identifier>();
-                if (consts->find(id->name) != consts->end()) {
-                    errors->push_back(new ConstantRedefinition({id->name}));
-                    break;
+                if (consts.find(id->name) != consts.end()) {
+                    errors.push_back(new ConstantRedefinition({id->name}));
+                    return true;
                 }
-                if (vars_declared->find(id->name) != vars_declared->end()) {
-                    vars_defined->insert(id->name);
-                    break;
+                if (vars_declared.find(id->name) != vars_declared.end()) {
+                    vars_defined.insert(id->name);
+                    return true;
+                }
             }
-            }
-            visit(bin_op->left);
-            if (errors->size() == 0 && bin_op->left->cast<Declaration>()) {
+            if (bin_op->left->cast<Declaration>()) {
                 const Declaration* decl = bin_op->left->cast<Declaration>();
                 if (decl->type == DeclarationType::VAR) {
-                    vars_defined->insert(decl->identifier->cast<Identifier>()->name);
+                    vars_defined.insert(decl->identifier->cast<Identifier>()->name);
                 }
+                return true;
             }
-            break;
+            return true;
         default:
             throw std::invalid_argument("Unknown operation type");
     }
@@ -297,10 +292,13 @@ bool CodeChecker::visit(const FunctionCall* func) {
     switch(func->type) {
         case FunctionType::PRINT:
         case FunctionType::INPUT:
-            visit(func->arguments[0]);            
-            break;
+            return true;
         default:
             throw std::invalid_argument("Unknown function type");
     }
+    return true;
+}
+
+bool CodeChecker::visit(const Root* tree) {
     return true;
 }
