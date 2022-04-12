@@ -18,17 +18,17 @@ static void print_usage(const std::string& program_name) {
 }
 
 // Parse code of source file
-static void parse_code(std::ifstream& in_file) {
+static int parse_code(std::ifstream& in_file) {
     std::stringstream all_code;
     all_code << in_file.rdbuf();
     yy_scan_string(all_code.str().c_str());
-    yyparse();
+    return yyparse();
 }
 
 // Open source file and run parser
-static void parse_file(const std::string& file_path) {
+static int parse_file(const std::string& file_path) {
     std::ifstream in_file(file_path);
-    parse_code(in_file);
+    return parse_code(in_file);
 }
 
 static int check_code(const Node* tree) {
@@ -76,9 +76,11 @@ int main(int argc, char** argv) {
     const std::string compiler_path = (path_ending == std::string::npos)
         ? "./" : program_name.substr(0, path_ending + 1);  // Path to C+- compiler
 
-    parse_file(source_path); // Parsing source code
+    if (parse_file(source_path) != 0) { // Parsing source code
+        std::cout << "\nParsing of " << source_path << " failed\n";
+        return 1;
+    }
     system(("mkdir -p " + compiler_path + "out").c_str()); // Creating "out" directory
-
     if (check_code(root) != 0) {
         std::cout << "Compilation of " << source_path << " failed\n";
         return 1;
