@@ -29,12 +29,47 @@ bool Visitor::visit(const Node* tree) {
     throw std::invalid_argument("Unknown Node type");
 }
 
-CodeGenerator::CodeGenerator(std::string* st) {
-    statement = st;
+CodeGenerator::CodeGenerator() {}
+
+std::string CodeGenerator::get_code() {
+    return code;
 }
 
-void CodeGenerator::update_string(std::string* st) {
-    statement = st;
+bool CodeGenerator::clear() {
+    code = "";
+    seen.clear();
+    return true;
+}
+void CodeGenerator::check_last(const Node* tree) {
+    if (tree->cast<Literal>()) {
+        check_last(tree->cast<Literal>());
+        return;
+    }
+    if (tree->cast<Identifier>()) {
+        check_last(tree->cast<Identifier>());
+        return;
+    }
+    if (tree->cast<Comment>()) {
+        check_last(tree->cast<Comment>());
+        return;
+    }
+    if (tree->cast<Statement>()) {
+        check_last(tree->cast<Statement>());
+        return;
+    }
+    if (tree->cast<Declaration>()) {
+        check_last(tree->cast<Declaration>());
+        return;
+    }
+    if (tree->cast<BinaryOperation>()) {
+        check_last(tree->cast<BinaryOperation>());
+        return;
+    }
+    if (tree->cast<FunctionCall>()) {
+        check_last(tree->cast<FunctionCall>());
+        return;
+    }
+    throw std::invalid_argument("Unknown Node type");
 }
 
 bool CodeGenerator::visit(const Node* tree) {
@@ -42,75 +77,118 @@ bool CodeGenerator::visit(const Node* tree) {
 }
 
 bool CodeGenerator::visit(const Literal* lit) {
-    *statement += "Mixed(" + lit->value + ")";
+    seen.back().second.push_back("Mixed(" + lit->value + ")");
+    check_last(lit);
     return true;
+}
+void CodeGenerator::check_last(const Literal* lit) {
+    if (!seen.empty() && seen.back().first->get_last()->cast<Literal>() == lit) {
+        check_last(seen.back().first);
+    }
 }
 
 bool CodeGenerator::visit(const Identifier* id) {
-    *statement += id->name;
+    seen.back().second.push_back(id->name);
+    check_last(id);
     return true;
+}
+void CodeGenerator::check_last(const Identifier* id) {
+    if (!seen.empty() && seen.back().first->get_last()->cast<Identifier>() == id) {
+        check_last(seen.back().first);
+    }
 }
 
 bool CodeGenerator::visit(const Comment* comm) {
-    *statement += comm->information;
+    code += comm->information;
+    //std::cout << "Comment: " << code << "\n";
+    //seen.back().second.push_back(comm->information);
+    //check_last(comm);
     return true;
+}
+void CodeGenerator::check_last(const Comment* comm) {
+    if (!seen.empty() && seen.back().first->get_last()->cast<Comment>() == comm) {
+        //check_last(seen.back().first);
+    }
 }
 
 bool CodeGenerator::visit(const Statement* st) {
-    *statement += "\n";
-    st->command->accept(*this);
-    *statement += ";";
+    //std::cout << "St visitor\n";
+    seen.push_back({st, {}});
     return true;
+}
+void CodeGenerator::check_last(const Statement* st) {
+    code += "\n" + seen.back().second[0] + ";";
+    std::cout << "Statment: " << code << "\n";
+    seen.pop_back();
+    /*
+    if (!seen.empty() && seen.back().first->get_last()->cast<Statement>() == st) {
+        check_last(seen.back().first->get_last());
+    }*/
 }
 
 bool CodeGenerator::visit(const Declaration* decl) {
-    switch(decl->type) {
-        case DeclarationType::CONST:
-            *statement += "const Mixed ";
-            break;
-        case DeclarationType::VAR:
-            *statement += "Mixed ";
-            break;
-        default:
-            throw std::invalid_argument("Unknown declaration type");
-    }
-    visit(decl->identifier);
+    //std::cout << "Decl visitor\n";
+    seen.push_back({decl, {}});
     return true;
+}
+
+void CodeGenerator::check_last(const Declaration* decl) {
+    std::vector<std::string> child_code = seen.back().second;
+    seen.pop_back();
+    seen.back().second.push_back("Mixed " + child_code[0]);
+    if (!seen.empty() && seen.back().first->get_last()->cast<Declaration>() == decl) {
+        check_last(seen.back().first);
+    }
 }
 
 bool CodeGenerator::visit(const BinaryOperation* bin_op) {
-    visit(bin_op->left);
-    switch(bin_op->type) {
-        case BinOpType::ADDITION:
-            *statement += " + ";
-            break;
-        case BinOpType::SUBTRACTION:
-            *statement += " - ";
-            break;
-        case BinOpType::ASSIGNMENT:
-           *statement += " = ";
-            break;
-        default:
-            throw std::invalid_argument("Unknown binary operation type");
-    }
-    visit(bin_op->right);
+    //std::cout << "BinOp visitor\n";
+    //std::cout << seen.size() << '\n';
+    seen.push_back({bin_op, {}});
     return true;
 }
 
-bool CodeGenerator::visit(const FunctionCall* func) {
-    switch(func->type) {
-        case FunctionType::INPUT:
-            *statement += "input(";
+void CodeGenerator::check_last(const BinaryOperation* bin_op) {
+    std::vector<std::string> child_code = seen.back().second;
+    seen.pop_back();
+    switch (bin_op->type) {
+        case BinOpType::ADDITION:
+            seen.back().second.push_back(child_code[0] + " + " + child_code[1]);
             break;
-        case FunctionType::PRINT:
-            *statement += "print(";
+        case BinOpType::SUBTRACTION:
+            seen.back().second.push_back(child_code[0] + " - " + child_code[1]);
+            break;
+        case BinOpType::ASSIGNMENT:
+            seen.back().second.push_back(child_code[0] + " = " + child_code[1]);
             break;
         default:
-            throw std::invalid_argument("Unknown function type");
+            break;
     }
-    visit(func->arguments[0]);
-    *statement += ")";
+    if (!seen.empty() && seen.back().first->get_last()->cast<BinaryOperation>() == bin_op) {
+        check_last(seen.back().first);
+    }
+}
+
+bool CodeGenerator::visit(const FunctionCall* func) {
+    seen.push_back({func, {}});
     return true;
+}
+void CodeGenerator::check_last(const FunctionCall* func) {
+    std::vector<std::string> child_code = seen.back().second;
+    seen.pop_back();
+    switch (func->type) {
+        case FunctionType::PRINT:
+            seen.back().second.push_back("print(" + child_code[0] + ")");
+            break;
+        case FunctionType::INPUT:
+            seen.back().second.push_back("input(" + child_code[0] + ")");
+            break;
+        default:
+            break;
+    }
+    if (!seen.empty() && seen.back().first->get_last()->cast<FunctionCall>() == func) {
+        check_last(seen.back().first);
+    }
 }
 
 

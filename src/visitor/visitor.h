@@ -29,18 +29,28 @@ public:
 
 class CodeGenerator : public Visitor {
 public:
-    CodeGenerator(std::string* st);
-    void update_string(std::string* st);
+    CodeGenerator();
+    std::string get_code();
+    bool clear();
     bool visit(const Node* tree) override;
+    void check_last(const Node* tree);
     bool visit(const Literal* lit) override;
+    void check_last(const Literal* lit);
     bool visit(const Identifier* id) override;
+    void check_last(const Identifier* id);
     bool visit(const Comment* comm) override;
+    void check_last(const Comment* comm);
     bool visit(const Statement* st) override;
+    void check_last(const Statement* st);
     bool visit(const Declaration* decl) override;
+    void check_last(const Declaration* decl);
     bool visit(const BinaryOperation* op) override;
+    void check_last(const BinaryOperation* op);
     bool visit(const FunctionCall* func) override;
+    void check_last(const FunctionCall* func);
 private:
-    std::string* statement;
+    std::vector<std::pair<const Node*, std::vector<std::string>>> seen = {};
+    std::string code = "";
 };
 
 class CodeChecker : public Visitor {

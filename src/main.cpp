@@ -44,32 +44,26 @@ static int generate_cpp(std::ostream& out_file) {
     out_file << "#include \"../mixed.h\"\n\n";
     out_file << "int main() {";
     
-    int wrong_statements = 0; // Number of statements with errors
-    std::string* current_line = new std::string("");
-    CodeGenerator writer = CodeGenerator(current_line);
+    CodeGenerator writer = CodeGenerator();
     CodeChecker checker = CodeChecker(&errors, &consts, &vars_declared, &vars_defined);
     for (const Node* command : code) {
-        command->accept(checker);
-        command->accept(writer);
+        /*command->accept(checker);
         if (errors.size() > 0) {
             seen_error = true;
             for (const Error* e : errors) {
                 std::cout << "Error: " << e->get_message() << "\n";
                 delete e;
             }
-            std::cout << "In command:";
-            std::cout << *current_line << "\n";
+            //std::cout << "In command:";
+            //std::cout << *current_line << "\n";
         }
-        errors.clear();
-        out_file << *current_line;
-        std::string* old_line = current_line;
-        current_line = new std::string("");
-        delete old_line;
-        writer.update_string(current_line);
+        errors.clear();*/
+        command->accept(writer);
+        out_file << writer.get_code();
+        writer.clear();
         delete command;
     }
     out_file << "\nreturn 0;\n}\n";
-    delete current_line;
     if (seen_error) {
         return 1;
     }
