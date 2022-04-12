@@ -1,6 +1,6 @@
 #include "error.h"
 
-Error::Error(const std::vector<std::string>& info)
+Error::Error(const std::vector<std::string>& info) // Clang-Tidy: Pass by value and use std::move
     : information{info} {
 }
 

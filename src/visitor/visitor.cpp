@@ -1,3 +1,4 @@
+// Лишний include.
 #include <iostream>
 #include "visitor.h"
 #include "../error/error.h"
@@ -191,13 +192,19 @@ void CodeGenerator::compute_last(const Root* tree) {
 }
 
 
-CodeChecker::CodeChecker() {}
+CodeChecker::CodeChecker() {} // Clang-Tidy: Use '= default' to define a trivial default constructor
 
 void CodeChecker::clear_errors() {
+    // Обычно для циклов с однострочным телом ты
+    // используешь фигурные скобки, а тут нет
+    // это не консистентно.
     for (const Error* e : errors)
         delete e;
     errors.clear();
 }
+// А зачем ты явно очищаешь std контейнеры?
+// Смотри снова RAII, они самостоятельно очистятся.
+// Поэтому следующие три функции можно удалить.
 void CodeChecker::clear_seen() {
     consts.clear();
     vars_declared.clear();
@@ -210,6 +217,14 @@ void CodeChecker::clear() {
 CodeChecker::~CodeChecker() {
     clear();
 }
+// Хм, а этот код вообще достижим? Когда плюсы
+// выбирают перегрузку, то насколько я помню они
+// выбирают максимально подходящую перегрузку.
+// И получается если узел имеет тип Literal, то
+// он никогда сюда не придет. А так как
+// Node еще и абстрактный, то его экземпляр
+// невозможней, а значит и этот метод недостижим
+// и может быть удален из всех обходчиков.
 bool CodeChecker::visit(const Node* tree) {
     return Visitor::visit(tree);
 }
@@ -219,8 +234,19 @@ bool CodeChecker::visit(const Literal* lit) {
 }
 
 bool CodeChecker::visit(const Identifier* id) {
+    // Такие сложные условия лучше не писать таким образом, читается крайне плохо.
+    // Лучше разделять их и выносить в переменные:
+    //    const bool is_defined_var = vars_defined.find(id->name) != vars_defined.end();
+    //    const bool is_defined_const = consts.find(id->name) != consts.end();
+    //    if (!is_defined_var && !is_defined_const) { ... }
+    //
+    // Так код читается как текст.
     if (consts.find(id->name) == consts.end()
         && vars_defined.find(id->name) == vars_defined.end()) {
+        // Мелочь, конечно, но можно добавить метод error(), чтобы код был
+        // более кратким.
+        // Я все еще не уверен в необходимости выделять на куче память под ошибки.
+        // Проще использовать их по значению, не нужно париться с очисткой памяти.
         errors.push_back(new UndefinedIdentifier({id->name}));
     }
     return false;
@@ -235,6 +261,8 @@ bool CodeChecker::visit(const Statement* st) {
 }
 
 bool CodeChecker::visit(const Declaration* decl) {
+    // Вот тут auto также немного подсократит код.
+    // Clang-Tidy: Use auto when initializing with a template cast to avoid duplicating the type name
     const Identifier* id = decl->identifier->cast<Identifier>();
     if (consts.find(id->name) != consts.end()) {
         errors.push_back(new ConstantRedeclaration({id->name}));
@@ -254,6 +282,7 @@ bool CodeChecker::visit(const Declaration* decl) {
         default:
             throw std::invalid_argument("Unknown declaration type");
     }
+    // Этот код недостижим и может быть удален.
     return false;
 }
 
@@ -285,6 +314,7 @@ bool CodeChecker::visit(const BinaryOperation* bin_op) {
         default:
             throw std::invalid_argument("Unknown operation type");
     }
+   // Этот код недостижим и может быть удален.
     return true;
 }
 
@@ -294,8 +324,10 @@ bool CodeChecker::visit(const FunctionCall* func) {
         case FunctionType::INPUT:
             return true;
         default:
+            // А почему type? Логичнее name.
             throw std::invalid_argument("Unknown function type");
     }
+   // Этот код недостижим и может быть удален.
     return true;
 }
 

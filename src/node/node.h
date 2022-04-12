@@ -1,6 +1,9 @@
 #pragma once
 
 #include <unordered_set>
+// А вот тут ты все еще теряешь библиотеку, без нее у меня не компилировалось.
+// error: implicit instantiation of undefined template 'std::basic_string<char>'
+#include <string>
 #include <vector>
 
 class Visitor;

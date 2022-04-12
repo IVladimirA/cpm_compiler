@@ -1,15 +1,15 @@
 #include <iostream>
 #include "mixed.h"
 
-Mixed::Mixed()
+Mixed::Mixed() // Мелочь, но кажется тут и далее без переноса было бы по приятнее.
     : type(DataType::UNDEF), integer(0), floating(0), string("") {
 }
 
-Mixed::Mixed(long long int num)
+Mixed::Mixed(long long int num) // А строку тут, кстати, необязательно инициализировать (Clang-Tidy: Redundant string initialization)
     : type{DataType::INT}, integer(num), floating(0), string("") {
 }
 
-Mixed::Mixed(int num)
+Mixed::Mixed(int num) // А чтобы не инициализировать каждый раз int и float, можно прямо в определении класса написать = 0 и = 0.0
     : type(DataType::INT), integer(num), floating(0), string("") {
 }
 
@@ -17,6 +17,7 @@ Mixed::Mixed(double num)
     : type(DataType::FLOAT), integer(0), floating(num), string("") {
 }
 
+// Clang-Tidy: Pass by value and use std::move
 Mixed::Mixed(const std::string& string)
     : type(DataType::STRING), integer(0), floating(0), string(string) {
 }
@@ -51,6 +52,8 @@ StringType is_numeric(const std::string& s) {
         return StringType::NONNUMERIC;
     bool was_point = false;
     for (const char& c : s) {
+        // Обычно однострочные if у тебя обернуты в фигурные скобеи.
+        // А тут нет, не консистентно.
         if (!std::isdigit(c) && c != '.')
             return StringType::NONNUMERIC;
         else if (c == '.') {

@@ -1,4 +1,5 @@
 #pragma once
+// Пропущена пустая строка.
 #include <string>
 #include <vector>
 

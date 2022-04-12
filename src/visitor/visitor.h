@@ -29,18 +29,24 @@ public:
     virtual ~Visitor() = default;
 };
 
+// Не уверен, что стоило оставлять все в одном файле. Лучше было
+// бы разделить по файлу на класс. Это также уменьшило бы размер visitor.cpp.
 class CodeGenerator : public Visitor {
 public:
     CodeGenerator();
     std::string get_code();
+    // Функция не используется.
     bool clear();
     bool visit(const Node* tree) override;
     void compute_last(const Node* tree);
     bool visit(const Literal* lit) override;
+    // Функция не используется и даже не реализована!
     void compute_last(const Literal* lit);
     bool visit(const Identifier* id) override;
+    // Функция не используется и даже не реализована!
     void compute_last(const Identifier* id);
     bool visit(const Comment* comm) override;
+    // Функция не используется и даже не реализована!
     void compute_last(const Comment* comm);
     bool visit(const Statement* st) override;
     void compute_last(const Statement* st);
@@ -80,3 +86,4 @@ private:
     std::unordered_set<std::string> vars_defined = {};
 };
 
+// Лишняя строка в конце.

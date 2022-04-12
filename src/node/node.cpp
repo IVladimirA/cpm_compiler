@@ -1,9 +1,12 @@
 #include <vector>
+// Неиспользуемый include.
 #include <iostream>
 #include "node.h"
 #include "../visitor/visitor.h"
 
-
+// Вот тут все очень очень некрасиво слиплось в кучу.
+// Clang-Tidy: Pass by value and use std::move
+// https://stackoverflow.com/questions/51705967/advantages-of-pass-by-value-and-stdmove-over-pass-by-reference
 Literal::Literal(const std::string& val) : value(val) {}
 void Literal::accept(Visitor& visitor) const {
     visitor.visit(this);
@@ -11,7 +14,8 @@ void Literal::accept(Visitor& visitor) const {
 const Node* Literal::get_last() const {
     return nullptr;
 }
-
+// А вот тут аж три строки пустых. Почему просто не разделить одни определения
+// одной строкой, а блоки двумя?
 
 
 Identifier::Identifier(const std::string& val) : name(val) {}
@@ -107,7 +111,9 @@ FunctionCall::~FunctionCall() {
 
 
 
-Root::Root() {}
+Root::Root() {} // Clang-Tidy: Use '= default' to define a trivial default constructor
+// А вот тут ты забыл переместить blocks с помощью std::move, из-за этого лишнее копирование.
+// Clang-Tidy: Parameter 'blocks' is passed by value and only copied once; consider moving it to avoid unnecessary copies
 Root::Root(std::vector<const Node*> blocks) : code_blocks(blocks) {}
 void Root::accept(Visitor& visitor) const {
     if (!visitor.visit(this)) {
