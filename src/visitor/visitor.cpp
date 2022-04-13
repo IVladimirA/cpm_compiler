@@ -1,5 +1,4 @@
 #include "visitor.h"
-#include "../error/error.h"
 #include "../node/node.h"
 
 
@@ -190,11 +189,7 @@ void CodeGenerator::compute_last(const Root* tree) {
 }
 
 
-CodeChecker::CodeChecker() {}
-
 void CodeChecker::clear_errors() {
-    for (const Error* e : errors)
-        delete e;
     errors.clear();
 }
 void CodeChecker::clear_seen() {
@@ -220,7 +215,7 @@ bool CodeChecker::visit(const Literal* lit) {
 bool CodeChecker::visit(const Identifier* id) {
     if (consts.find(id->name) == consts.end()
         && vars_defined.find(id->name) == vars_defined.end()) {
-        errors.push_back(new UndefinedIdentifier({id->name}));
+        errors.push_back("usage of undefined identifier \'" + id->name + "\'");
     }
     return false;
 }
@@ -236,11 +231,11 @@ bool CodeChecker::visit(const Statement* st) {
 bool CodeChecker::visit(const Declaration* decl) {
     const Identifier* id = decl->identifier->cast<Identifier>();
     if (consts.find(id->name) != consts.end()) {
-        errors.push_back(new ConstantRedeclaration({id->name}));
+        errors.push_back("redeclaration of constant \'" + id->name + "\'");
         return false;
     }
     if (vars_declared.find(id->name) != vars_declared.end()) {
-        errors.push_back(new VariableRedeclaration({id->name}));
+        errors.push_back("redeclaration of variable \'" + id->name + "\'");
         return false;
     }
     switch(decl->type) {
@@ -265,7 +260,7 @@ bool CodeChecker::visit(const BinaryOperation* bin_op) {
             if (bin_op->left->cast<Identifier>()) {
                 const Identifier* id = bin_op->left->cast<Identifier>();
                 if (consts.find(id->name) != consts.end()) {
-                    errors.push_back(new ConstantRedefinition({id->name}));
+                    errors.push_back("redefinition of constant \'" + id->name + "\'");
                     return true;
                 }
                 if (vars_declared.find(id->name) != vars_declared.end()) {

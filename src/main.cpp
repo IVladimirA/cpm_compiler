@@ -2,7 +2,6 @@
 #include <fstream>
 #include <sstream>
 #include "node/node.h"
-#include "error/error.h"
 #include "parser/node.tab.h"
 #include "parser/node.lexer.h"
 #include "visitor/visitor.h"
@@ -35,9 +34,8 @@ static bool check_code(const Node* tree) {
     CodeChecker checker = CodeChecker();
     tree->accept(checker);
     if (!checker.errors.empty()) {
-        std::cout << checker.errors.size() << " errors:\n";
-        for (auto* e : checker.errors) {
-            std::cout << e->get_message() << '\n';
+        for (const std::string& e : checker.errors) {
+            std::cout << e << '\n';
         }
         return false;
     }

@@ -13,7 +13,6 @@ class Declaration;
 class BinaryOperation;
 class FunctionCall;
 class Root;
-class Error;
 
 class Visitor {
 public:
@@ -59,7 +58,7 @@ private:
 
 class CodeChecker : public Visitor {
 public:
-    CodeChecker();
+    CodeChecker() = default;
     void clear_errors();
     void clear_seen();
     void clear();
@@ -73,10 +72,10 @@ public:
     bool visit(const BinaryOperation* op) override;
     bool visit(const FunctionCall* func) override;
     bool visit(const Root* tree) override;
-    std::vector<const Error*> errors = {};
+    std::vector<std::string> errors;
 private:
-    std::unordered_set<std::string> consts = {};
-    std::unordered_set<std::string> vars_declared = {};
-    std::unordered_set<std::string> vars_defined = {};
+    std::unordered_set<std::string> consts;
+    std::unordered_set<std::string> vars_declared;
+    std::unordered_set<std::string> vars_defined;
 };
 
