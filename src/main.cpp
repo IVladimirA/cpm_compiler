@@ -31,7 +31,7 @@ static bool parse_file(const std::string& file_path) {
 }
 
 static bool check_code(const Node* tree) {
-    CodeChecker checker = CodeChecker();
+    auto checker = CodeChecker();
     tree->accept(checker);
     if (!checker.errors.empty()) {
         for (const std::string& e : checker.errors) {
@@ -45,7 +45,7 @@ static bool check_code(const Node* tree) {
 static std::string generate_cpp(const Node* tree) {
     std::string code =  "#include \"../mixed.h\"\n";
     code += "int main() {";
-    CodeGenerator writer = CodeGenerator();
+    auto writer = CodeGenerator();
     tree->accept(writer);
     code += writer.get_code();
     code += "\nreturn 0;\n}\n";
