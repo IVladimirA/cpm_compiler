@@ -30,8 +30,6 @@ bool Visitor::visit(const Node* tree) {
     throw std::invalid_argument("Unknown Node type");
 }
 
-CodeGenerator::CodeGenerator() {}
-
 std::string CodeGenerator::get_code() {
     return code;
 }
@@ -41,6 +39,7 @@ bool CodeGenerator::clear() {
     seen.clear();
     return true;
 }
+
 void CodeGenerator::compute_last(const Node* tree) {
     if (tree->cast<Statement>()) {
         compute_last(tree->cast<Statement>());
@@ -97,6 +96,7 @@ bool CodeGenerator::visit(const Statement* st) {
     seen.push_back({st, {}});
     return true;
 }
+
 void CodeGenerator::compute_last(const Statement* st) {
     std::vector<std::string> child_code = seen.back().second;
     seen.pop_back();
@@ -159,6 +159,7 @@ bool CodeGenerator::visit(const FunctionCall* func) {
     seen.push_back({func, {}});
     return true;
 }
+
 void CodeGenerator::compute_last(const FunctionCall* func) {
     std::vector<std::string> child_code = seen.back().second;
     seen.pop_back();
@@ -176,10 +177,12 @@ void CodeGenerator::compute_last(const FunctionCall* func) {
         compute_last(seen.back().first);
     }
 }
+
 bool CodeGenerator::visit(const Root* tree) {
     seen.push_back({tree, {}});
     return true;
 }
+
 void CodeGenerator::compute_last(const Root* tree) {
     std::vector<std::string> child_code = seen.back().second;
     seen.pop_back();
@@ -192,18 +195,22 @@ void CodeGenerator::compute_last(const Root* tree) {
 void CodeChecker::clear_errors() {
     errors.clear();
 }
+
 void CodeChecker::clear_seen() {
     consts.clear();
     vars_declared.clear();
     vars_defined.clear();
 }
+
 void CodeChecker::clear() {
     clear_errors();
     clear_seen();
 }
-CodeChecker::~CodeChecker() {
-    clear();
+
+void CodeChecker::error(std::string info) {
+    errors.push_back(std::move(info));
 }
+
 bool CodeChecker::visit(const Node* tree) {
     return Visitor::visit(tree);
 }
@@ -213,9 +220,10 @@ bool CodeChecker::visit(const Literal* lit) {
 }
 
 bool CodeChecker::visit(const Identifier* id) {
-    if (consts.find(id->name) == consts.end()
-        && vars_defined.find(id->name) == vars_defined.end()) {
-        errors.push_back("usage of undefined identifier \'" + id->name + "\'");
+    const bool is_defined_const = consts.find(id->name) != consts.end();
+    const bool is_defined_var = vars_defined.find(id->name) != vars_defined.end();
+    if (!is_defined_const && !is_defined_var) {
+        error("usage of undefined identifier \'" + id->name + "\'");
     }
     return false;
 }
@@ -229,13 +237,13 @@ bool CodeChecker::visit(const Statement* st) {
 }
 
 bool CodeChecker::visit(const Declaration* decl) {
-    const Identifier* id = decl->identifier->cast<Identifier>();
+    auto id = decl->identifier->cast<Identifier>();
     if (consts.find(id->name) != consts.end()) {
-        errors.push_back("redeclaration of constant \'" + id->name + "\'");
+        error("redeclaration of constant \'" + id->name + "\'");
         return false;
     }
     if (vars_declared.find(id->name) != vars_declared.end()) {
-        errors.push_back("redeclaration of variable \'" + id->name + "\'");
+        error("redeclaration of variable \'" + id->name + "\'");
         return false;
     }
     switch(decl->type) {
@@ -246,7 +254,7 @@ bool CodeChecker::visit(const Declaration* decl) {
             vars_declared.insert(id->name);
             return false;
         default:
-            throw std::invalid_argument("Unknown declaration type");
+            throw std::invalid_argument("Unknown DeclarationType");
     }
     return false;
 }
@@ -258,9 +266,9 @@ bool CodeChecker::visit(const BinaryOperation* bin_op) {
             return true;
         case BinOpType::ASSIGNMENT:
             if (bin_op->left->cast<Identifier>()) {
-                const Identifier* id = bin_op->left->cast<Identifier>();
+                auto id = bin_op->left->cast<Identifier>();
                 if (consts.find(id->name) != consts.end()) {
-                    errors.push_back("redefinition of constant \'" + id->name + "\'");
+                    error("redefinition of constant \'" + id->name + "\'");
                     return true;
                 }
                 if (vars_declared.find(id->name) != vars_declared.end()) {
@@ -269,7 +277,7 @@ bool CodeChecker::visit(const BinaryOperation* bin_op) {
                 }
             }
             if (bin_op->left->cast<Declaration>()) {
-                const Declaration* decl = bin_op->left->cast<Declaration>();
+                auto decl = bin_op->left->cast<Declaration>();
                 if (decl->type == DeclarationType::VAR) {
                     vars_defined.insert(decl->identifier->cast<Identifier>()->name);
                 }
@@ -277,7 +285,7 @@ bool CodeChecker::visit(const BinaryOperation* bin_op) {
             }
             return true;
         default:
-            throw std::invalid_argument("Unknown operation type");
+            throw std::invalid_argument("Unknown BinOpType");
     }
     return true;
 }
@@ -288,7 +296,7 @@ bool CodeChecker::visit(const FunctionCall* func) {
         case FunctionType::INPUT:
             return true;
         default:
-            throw std::invalid_argument("Unknown function type");
+            throw std::invalid_argument("Unknown FunctionType");
     }
     return true;
 }

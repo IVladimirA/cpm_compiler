@@ -15,7 +15,7 @@ public:
     Mixed(long long int num);
     Mixed(int num);
     Mixed(double num);
-    Mixed(const std::string& string);
+    Mixed(std::string string);
     bool is_defined() const;
     std::string to_string() const;
     Mixed to_numeric() const;

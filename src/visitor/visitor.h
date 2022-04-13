@@ -30,17 +30,14 @@ public:
 
 class CodeGenerator : public Visitor {
 public:
-    CodeGenerator();
+    CodeGenerator() = default;
     std::string get_code();
     bool clear();
     bool visit(const Node* tree) override;
     void compute_last(const Node* tree);
     bool visit(const Literal* lit) override;
-    void compute_last(const Literal* lit);
     bool visit(const Identifier* id) override;
-    void compute_last(const Identifier* id);
     bool visit(const Comment* comm) override;
-    void compute_last(const Comment* comm);
     bool visit(const Statement* st) override;
     void compute_last(const Statement* st);
     bool visit(const Declaration* decl) override;
@@ -62,7 +59,7 @@ public:
     void clear_errors();
     void clear_seen();
     void clear();
-    ~CodeChecker();
+    void error(std::string info);
     bool visit(const Node* tree) override;
     bool visit(const Literal* lit) override;
     bool visit(const Identifier* id) override;
@@ -78,4 +75,3 @@ private:
     std::unordered_set<std::string> vars_declared;
     std::unordered_set<std::string> vars_defined;
 };
-

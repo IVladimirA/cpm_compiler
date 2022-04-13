@@ -1,4 +1,5 @@
 #include <iostream>
+
 #include "mixed.h"
 
 Mixed::Mixed(long long int num) : type{DataType::INT}, integer(num) {}
@@ -7,7 +8,7 @@ Mixed::Mixed(int num) : type(DataType::INT), integer(num) {}
 
 Mixed::Mixed(double num) : type(DataType::FLOAT), floating(num) {}
 
-Mixed::Mixed(const std::string& string) : type(DataType::STRING), string(string) {}
+Mixed::Mixed(std::string str) : type(DataType::STRING), string(std::move(str)) {}
 
 bool Mixed::is_defined() const {
     return type != DataType::UNDEF;
@@ -39,9 +40,9 @@ StringType is_numeric(const std::string& s) {
         return StringType::NONNUMERIC;
     bool was_point = false;
     for (const char& c : s) {
-        if (!std::isdigit(c) && c != '.')
+        if (!std::isdigit(c) && c != '.') {
             return StringType::NONNUMERIC;
-        else if (c == '.') {
+        } else if (c == '.') {
             if (was_point)
                 return StringType::NONNUMERIC;
             was_point = true;

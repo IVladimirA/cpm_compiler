@@ -1,10 +1,8 @@
-#include <vector>
-
 #include "node.h"
 #include "../visitor/visitor.h"
 
 
-Literal::Literal(const std::string& val) : value(val) {}
+Literal::Literal(std::string val) : value(std::move(val)) {}
 void Literal::accept(Visitor& visitor) const {
     visitor.visit(this);
 }
@@ -14,7 +12,7 @@ const Node* Literal::get_last() const {
 
 
 
-Identifier::Identifier(const std::string& val) : name(val) {}
+Identifier::Identifier(std::string val) : name(std::move(val)) {}
 void Identifier::accept(Visitor& visitor) const {
     visitor.visit(this);
 }
@@ -24,7 +22,7 @@ const Node* Identifier::get_last() const {
 
 
 
-Comment::Comment(const std::string& info) : information{info} {}
+Comment::Comment(std::string info) : information(std::move(info)) {}
 void Comment::accept(Visitor& visitor) const {
     visitor.visit(this);
 }
@@ -87,7 +85,7 @@ BinaryOperation::~BinaryOperation() {
 
 
 FunctionCall::FunctionCall(FunctionType tp, std::vector<const Node*> args)
-    : type(tp), arguments(args) {}
+    : type(tp), arguments(std::move(args)) {}
 void FunctionCall::accept(Visitor& visitor) const {
     if (!visitor.visit(this)) {
         return;
@@ -107,8 +105,7 @@ FunctionCall::~FunctionCall() {
 
 
 
-Root::Root() {}
-Root::Root(std::vector<const Node*> blocks) : code_blocks(blocks) {}
+Root::Root(std::vector<const Node*> blocks) : code_blocks(std::move(blocks)) {}
 void Root::accept(Visitor& visitor) const {
     if (!visitor.visit(this)) {
         return;

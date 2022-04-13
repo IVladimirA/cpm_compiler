@@ -19,7 +19,7 @@ public:
 
 class Literal : public Node {
 public:
-    explicit Literal(const std::string& string);
+    explicit Literal(std::string val);
     void accept(Visitor& visitor) const override;
     const Node* get_last() const override;
     const std::string value;
@@ -27,7 +27,7 @@ public:
 
 class Identifier : public Node {
 public:
-    explicit Identifier(const std::string& string);
+    explicit Identifier(std::string val);
     void accept(Visitor& visitor) const override;
     const Node* get_last() const override;
     const std::string name;
@@ -35,7 +35,7 @@ public:
 
 class Comment : public Node {
 public:
-    explicit Comment(const std::string& info);
+    explicit Comment(std::string info);
     void accept(Visitor& visitor) const override;
     const Node* get_last() const override;
     const std::string information;
@@ -99,10 +99,10 @@ public:
 
 class Root : public Node {
 public:
-    Root();
+    Root() = default;
     Root(std::vector<const Node*> blocks);
     void accept(Visitor& visitor) const override;
     ~Root();
     const Node* get_last() const override;
-    std::vector<const Node*> code_blocks = {};
+    std::vector<const Node*> code_blocks;
 };
