@@ -1,4 +1,3 @@
-#include <iostream>
 #include "visitor.h"
 #include "../error/error.h"
 #include "../node/node.h"

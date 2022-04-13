@@ -18,20 +18,20 @@ static void print_usage(const std::string& program_name) {
 }
 
 // Parse code of source file
-static int parse_code(std::ifstream& in_file) {
+static bool parse_code(std::ifstream& in_file) {
     std::stringstream all_code;
     all_code << in_file.rdbuf();
     yy_scan_string(all_code.str().c_str());
-    return yyparse();
+    return yyparse() == 0;
 }
 
 // Open source file and run parser
-static int parse_file(const std::string& file_path) {
+static bool parse_file(const std::string& file_path) {
     std::ifstream in_file(file_path);
     return parse_code(in_file);
 }
 
-static int check_code(const Node* tree) {
+static bool check_code(const Node* tree) {
     CodeChecker checker = CodeChecker();
     tree->accept(checker);
     if (!checker.errors.empty()) {
@@ -39,13 +39,13 @@ static int check_code(const Node* tree) {
         for (auto* e : checker.errors) {
             std::cout << e->get_message() << '\n';
         }
-        return 1;
+        return false;
     }
-    return 0;
+    return true;
 }
 
 static std::string generate_cpp(const Node* tree) {
-    std::string code =  "#include \"../mixed.h\"\n\n";
+    std::string code =  "#include \"../mixed.h\"\n";
     code += "int main() {";
     CodeGenerator writer = CodeGenerator();
     tree->accept(writer);
@@ -72,21 +72,20 @@ int main(int argc, char** argv) {
     }
     const std::string out_path = (argc == 3) ? argv[2] : ".";  // Resulting directory with .cpp and .out files location
 
-    const size_t path_ending = program_name.rfind("/");
+    const size_t path_ending = program_name.rfind('/');
     const std::string compiler_path = (path_ending == std::string::npos)
         ? "./" : program_name.substr(0, path_ending + 1);  // Path to C+- compiler
 
-    if (parse_file(source_path) != 0) { // Parsing source code
+    if (!parse_file(source_path)) { // Parsing source code
         std::cout << "\nParsing of " << source_path << " failed\n";
         return 1;
     }
     system(("mkdir -p " + compiler_path + "out").c_str()); // Creating "out" directory
-    if (check_code(root) != 0) {
+    if (!check_code(root)) {
         std::cout << "Compilation of " << source_path << " failed\n";
         return 1;
     }
     
-
     std::ofstream out_file(compiler_path + "out/a.cpp");
     out_file << generate_cpp(root); // Writing transpiled code to .cpp file
     out_file.close();
@@ -97,15 +96,15 @@ int main(int argc, char** argv) {
         std::cout << "Compilation of a.cpp failed\n";
         return 1;
     }
-    std::cout << compiler_path << "out/a.out successfully compsiled\n";
+    std::cout << compiler_path << "out/a.out successfully compiled\n";
     if (out_path + "/" == compiler_path) {
         return 0;
     }
     // Moving out directory to destination location
-    if (system(("mv " + compiler_path + "out " + out_path).c_str()) == 0) {
-        std::cout << compiler_path << "out successfully moved to " << out_path << "\n";
-        return 0;
+    if (system(("mv " + compiler_path + "out " + out_path).c_str()) != 0) {
+        std::cout << "Couldn't move " << compiler_path << "out to " << out_path << '\n';
+        return 1;
     }
-    std::cout << "Couldn't move " << compiler_path << "out to " << out_path << "\n";
-    return 1;
+    std::cout << compiler_path << "out successfully moved to " << out_path << '\n';
+    return 0;
 }
