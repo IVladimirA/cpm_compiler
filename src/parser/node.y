@@ -10,7 +10,7 @@ void yyerror(const char *error) {
     std::cerr << error;
 }
 
-Root* root = new Root();
+Root root;
 
 %}
 
@@ -36,8 +36,8 @@ Root* root = new Root();
 
 %%
 
-Input: Statement { root->code_blocks.push_back($1); }
-| Input Statement { root->code_blocks.push_back($2); }
+Input: Statement { root.code_blocks.push_back($1); }
+| Input Statement { root.code_blocks.push_back($2); }
 ;
 
 Statement: t_comment { $$ = new Comment(*$1); }

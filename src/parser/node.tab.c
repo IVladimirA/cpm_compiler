@@ -79,7 +79,7 @@ void yyerror(const char *error) {
     std::cerr << error;
 }
 
-Root* root = new Root();
+Root root;
 
 
 #line 86 "src/parser/node.tab.c"
@@ -1350,13 +1350,13 @@ yyreduce:
     {
   case 2:
 #line 39 "src/parser/node.y"
-                 { root->code_blocks.push_back((yyvsp[0].node)); }
+                 { root.code_blocks.push_back((yyvsp[0].node)); }
 #line 1355 "src/parser/node.tab.c"
     break;
 
   case 3:
 #line 40 "src/parser/node.y"
-                  { root->code_blocks.push_back((yyvsp[0].node)); }
+                  { root.code_blocks.push_back((yyvsp[0].node)); }
 #line 1361 "src/parser/node.tab.c"
     break;
 

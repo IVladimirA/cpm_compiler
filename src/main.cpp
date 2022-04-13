@@ -6,7 +6,7 @@
 #include "parser/node.lexer.h"
 #include "visitor/visitor.h"
 
-extern Root* root;
+extern Root root;
 
 // Print program usage
 static void print_usage(const std::string& program_name) {
@@ -79,13 +79,13 @@ int main(int argc, char** argv) {
         return 1;
     }
     system(("mkdir -p " + compiler_path + "out").c_str()); // Creating "out" directory
-    if (!check_code(root)) {
+    if (!check_code(&root)) {
         std::cout << "Compilation of " << source_path << " failed\n";
         return 1;
     }
     
     std::ofstream out_file(compiler_path + "out/a.cpp");
-    out_file << generate_cpp(root); // Writing transpiled code to .cpp file
+    out_file << generate_cpp(&root); // Writing transpiled code to .cpp file
     out_file.close();
 
     // Compiling a.cpp into a.out file

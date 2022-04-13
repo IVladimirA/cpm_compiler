@@ -3,7 +3,7 @@ node := src/node/node.h src/node/node.cpp
 visitor := src/visitor/visitor.h src/visitor/visitor.cpp
 mixed := src/mixed/mixed.h src/mixed/mixed.cpp
 library := cpm_compiler/libmixed.a cpm_compiler/mixed.h
-example := examples/errors.cpm
+example := examples/a.cpm
 CXXFLAGS+=-std=c++17 -Wall -O2
 
 .PHONY: all clean run pack rerun
