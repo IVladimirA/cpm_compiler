@@ -9,7 +9,6 @@ public:
     void clear_seen();
     void clear();
     void error(std::string info);
-    bool visit(const Node* tree) override;
     bool visit(const Literal* lit) override;
     bool visit(const Identifier* id) override;
     bool visit(const Comment* comm) override;

@@ -36,10 +36,6 @@ void CodeGenerator::compute_last(const Node* tree) {
     throw std::invalid_argument("Unknown Node type");
 }
 
-bool CodeGenerator::visit(const Node* tree) {
-    return Visitor::visit(tree);
-}
-
 bool CodeGenerator::visit(const Literal* lit) {
     seen.back().second.push_back("Mixed(" + lit->value + ")");
     if (!seen.empty() && seen.back().first->get_last()->cast<Literal>() == lit) {

@@ -16,7 +16,6 @@ class Root;
 
 class Visitor {
 public:
-    virtual bool visit(const Node* tree) = 0;
     virtual bool visit(const Literal* lit) = 0;
     virtual bool visit(const Identifier* id) = 0;
     virtual bool visit(const Comment* comm) = 0;

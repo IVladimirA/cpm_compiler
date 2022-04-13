@@ -36,6 +36,5 @@ enum class StringType {
 };
 
 StringType is_numeric(const std::string& s);
-
 void print(const Mixed& m);
 Mixed input(const Mixed& m);

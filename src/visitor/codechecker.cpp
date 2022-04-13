@@ -2,7 +2,6 @@
 #include "../node/terminals.h"
 #include "../node/nonterminals.h"
 
-
 void CodeChecker::clear_errors() {
     errors.clear();
 }
@@ -20,10 +19,6 @@ void CodeChecker::clear() {
 
 void CodeChecker::error(std::string info) {
     errors.push_back(std::move(info));
-}
-
-bool CodeChecker::visit(const Node* tree) {
-    return Visitor::visit(tree);
 }
 
 bool CodeChecker::visit(const Literal* lit) {
@@ -67,7 +62,6 @@ bool CodeChecker::visit(const Declaration* decl) {
         default:
             throw std::invalid_argument("Unknown DeclarationType");
     }
-    return false;
 }
 
 bool CodeChecker::visit(const BinaryOperation* bin_op) {
@@ -98,7 +92,6 @@ bool CodeChecker::visit(const BinaryOperation* bin_op) {
         default:
             throw std::invalid_argument("Unknown BinOpType");
     }
-    return true;
 }
 
 bool CodeChecker::visit(const FunctionCall* func) {
@@ -109,7 +102,6 @@ bool CodeChecker::visit(const FunctionCall* func) {
         default:
             throw std::invalid_argument("Unknown FunctionType");
     }
-    return true;
 }
 
 bool CodeChecker::visit(const Root* tree) {
