@@ -1,5 +1,6 @@
 #include "codegenerator.h"
-#include "../../node/node.h"
+#include "../node/terminals.h"
+#include "../node/nonterminals.h"
 
 std::string CodeGenerator::get_code() {
     return code;

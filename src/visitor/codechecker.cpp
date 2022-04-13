@@ -1,5 +1,7 @@
 #include "codechecker.h"
-#include "../../node/node.h"
+#include "../node/terminals.h"
+#include "../node/nonterminals.h"
+
 
 void CodeChecker::clear_errors() {
     errors.clear();

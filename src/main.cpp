@@ -2,11 +2,12 @@
 #include <fstream>
 #include <sstream>
 
-#include "node/node.h"
+#include "node/terminals.h"
+#include "node/nonterminals.h"
 #include "parser/node.tab.h"
 #include "parser/node.lexer.h"
-#include "visitor/codechecker/codechecker.h"
-#include "visitor/codegenerator/codegenerator.h"
+#include "visitor/codechecker.h"
+#include "visitor/codegenerator.h"
 
 extern Root root;
 

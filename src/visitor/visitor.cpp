@@ -1,5 +1,6 @@
 #include "visitor.h"
-#include "../../node/node.h"
+#include "../node/terminals.h"
+#include "../node/nonterminals.h"
 
 bool Visitor::visit(const Node* tree) {
     if (tree->cast<Literal>()) {

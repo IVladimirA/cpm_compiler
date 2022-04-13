@@ -70,9 +70,9 @@
 
 
 #include <iostream>
-#include <string>
-#include <vector>
-#include "../node/node.h"
+
+#include "../node/nonterminals.h"
+#include "../node/terminals.h"
 
 int yylex(void);
 void yyerror(const char *error) {

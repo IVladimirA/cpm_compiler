@@ -1,8 +1,11 @@
 CXX := g++
 node := src/node/node.h src/node/node.cpp
-visitor := src/visitor/visitor/visitor.h src/visitor/visitor/visitor.cpp
-codechecker := src/visitor/codechecker/codechecker.h src/visitor/codechecker/codechecker.cpp
-codegenerator := src/visitor/codegenerator/codegenerator.h src/visitor/codegenerator/codegenerator.cpp
+terminals := src/node/terminals.h src/node/terminals.cpp
+nonterminals := src/node/nonterminals.h src/node/nonterminals.cpp
+node_all := $(node) $(terminals) $(nonterminals)
+visitor := src/visitor/visitor.h src/visitor/visitor.cpp
+codechecker := src/visitor/codechecker.h src/visitor/codechecker.cpp
+codegenerator := src/visitor/codegenerator.h src/visitor/codegenerator.cpp
 visitor_all = $(visitor) $(codechecker) $(codegenerator)
 mixed := src/mixed/mixed.h src/mixed/mixed.cpp
 library := cpm_compiler/libmixed.a cpm_compiler/mixed.h
@@ -31,7 +34,7 @@ $(library): $(mixed)
 	ranlib cpm_compiler/libmixed.a
 	rm -f cpm_compiler/mixed.o
 
-cpm_compiler/c+-: src/main.cpp $(node) $(visitor_all) src/parser/node.lexer.c src/parser/node.tab.c
+cpm_compiler/c+-: src/main.cpp $(node_all) $(visitor_all) src/parser/node.lexer.c src/parser/node.tab.c
 	$(CXX) $^ $(CXXFLAGS) -w -o $@
 
 src/parser/%.lexer.c src/parser/%.lexer.h: src/parser/%.lex
