@@ -5,7 +5,8 @@
 #include "node/node.h"
 #include "parser/node.tab.h"
 #include "parser/node.lexer.h"
-#include "visitor/visitor.h"
+#include "visitor/codechecker/codechecker.h"
+#include "visitor/codegenerator/codegenerator.h"
 
 extern Root root;
 

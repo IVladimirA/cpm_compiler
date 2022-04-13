@@ -1,5 +1,5 @@
 #include "node.h"
-#include "../visitor/visitor.h"
+#include "../visitor/visitor/visitor.h"
 
 
 Literal::Literal(std::string val) : value(std::move(val)) {}
