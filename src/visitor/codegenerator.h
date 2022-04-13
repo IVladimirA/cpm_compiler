@@ -6,7 +6,7 @@ class CodeGenerator : public Visitor {
 public:
     CodeGenerator() = default;
     std::string get_code();
-    bool clear();
+    void clear();
     void compute_last(const Node* tree);
     bool visit(const Literal* lit) override;
     bool visit(const Identifier* id) override;

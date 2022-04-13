@@ -6,10 +6,9 @@ std::string CodeGenerator::get_code() {
     return code;
 }
 
-bool CodeGenerator::clear() {
+void CodeGenerator::clear() {
     code.clear();
     seen.clear();
-    return true;
 }
 
 void CodeGenerator::compute_last(const Node* tree) {
