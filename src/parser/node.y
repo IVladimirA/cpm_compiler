@@ -24,7 +24,7 @@ Root root;
 %token <name> t_variable t_integer_literal t_float_literal t_string_literal t_comment
 %token t_variable_declaration t_constant_declaration
 %token t_plus t_minus t_equals
-%token t_command_ending
+%token t_semicolon
 %token t_left_bracket t_right_bracket
 %token t_print t_input
 
@@ -41,7 +41,7 @@ Input: Statement { root.code_blocks.push_back($1); }
 ;
 
 Statement: t_comment { $$ = new Comment(*$1); }
-| Command t_command_ending { $$ = new Statement($1); }
+| Command t_semicolon { $$ = new Statement($1); }
 ;
 
 Command: Expression { $$ = $1; }

@@ -870,7 +870,7 @@ return t_minus;
 case 16:
 YY_RULE_SETUP
 #line 74 "src/parser/node.lex"
-return t_command_ending;
+return t_semicolon;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP

@@ -140,7 +140,7 @@ extern int yydebug;
     t_plus = 265,
     t_minus = 266,
     t_equals = 267,
-    t_command_ending = 268,
+    t_semicolon = 268,
     t_left_bracket = 269,
     t_right_bracket = 270,
     t_print = 271,
@@ -548,7 +548,7 @@ static const char *const yytname[] =
   "$end", "error", "$undefined", "t_variable", "t_integer_literal",
   "t_float_literal", "t_string_literal", "t_comment",
   "t_variable_declaration", "t_constant_declaration", "t_plus", "t_minus",
-  "t_equals", "t_command_ending", "t_left_bracket", "t_right_bracket",
+  "t_equals", "t_semicolon", "t_left_bracket", "t_right_bracket",
   "t_print", "t_input", "$accept", "Input", "Statement", "Command",
   "Expression", "Declaration", "Variable", "Literal", YY_NULLPTR
 };
@@ -1368,7 +1368,7 @@ yyreduce:
 
   case 5:
 #line 44 "src/parser/node.y"
-                           { (yyval.node) = new Statement((yyvsp[-1].node)); }
+                      { (yyval.node) = new Statement((yyvsp[-1].node)); }
 #line 1373 "src/parser/node.tab.c"
     break;
 

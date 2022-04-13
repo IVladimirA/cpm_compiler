@@ -71,6 +71,6 @@ comment ({blank}?"//"[^\n]*)|({blank}?"/*"([^\n]|"\n")*"*/")
 "=" return t_equals;
 "+" return t_plus;
 "-" return t_minus;
-";" return t_command_ending;
+";" return t_semicolon;
 
 %%

@@ -59,7 +59,7 @@ extern int yydebug;
     t_plus = 265,
     t_minus = 266,
     t_equals = 267,
-    t_command_ending = 268,
+    t_semicolon = 268,
     t_left_bracket = 269,
     t_right_bracket = 270,
     t_print = 271,
