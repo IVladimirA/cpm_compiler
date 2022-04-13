@@ -11,7 +11,7 @@ enum class DataType {
 
 class Mixed {
 public:
-    Mixed();
+    Mixed() = default;
     Mixed(long long int num);
     Mixed(int num);
     Mixed(double num);
@@ -22,9 +22,9 @@ public:
     friend Mixed operator+(const Mixed& m1, const Mixed& m2);
     friend Mixed operator-(const Mixed& m1, const Mixed& m2);
 private:
-    DataType type;
-    long long int integer;
-    double floating;
+    DataType type = DataType::UNDEF;
+    long long int integer = 0;
+    double floating = 0.0;
     std::string string;
 };
 

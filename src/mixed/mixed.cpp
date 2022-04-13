@@ -1,25 +1,13 @@
 #include <iostream>
 #include "mixed.h"
 
-Mixed::Mixed()
-    : type(DataType::UNDEF), integer(0), floating(0), string("") {
-}
+Mixed::Mixed(long long int num) : type{DataType::INT}, integer(num) {}
 
-Mixed::Mixed(long long int num)
-    : type{DataType::INT}, integer(num), floating(0), string("") {
-}
+Mixed::Mixed(int num) : type(DataType::INT), integer(num) {}
 
-Mixed::Mixed(int num)
-    : type(DataType::INT), integer(num), floating(0), string("") {
-}
+Mixed::Mixed(double num) : type(DataType::FLOAT), floating(num) {}
 
-Mixed::Mixed(double num)
-    : type(DataType::FLOAT), integer(0), floating(num), string("") {
-}
-
-Mixed::Mixed(const std::string& string)
-    : type(DataType::STRING), integer(0), floating(0), string(string) {
-}
+Mixed::Mixed(const std::string& string) : type(DataType::STRING), string(string) {}
 
 bool Mixed::is_defined() const {
     return type != DataType::UNDEF;
